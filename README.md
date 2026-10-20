@@ -637,6 +637,14 @@ Die LLM-Zuweisung erfolgt zentral unter **Einstellungen** – dort wird einmalig
 
 ---
 
+## 📌 Alles auf einen Blick
+
+<p align="center">
+  <img src="docs/feature-ueberblick.png" alt="Funktionsübersicht: Dubletten zusammenführen, Tag-Cleanup-Wizard, Neu-OCR, Duplikate, Ballast entfernen, Cloud-Import, Klassifizierer, Dokumenten-Chat" width="540">
+</p>
+
+---
+
 ## 🤝 Beitragen
 
 Beiträge sind willkommen!
