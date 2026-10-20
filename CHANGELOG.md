@@ -4,6 +4,12 @@ Alle wichtigen Änderungen an AI Paperless Organizer.
 
 ---
 
+## 2026-10-20
+
+### Aufräumen mit Ollama: leere KI-Antwort behoben
+- **Bugfix**: „Mit KI analysieren" (Korrespondenten, Dokumenttypen, Tags, Tag-Wizard) brach mit Denk-Modellen wie `qwen3.5` mit „Keine JSON-Antwort vom LLM erhalten" ab. Das Modell dachte, bis Ollamas Standard-Kontext von 4.096 Token voll war, und gab dann nichts zurück. Jetzt ist der Denk-Modus dabei aus, wie schon beim Klassifizierer, und das Kontextfenster steht auf 16.384. Gemessen mit 28 Namen: Ergebnis nach 12 Sekunden statt leerer Antwort nach 42.
+- **Empfehlung**: Fürs Aufräumen `qwen3.5:9b` als „Bereinigung-Modell" eintragen. Es findet mehr Schreibweisen derselben Firma (im Test alle vier Telekom-Varianten statt zwei). Der Klassifizierer bleibt bei `qwen3.5:4b`.
+
 ## 2026-10-13
 
 ### Selbstbau repariert, Paketversionen festgeschrieben

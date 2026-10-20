@@ -370,15 +370,21 @@ class LLMProviderService:
         model = model_override or self.provider.model or "llama3.1"
         base_url = self.provider.api_base_url or "http://localhost:11434"
         
-        async with httpx.AsyncClient(timeout=120.0) as client:
+        async with httpx.AsyncClient(timeout=300.0) as client:
             response = await client.post(
                 f"{base_url}/api/generate",
                 json={
                     "model": model,
                     "prompt": prompt,
                     "stream": False,
+                    # Thinking models (qwen3.5, ...) otherwise reason until the context is
+                    # full and return an empty answer. Models without thinking ignore it.
+                    "think": False,
                     "options": {
-                        "temperature": 0.3
+                        "temperature": 0.3,
+                        # Ollama's default context (4096) is too small for a batch of
+                        # 200 names plus the answer – same value as the classifier.
+                        "num_ctx": 16384,
                     }
                 }
             )
