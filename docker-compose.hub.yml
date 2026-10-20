@@ -3,12 +3,12 @@ services:
   backend:
     image: webdienste/ai-paperless-organizer:backend-latest
     container_name: paperless-organizer-backend
-    ports:
-      - "8000:8000"
     volumes:
       - ./backend/data:/app/data
     environment:
       - DATABASE_URL=sqlite+aiosqlite:///./data/organizer.db
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     restart: unless-stopped
     mem_limit: 3g
     healthcheck:

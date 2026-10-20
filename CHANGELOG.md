@@ -6,6 +6,11 @@ Alle wichtigen Änderungen an AI Paperless Organizer.
 
 ## 2026-10-20
 
+### README: Installation korrigiert, Aussagen geradegerückt
+- **Installation**: Das Compose-Beispiel legt das Backend nicht mehr auf Port 8000, wo meist schon Paperless läuft. Dazu kommt `extra_hosts`, damit der Container unter Linux Ollama auf dem Docker-Host erreicht. Beim Selbstbau steht jetzt der richtige Port 8088 statt 3001. Gleiches in `docker-compose.hub.yml` und im Docker-Hub-Text.
+- **Hinweise oben**: keine eigene Anmeldung, also nur im Heimnetz oder per VPN betreiben. Mit KI-Assistenten entwickelt, automatische Tests gibt es noch nicht.
+- **Einordnung**: neuer Absatz „Paperless 3 hat eigene KI – wozu dann der Organizer?". Entfernt wurden „All-in-One" und die Aussage, andere Tools klassifizierten nur beim Import. Das stimmte nicht.
+
 ### Neue Adresse auf GitHub
 - Das Projekt liegt jetzt unter [github.com/web-dienste/AI-Paperless-Organizer](https://github.com/web-dienste/AI-Paperless-Organizer). Alte Links auf `syberx` leiten automatisch weiter, auch `git pull` in bestehenden Klonen läuft weiter. Links in README, App und Docker-Hub-Text angepasst. Das Docker-Image heißt weiter `webdienste/ai-paperless-organizer`.
 

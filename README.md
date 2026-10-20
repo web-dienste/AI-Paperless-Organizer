@@ -2,7 +2,7 @@
 
 # 🤖 AI Paperless Organizer
 
-**Die All-in-One Erweiterung für Paperless-ngx – weit mehr als nur Klassifizierung**
+**Räumt ein gewachsenes Paperless-ngx-Archiv auf – mit lokaler KI über Ollama oder einem Cloud-Anbieter**
 
 [![GitHub](https://img.shields.io/badge/GitHub-web--dienste%2FAI--Paperless--Organizer-blue?logo=github)](https://github.com/web-dienste/AI-Paperless-Organizer)
 [![Docker Hub](https://img.shields.io/badge/Docker%20Hub-webdienste%2Fai--paperless--organizer-blue?logo=docker)](https://hub.docker.com/r/webdienste/ai-paperless-organizer)
@@ -11,7 +11,7 @@
 [![Ko-fi](https://img.shields.io/badge/Ko--fi-Support%20me-FF5E5B?logo=ko-fi&logoColor=white)](https://ko-fi.com/chriswilms)
 [![PayPal](https://img.shields.io/badge/PayPal-Donate-00457C?logo=paypal&logoColor=white)](https://www.paypal.com/paypalme/withmoney)
 
-**Klassifizieren · Bereinigen · OCR · Chat · Cloud-Import · Duplikate finden – alles in einem Tool**
+**Dubletten zusammenführen · Tags aufräumen · Neu-OCR · Duplikate finden · Klassifizieren · Chat**
 
 🇩🇪 **Deutsch** · 🇬🇧 [English version](README.en.md)
 
@@ -23,6 +23,10 @@
 
 > **⚠️ Betatest – Bitte vor der Nutzung IMMER ein vollständiges Paperless-ngx Backup erstellen!**
 > Aktive Entwicklung. Dokumente, Tags, Korrespondenten und Metadaten werden in Paperless-ngx verändert. **Keine Garantie, keine Haftung.** Nutzung auf eigenes Risiko.
+
+> **🔒 Keine Anmeldung:** Der Organizer hat keinen eigenen Login. Nur im Heimnetz oder per VPN betreiben, nie direkt ins Internet stellen.
+>
+> Entwickelt mit Unterstützung von KI-Assistenten. Automatische Tests gibt es im Repo noch nicht, getestet wird gegen ein echtes Archiv mit gut 5.000 Dokumenten.
 
 ---
 
@@ -42,22 +46,22 @@
 
 ## Was kann das Tool?
 
-Andere Tools wie Paperless-GPT oder Paperless-AI klassifizieren Dokumente beim Import. **AI Paperless Organizer geht deutlich weiter** – es ist eine vollständige Verwaltungs- und Optimierungssuite für Paperless-ngx:
+Ein Werkzeug für das, was sich über Jahre im Archiv angesammelt hat, als Ergänzung zu Paperless-ngx:
 
 | | Feature | Kurz |
 |---|---|---|
-| ✨ | **KI-Klassifizierer** | Titel, Tags, Korrespondent, Typ, Datum, Speicherpfad, Custom Fields – vollautomatisch oder manuell |
 | 🧠 | **Metadaten-Bereinigung** | Doppelte Korrespondenten, Tags, Dokumententypen finden & zusammenführen |
 | 🧹 | **Tag Cleanup Wizard** | 5-stufige systematische Tag-Bereinigung |
 | 📷 | **OCR (Ollama Vision)** | Bessere Texterkennung mit lokalen KI-Modellen, Watchdog, Batch-Verarbeitung |
 | 🏆 | **Modell-Benchmark** | Lokal vs. Cloud – bis zu 5 OCR-Modelle oder 4 LLM-Provider vergleichen |
-| 💬 | **Dokumenten-Chat (RAG)** | Fragen an dein Archiv stellen – mit Quellenangabe und Hybrid-Search |
-| ☁️ | **Cloud Sync / Import** | Google Drive, OneDrive, Dropbox, Nextcloud, lokale Ordner → automatisch in Paperless |
 | 🔍 | **Duplikate finden** | Exakte Duplikate, ähnliche Dokumente (KI), doppelte Rechnungen erkennen |
 | 🗑️ | **Dokumente aufräumen** | Junk-Dokumente (AGB, Impressum, etc.) finden und entfernen |
+| ☁️ | **Cloud Sync / Import** | Google Drive, OneDrive, Dropbox, Nextcloud, lokale Ordner → automatisch in Paperless |
+| ✨ | **KI-Klassifizierer** | Titel, Tags, Korrespondent, Typ, Datum, Speicherpfad, Custom Fields – vollautomatisch oder manuell |
+| 💬 | **Dokumenten-Chat (RAG)** | Fragen an dein Archiv stellen – mit Quellenangabe und Hybrid-Search |
 | 📊 | **Dashboard & Statistiken** | Fortschritt, Aktivitäten, gesparte Zeit |
 
-> 💡 **Kurz gesagt:** Alles was Paperless-ngx fehlt – vollautomatisch wenn du willst, mit voller Kontrolle wenn du sie brauchst.
+> 💡 **Kurz gesagt:** Ordnung für ein gewachsenes Archiv – vollautomatisch, wenn du willst, mit voller Kontrolle, wenn du sie brauchst.
 
 ![Dashboard](docs/screenshots/dashboard.png)
 
@@ -65,9 +69,11 @@ Andere Tools wie Paperless-GPT oder Paperless-AI klassifizieren Dokumente beim I
 
 ## 🚀 Warum AI Paperless Organizer?
 
-Es gibt andere Tools die Dokumente beim Import klassifizieren – aber sie lösen nicht das eigentliche Problem: **Was ist mit den Tausenden Dokumenten die bereits in deinem System schlummern?** Und was wenn die automatische Klassifizierung Fehler gemacht hat?
+**Paperless 3 hat eigene KI – wozu dann der Organizer?** Seit Version 3.0 macht Paperless-ngx selbst KI-Vorschläge zum Einsortieren und hat einen Dokumenten-Chat, seit 3.1 übernimmt es die Vorschläge auch automatisch. Für neue Dokumente ist das eine gute Wahl, es kommt vom Kernteam.
 
-**AI Paperless Organizer** setzt den Fokus auf **Flexibilität, Tiefe und Kontrolle**:
+Der Organizer ergänzt das, vor allem für das, was schon im Archiv liegt: doppelte Korrespondenten, Tags und Dokumenttypen zusammenführen, Tags Schritt für Schritt aufräumen, schlecht erkannte Scans mit lokalen Vision-Modellen neu einlesen, doppelte Rechnungen und Ballast finden. Das bringt Paperless selbst nicht mit (Stand 3.3).
+
+Wer beim Klassifizieren mehr Kontrolle will, findet hier außerdem:
 
 - ⚡ **Drei Modi: Vollautomatisch, Halb-automatisch oder Manuell** – du stellst ein was du willst
 - 📂 **Speicherpfad-Profile** – Personen-Profile mit Kontext, KI ordnet automatisch zu
@@ -454,9 +460,9 @@ An das LLM werden **ausschließlich Metadaten-Namen** übermittelt:
 Der Klassifizierer liest den **OCR-Text** des Dokuments um es zu klassifizieren:
 
 - Bei **Cloud-Modellen** (OpenAI, etc.): OCR-Text wird an den Provider gesendet
-- Bei **Ollama (lokal)**: Alle Daten bleiben auf deinem Server
+- Bei **Ollama (lokal)**: Alle Daten bleiben in deinem Netz
 
-> 💡 **Tipp:** Für maximalen Datenschutz bei der Klassifizierung: **Ollama** mit lokalen Modellen nutzen – dann verlässt kein Dokumentinhalt deinen Server!
+> 💡 **Tipp:** Für maximalen Datenschutz bei der Klassifizierung: **Ollama** mit lokalen Modellen nutzen – dann verlässt kein Dokumentinhalt dein Netz.
 
 ---
 
@@ -479,6 +485,8 @@ Zwei weitere Stolperstellen wurden geprüft und sind unkritisch:
 
 > **Hinweis:** Das Tool pinnt keine API-Version, sondern nutzt den Default des Servers. Bei Paperless-ngx 3.3.1 ist das v10; die von uns verwendeten Felder sind dort identisch zu v9.
 
+> 📘 **Schritt für Schritt mit allen KI-Einstellungen:** [docs/QUICKSTART.md](docs/QUICKSTART.md)
+
 ### Option 1: Docker Hub (Empfohlen)
 
 ```yaml
@@ -486,12 +494,11 @@ Zwei weitere Stolperstellen wurden geprüft und sind unkritisch:
 services:
   backend:
     image: webdienste/ai-paperless-organizer:backend-latest
-    ports:
-      - "8000:8000"
     volumes:
       - ./data:/app/data
-    environment:
-      - DATABASE_URL=sqlite+aiosqlite:///./data/organizer.db
+    extra_hosts:
+      - "host.docker.internal:host-gateway"   # damit der Container den Docker-Host erreicht (Linux)
+    restart: unless-stopped
 
   frontend:
     image: webdienste/ai-paperless-organizer:frontend-latest
@@ -499,23 +506,26 @@ services:
       - "3001:80"
     depends_on:
       - backend
+    restart: unless-stopped
 ```
 
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
+
+Das Backend braucht keinen eigenen Port nach außen, die Oberfläche reicht `/api` intern durch. So kommt es auch nicht Paperless in die Quere, das meist schon auf Port 8000 läuft. Nur für Google Drive, OneDrive oder Dropbox kommt beim Backend `ports: ["53682:53683"]` dazu (Anmeldung beim Cloud-Anbieter).
 
 ### Option 2: Selbst bauen
 
 ```bash
 git clone https://github.com/web-dienste/AI-Paperless-Organizer.git
 cd AI-Paperless-Organizer
-docker-compose up -d --build
+docker compose up -d --build
 ```
 
 ### 🌐 Öffnen
 
-**Webinterface:** http://localhost:3001
+**Webinterface:** `http://<dein-server>:3001` (Docker Hub) oder `http://<dein-server>:8088` (selbst gebaut). Der erste Start des Backends kann eine Minute dauern.
 
 ---
 

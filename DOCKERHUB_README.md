@@ -1,10 +1,12 @@
 # AI Paperless Organizer
 
-🤖 **The all-in-one AI companion for Paperless-ngx** – classify, clean up, OCR, chat, import, deduplicate.
+🤖 **Cleanup companion for a grown Paperless-ngx archive** – merge duplicate correspondents, tags and document types, tag wizard, re-OCR with local vision models, duplicate invoices, classification, chat.
 
 📖 [GitHub](https://github.com/web-dienste/AI-Paperless-Organizer) · 🇬🇧 [English README](https://github.com/web-dienste/AI-Paperless-Organizer/blob/main/README.en.md) · 🇩🇪 [Deutsche README](https://github.com/web-dienste/AI-Paperless-Organizer/blob/main/README.md) · 🐛 [Issues](https://github.com/web-dienste/AI-Paperless-Organizer/issues)
 
 > **⚠️ Beta – always make a full Paperless-ngx backup before use.** This tool modifies documents, tags, correspondents and metadata in your Paperless instance. No warranty, no liability.
+
+> **🔒 No login:** the Organizer has no authentication of its own. Run it on your home network or behind a VPN only. **The UI is German only.** Images are `amd64` only.
 
 ## Compatibility
 
@@ -33,7 +35,7 @@ What gets sent to the LLM depends on the feature:
 | **Document chat (RAG)** | The **text chunks** retrieved for your question |
 | **OCR** | The **page images** being transcribed |
 
-👉 With **Ollama**, all of this stays on your own server – nothing leaves your machine.
+👉 With **Ollama**, no document content leaves your network.
 
 ## Supported LLM providers
 
@@ -46,14 +48,11 @@ OpenAI · Mistral · OpenRouter · Anthropic · Azure OpenAI · **Ollama** (loca
 services:
   backend:
     image: webdienste/ai-paperless-organizer:backend-latest
-    ports:
-      - "8000:8000"
     volumes:
       - ./data:/app/data
-    environment:
-      - DATABASE_URL=sqlite+aiosqlite:///./data/organizer.db
+    extra_hosts:
+      - "host.docker.internal:host-gateway"   # lets the container reach the Docker host (Linux)
     restart: unless-stopped
-    mem_limit: 3g
 
   frontend:
     image: webdienste/ai-paperless-organizer:frontend-latest
@@ -68,7 +67,9 @@ services:
 docker compose up -d
 ```
 
-Then open http://localhost:3001
+Then open `http://<your-server>:3001`. The backend needs no published port: the frontend proxies `/api` internally, so it stays clear of Paperless on port 8000. The services must be named `backend` and `frontend`.
+
+Step-by-step guide with all AI settings (German): [docs/QUICKSTART.md](https://github.com/web-dienste/AI-Paperless-Organizer/blob/main/docs/QUICKSTART.md)
 
 ## Configuration
 

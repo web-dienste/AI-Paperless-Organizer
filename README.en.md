@@ -2,7 +2,7 @@
 
 # 🤖 AI Paperless Organizer
 
-**The all-in-one companion for Paperless-ngx – far more than just classification**
+**Cleans up a grown Paperless-ngx archive – with local AI via Ollama or a cloud provider**
 
 [![GitHub](https://img.shields.io/badge/GitHub-web--dienste%2FAI--Paperless--Organizer-blue?logo=github)](https://github.com/web-dienste/AI-Paperless-Organizer)
 [![Docker Hub](https://img.shields.io/badge/Docker%20Hub-webdienste%2Fai--paperless--organizer-blue?logo=docker)](https://hub.docker.com/r/webdienste/ai-paperless-organizer)
@@ -11,7 +11,7 @@
 [![Ko-fi](https://img.shields.io/badge/Ko--fi-Support%20me-FF5E5B?logo=ko-fi&logoColor=white)](https://ko-fi.com/chriswilms)
 [![PayPal](https://img.shields.io/badge/PayPal-Donate-00457C?logo=paypal&logoColor=white)](https://www.paypal.com/paypalme/withmoney)
 
-**Classify · Clean up · OCR · Chat · Cloud import · Find duplicates – in one tool**
+**Merge duplicates · Clean up tags · Re-OCR · Find duplicates · Classify · Chat**
 
 🇩🇪 [Deutsche Version](README.md) · 🇬🇧 **English**
 
@@ -24,28 +24,32 @@
 > **⚠️ Beta – ALWAYS make a full Paperless-ngx backup before using this tool.**
 > Under active development. It modifies documents, tags, correspondents and metadata inside your Paperless-ngx instance. **No warranty, no liability.** Use at your own risk.
 
+> **🔒 No login:** the Organizer has no authentication of its own. Run it on your home network or behind a VPN only, never expose it to the internet.
+>
+> **The UI is German only.** Built with the help of AI coding assistants. There are no automated tests in the repo yet; it is tested against a real archive of 5,000+ documents.
+
 ---
 
 ## What is this?
 
-Tools like Paperless-GPT or Paperless-AI classify documents **as they are imported**. That leaves the actual problem untouched: **the thousands of documents already sitting in your archive** – and whatever the automatic classification got wrong along the way.
+**Paperless 3 has its own AI – so why the Organizer?** Since version 3.0, Paperless-ngx makes its own AI suggestions for filing documents and has a document chat; since 3.1 it can apply the suggestions automatically. For incoming documents that is a good choice – it comes from the core team.
 
-AI Paperless Organizer is a full management and optimization suite for an existing Paperless-ngx archive.
+The Organizer is a companion for what has piled up in your archive over the years: merging duplicate correspondents, tags and document types, cleaning up tags step by step, re-OCR of poor scans with local vision models, finding duplicate invoices and junk. Paperless itself does not do that (as of 3.3).
 
 | | Feature | What it does |
 |---|---|---|
-| ✨ | **AI classifier** | Title, tags, correspondent, type, date, storage path, custom fields – fully automatic, semi-automatic or manual |
 | 🧠 | **Metadata cleanup** | Find and merge duplicate correspondents, tags and document types |
 | 🧹 | **Tag Cleanup Wizard** | 5-step systematic tag cleanup |
 | 📷 | **OCR (Ollama Vision)** | Re-OCR documents with local vision models – single, batch, watchdog |
 | 🏆 | **Model benchmark** | Compare up to 5 OCR models or 4 LLM providers on the same document |
-| 💬 | **Document chat (RAG)** | Ask your archive questions – with source attribution and hybrid search |
-| ☁️ | **Cloud sync / import** | Google Drive, OneDrive, Dropbox, Nextcloud, local folders → Paperless |
 | 🔍 | **Duplicate detection** | Exact duplicates, similar documents (AI), duplicate invoices |
 | 🗑️ | **Junk cleanup** | Find and remove boilerplate documents (T&C, imprints, ...) |
+| ☁️ | **Cloud sync / import** | Google Drive, OneDrive, Dropbox, Nextcloud, local folders → Paperless |
+| ✨ | **AI classifier** | Title, tags, correspondent, type, date, storage path, custom fields – fully automatic, semi-automatic or manual |
+| 💬 | **Document chat (RAG)** | Ask your archive questions – with source attribution and hybrid search |
 | 📊 | **Dashboard & stats** | Progress, activity, time saved |
 
-**In short:** everything Paperless-ngx is missing – fully automatic if you want it, with full control when you need it.
+**In short:** order for a grown archive – fully automatic if you want it, with full control when you need it.
 
 ![Dashboard](docs/screenshots/dashboard.png)
 
@@ -87,7 +91,7 @@ The classifier reads the **content** of your documents and fills in every metada
 
 **With OpenAI / cloud models (tool calling):** the model actively queries your Paperless data – it searches for matching tags, correspondents and document types in real time before deciding. Result: much better alignment with entries you already have.
 
-**With Ollama (local models) ⭐ recommended:** a multi-stage pipeline – analysis → tags → document type → storage path → custom fields → verification. Everything local, no data leaves your server. Best results: **`qwen3:4b`** or **`qwen3:8b`** – Qwen3 reasons internally before answering, which noticeably improves classification quality over older non-reasoning models.
+**With Ollama (local models) ⭐ recommended:** a multi-stage pipeline – analysis → tags → document type → storage path → custom fields → verification. Everything local, no data leaves your network. Best results: **`qwen3:4b`** or **`qwen3:8b`** – Qwen3 reasons internally before answering, which noticeably improves classification quality over older non-reasoning models.
 
 ### Full control before anything is written
 
@@ -103,7 +107,7 @@ Describe **who** receives which documents (personal, business, family members, .
 
 Not sure which model fits your documents? Test **up to 4 providers simultaneously** on the same document, compare results side by side, and get a cost estimate. A typical finding: `gpt-4o-mini` delivers identical quality to `gpt-4o` for ~95% of documents, at a fraction of the price.
 
-> ⚠️ **Privacy note:** the classifier sends the **OCR text** of your documents to the configured LLM. With cloud models, document content leaves your server. For maximum privacy use **Ollama** with local models – then nothing leaves your machine.
+> ⚠️ **Privacy note:** the classifier sends the **OCR text** of your documents to the configured LLM. With cloud models, document content leaves your network. For maximum privacy use **Ollama** with local models – then no document content leaves your network.
 
 ---
 
@@ -264,14 +268,11 @@ The tool does not pin an API version and follows the server default (v10 on 3.3.
 services:
   backend:
     image: webdienste/ai-paperless-organizer:backend-latest
-    ports:
-      - "8000:8000"
     volumes:
       - ./data:/app/data
-    environment:
-      - DATABASE_URL=sqlite+aiosqlite:///./data/organizer.db
+    extra_hosts:
+      - "host.docker.internal:host-gateway"   # lets the container reach the Docker host (Linux)
     restart: unless-stopped
-    mem_limit: 3g
 
   frontend:
     image: webdienste/ai-paperless-organizer:frontend-latest
@@ -286,6 +287,8 @@ services:
 docker compose up -d
 ```
 
+The backend needs no published port: the frontend proxies `/api` internally. That also keeps it clear of Paperless, which usually already runs on port 8000. Only Google Drive, OneDrive or Dropbox need `ports: ["53682:53683"]` on the backend (sign-in with the cloud provider).
+
 ### Option 2: Build it yourself
 
 ```bash
@@ -294,7 +297,7 @@ cd AI-Paperless-Organizer
 docker compose up -d --build
 ```
 
-**Web interface:** http://localhost:3001
+**Web interface:** `http://<your-server>:3001` (Docker Hub) or `http://<your-server>:8088` (self-built). The backend's first start can take a minute.
 
 ---
 
