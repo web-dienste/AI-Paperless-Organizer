@@ -2267,7 +2267,7 @@ export default function DocumentClassifier() {
                                     value={profile.person_name || ''}
                                     onChange={(e) => updateStorageProfile(profile.paperless_path_id, 'person_name', e.target.value)}
                                     className="input mt-0.5 text-sm"
-                                    placeholder="z.B. Christian Wilms"
+                                    placeholder="z.B. Max Mustermann"
                                   />
                                 </div>
                                 <div>

@@ -279,7 +279,7 @@ PRUEF-REGELN:
 Antworte als JSON mit NUR den Feldern die du AENDERN willst.
 Wenn alles korrekt ist, antworte mit leerem JSON: {{{{}}}}
 
-Beispiel Korrektur: {{{{"storage_path_id": 11, "storage_path_reason": "Privat Christian"}}}}
+Beispiel Korrektur: {{{{"storage_path_id": 11, "storage_path_reason": "Privat Max"}}}}
 Beispiel alles ok: {{{{}}}}
 
 Antworte NUR mit dem JSON."""

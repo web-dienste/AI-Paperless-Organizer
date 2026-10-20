@@ -11,6 +11,9 @@ Alle wichtigen Änderungen an AI Paperless Organizer.
 - **Hinweise oben**: keine eigene Anmeldung, also nur im Heimnetz oder per VPN betreiben. Mit KI-Assistenten entwickelt, automatische Tests gibt es noch nicht.
 - **Einordnung**: neuer Absatz „Paperless 3 hat eigene KI – wozu dann der Organizer?". Entfernt wurden „All-in-One" und die Aussage, andere Tools klassifizierten nur beim Import. Das stimmte nicht.
 
+### Beispielnamen neutral
+- Der Platzhalter im Feld „Person" der Speicherpfad-Profile und das Beispiel im Speicherpfad-Prompt nutzen jetzt „Max Mustermann" bzw. „Privat Max".
+
 ### Neue Adresse auf GitHub
 - Das Projekt liegt jetzt unter [github.com/web-dienste/AI-Paperless-Organizer](https://github.com/web-dienste/AI-Paperless-Organizer). Alte Links auf `syberx` leiten automatisch weiter, auch `git pull` in bestehenden Klonen läuft weiter. Links in README, App und Docker-Hub-Text angepasst. Das Docker-Image heißt weiter `webdienste/ai-paperless-organizer`.
 

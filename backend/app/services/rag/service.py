@@ -258,7 +258,7 @@ class RAGService:
                     d["rerank_score"] = d.get("rerank_score", 0) + 0.15 * title_overlap
 
             # Person-name boost: if the query contains a capitalized multi-word name
-            # (e.g. "Hans-Peter Wilms") and that name appears in the document's first
+            # (e.g. "Hans-Peter Mustermann") and that name appears in the document's first
             # identity chunk, strongly boost it. This prevents a Kaufvertrag that mentions
             # *other* people from outranking the actual document addressed to the queried person.
             import re as _re_boost
