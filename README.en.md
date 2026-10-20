@@ -15,7 +15,9 @@
 
 🇩🇪 [Deutsche Version](README.md) · 🇬🇧 **English**
 
-![Dashboard](docs/screenshots/dashboard.png)
+![Merging duplicate correspondents: the AI suggests, you confirm](docs/demo-zusammenfuehren.gif)
+
+<sub>Four spellings of Telekom become one correspondent · local AI via Ollama · sample data · the UI is German</sub>
 
 </div>
 
@@ -44,6 +46,8 @@ AI Paperless Organizer is a full management and optimization suite for an existi
 | 📊 | **Dashboard & stats** | Progress, activity, time saved |
 
 **In short:** everything Paperless-ngx is missing – fully automatic if you want it, with full control when you need it.
+
+![Dashboard](docs/screenshots/dashboard.png)
 
 ---
 
@@ -244,6 +248,8 @@ With **Ollama**, all of the above stays on your own server. With cloud providers
 ---
 
 ## 🚀 Quick start
+
+> 📘 **Step-by-step guide (German):** [docs/QUICKSTART.md](docs/QUICKSTART.md) – where each AI setting lives and which Ollama address to use inside Docker.
 
 ### Compatibility
 

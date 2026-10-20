@@ -15,7 +15,9 @@
 
 🇩🇪 **Deutsch** · 🇬🇧 [English version](README.en.md)
 
-![Dashboard](docs/screenshots/dashboard.png)
+![Doppelte Korrespondenten zusammenführen: Die KI schlägt vor, du bestätigst](docs/demo-zusammenfuehren.gif)
+
+<sub>Vier Schreibweisen von Telekom werden zu einem Korrespondenten · lokale KI mit Ollama · erfundene Beispieldaten</sub>
 
 </div>
 
@@ -26,6 +28,8 @@
 
 ## 🆕 Neu
 
+- **Schritt-für-Schritt-Anleitung** – [docs/QUICKSTART.md](docs/QUICKSTART.md): wo welche KI-Einstellung liegt, welche Ollama-Adresse im Docker-Container gilt und wie man die typischen Stolpersteine umgeht.
+- **Aufräumen mit `qwen3.5` repariert** – „Mit KI analysieren" lieferte mit Denk-Modellen keine Antwort. Behoben. Fürs Aufräumen empfiehlt sich `qwen3.5:9b` als „Bereinigung-Modell".
 - **Paperless-ngx v3 wird unterstützt** – geprüft bis einschließlich 3.3.1, lesend wie schreibend. Eine Anpassung war nötig: Die Titelsuche in „Dokumente Aufräumen" traf durch die neue Suchmaschine viel zu viele Dokumente (462 statt 14) – bei einem Feature, das löscht. Behoben. Details unter [Kompatibilität](#kompatibilität).
 - **OCR speichert deutlich sparsamer** – lange PDFs werden Seite für Seite gerendert statt alle Seiten gleichzeitig. Ein 12-seitiges Dokument bei 400 DPI brauchte vorher ~1,6 GB Arbeitsspeicher, jetzt ~170 MB – unabhängig von der Seitenzahl. Dokumente ab 50 Seiten landen zur manuellen Prüfung auf der Ignore-Liste, statt den Batch zu blockieren.
 - **Intelligente Korrespondenten-Zuordnung (Beta)** – ordnet einen von der KI vorgeschlagenen Korrespondenten automatisch einem bereits vorhandenen zu, statt eine Dublette anzulegen (z. B. „Muster-Technik" und „Muster Technik"). Optional zuschaltbar, standardmäßig aus – nichts wird zusammengeführt oder gelöscht, nur ein bestehender Eintrag wiederverwendet.
@@ -54,6 +58,8 @@ Andere Tools wie Paperless-GPT oder Paperless-AI klassifizieren Dokumente beim I
 | 📊 | **Dashboard & Statistiken** | Fortschritt, Aktivitäten, gesparte Zeit |
 
 > 💡 **Kurz gesagt:** Alles was Paperless-ngx fehlt – vollautomatisch wenn du willst, mit voller Kontrolle wenn du sie brauchst.
+
+![Dashboard](docs/screenshots/dashboard.png)
 
 ---
 
@@ -455,6 +461,8 @@ Der Klassifizierer liest den **OCR-Text** des Dokuments um es zu klassifizieren:
 ---
 
 ## 🚀 Quick Start
+
+> 📘 **Neu hier?** Die [Schritt-für-Schritt-Anleitung](docs/QUICKSTART.md) zeigt, wo welche KI-Einstellung liegt und welche Ollama-Adresse im Container gilt.
 
 ### Kompatibilität
 
