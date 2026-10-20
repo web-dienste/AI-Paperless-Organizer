@@ -4,7 +4,7 @@
 
 **Die All-in-One Erweiterung für Paperless-ngx – weit mehr als nur Klassifizierung**
 
-[![GitHub](https://img.shields.io/badge/GitHub-syberx%2FAI--Paperless--Organizer-blue?logo=github)](https://github.com/syberx/AI-Paperless-Organizer)
+[![GitHub](https://img.shields.io/badge/GitHub-web--dienste%2FAI--Paperless--Organizer-blue?logo=github)](https://github.com/web-dienste/AI-Paperless-Organizer)
 [![Docker Hub](https://img.shields.io/badge/Docker%20Hub-webdienste%2Fai--paperless--organizer-blue?logo=docker)](https://hub.docker.com/r/webdienste/ai-paperless-organizer)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -508,7 +508,7 @@ docker-compose up -d
 ### Option 2: Selbst bauen
 
 ```bash
-git clone https://github.com/syberx/AI-Paperless-Organizer.git
+git clone https://github.com/web-dienste/AI-Paperless-Organizer.git
 cd AI-Paperless-Organizer
 docker-compose up -d --build
 ```
@@ -660,7 +660,7 @@ Beiträge sind willkommen!
 - 💡 Feature Requests
 - 🔌 Andere LLM Provider testen
 
-Fragen, Ideen und Erfahrungsberichte: [GitHub Discussions](https://github.com/syberx/AI-Paperless-Organizer/discussions)
+Fragen, Ideen und Erfahrungsberichte: [GitHub Discussions](https://github.com/web-dienste/AI-Paperless-Organizer/discussions)
 
 ---
 

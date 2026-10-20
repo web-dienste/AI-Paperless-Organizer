@@ -206,7 +206,7 @@ class DocumentClassifierService:
             return OpenAIToolCallingProvider(
                 api_key=llm.api_key, model=model, tool_executor=tool_executor,
                 base_url="https://openrouter.ai/api/v1", provider_label="OpenRouter",
-                extra_headers={"HTTP-Referer": "https://github.com/syberx/AI-Paperless-Organizer"},
+                extra_headers={"HTTP-Referer": "https://github.com/web-dienste/AI-Paperless-Organizer"},
             )
         elif provider_name == "ollama":
             host = llm.api_base_url or "http://localhost:11434"

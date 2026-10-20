@@ -2,7 +2,7 @@
 
 🤖 **The all-in-one AI companion for Paperless-ngx** – classify, clean up, OCR, chat, import, deduplicate.
 
-📖 [GitHub](https://github.com/syberx/AI-Paperless-Organizer) · 🇬🇧 [English README](https://github.com/syberx/AI-Paperless-Organizer/blob/main/README.en.md) · 🇩🇪 [Deutsche README](https://github.com/syberx/AI-Paperless-Organizer/blob/main/README.md) · 🐛 [Issues](https://github.com/syberx/AI-Paperless-Organizer/issues)
+📖 [GitHub](https://github.com/web-dienste/AI-Paperless-Organizer) · 🇬🇧 [English README](https://github.com/web-dienste/AI-Paperless-Organizer/blob/main/README.en.md) · 🇩🇪 [Deutsche README](https://github.com/web-dienste/AI-Paperless-Organizer/blob/main/README.md) · 🐛 [Issues](https://github.com/web-dienste/AI-Paperless-Organizer/issues)
 
 > **⚠️ Beta – always make a full Paperless-ngx backup before use.** This tool modifies documents, tags, correspondents and metadata in your Paperless instance. No warranty, no liability.
 
@@ -78,11 +78,11 @@ Then open http://localhost:3001
 
 ## Screenshots
 
-![Dashboard](https://raw.githubusercontent.com/syberx/AI-Paperless-Organizer/main/docs/screenshots/dashboard.png)
+![Dashboard](https://raw.githubusercontent.com/web-dienste/AI-Paperless-Organizer/main/docs/screenshots/dashboard.png)
 
-![Document chat](https://raw.githubusercontent.com/syberx/AI-Paperless-Organizer/main/docs/screenshots/dokumentenchat.png)
+![Document chat](https://raw.githubusercontent.com/web-dienste/AI-Paperless-Organizer/main/docs/screenshots/dokumentenchat.png)
 
-![OCR Stats](https://raw.githubusercontent.com/syberx/AI-Paperless-Organizer/main/docs/screenshots/ocr-stats.png)
+![OCR Stats](https://raw.githubusercontent.com/web-dienste/AI-Paperless-Organizer/main/docs/screenshots/ocr-stats.png)
 
 ## Tags
 

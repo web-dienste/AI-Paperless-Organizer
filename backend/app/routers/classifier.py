@@ -698,7 +698,7 @@ async def test_openrouter_connection(
         client = AsyncOpenAI(
             api_key=api_key,
             base_url="https://openrouter.ai/api/v1",
-            default_headers={"HTTP-Referer": "https://github.com/syberx/AI-Paperless-Organizer"},
+            default_headers={"HTTP-Referer": "https://github.com/web-dienste/AI-Paperless-Organizer"},
         )
         await client.chat.completions.create(
             model=model,

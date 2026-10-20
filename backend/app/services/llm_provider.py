@@ -348,7 +348,7 @@ class LLMProviderService:
         client = AsyncOpenAI(
             api_key=self.provider.api_key,
             base_url="https://openrouter.ai/api/v1",
-            default_headers={"HTTP-Referer": "https://github.com/syberx/AI-Paperless-Organizer"},
+            default_headers={"HTTP-Referer": "https://github.com/web-dienste/AI-Paperless-Organizer"},
         )
         
         response = await client.chat.completions.create(

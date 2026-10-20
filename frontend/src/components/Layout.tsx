@@ -617,7 +617,7 @@ export default function Layout({ children }: LayoutProps) {
           {/* GitHub + Donate links */}
           <div className="flex gap-2">
             <a
-              href="https://github.com/syberx/AI-Paperless-Organizer"
+              href="https://github.com/web-dienste/AI-Paperless-Organizer"
               target="_blank"
               rel="noopener noreferrer"
               className="flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-lg
