@@ -92,18 +92,24 @@ async def _migrate_columns(conn):
         ("classifier_config", "correspondent_smart_normalize", "BOOLEAN DEFAULT 1"),
     ]
 
+    added = set()
     for table, column, col_type in migrations:
         try:
             await conn.execute(sa.text(
                 f"ALTER TABLE {table} ADD COLUMN {column} {col_type}"
             ))
+            added.add((table, column))
         except Exception:
             pass  # Column already exists
 
     # Seed Mistral and OpenRouter providers if missing
     await _seed_new_providers(conn)
-    # Migrate classifier config values into the central LLMProvider table
-    await _migrate_classifier_to_providers(conn)
+    # Copy the old per-classifier settings into the central tables – once. The switch to
+    # central providers also added app_settings.classifier_provider, so "that column was
+    # just added" marks the first start on that version. Running the copy on every start
+    # overwrote later choices, e.g. Ollama went back to the old default "openai".
+    if ("app_settings", "classifier_provider") in added:
+        await _migrate_classifier_to_providers(conn)
 
 
 async def _seed_new_providers(conn):

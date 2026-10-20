@@ -491,7 +491,9 @@ export default function TagCleanupWizard() {
     try {
       const estimate = await api.estimateTags(info.type)
       // Check if external LLM (not Ollama)
-      const isExternal = estimate.model ? !estimate.model.toLowerCase().includes('llama') && !estimate.model.toLowerCase().includes('mistral') && !estimate.model.toLowerCase().includes('local') : true
+      // External = anything but local Ollama, judged by the provider the backend reports.
+      // Guessing from the model name called qwen external and Mistral's cloud local.
+      const isExternal = estimate.provider ? estimate.provider !== 'ollama' : true
       setConfirmEstimate({ ...estimate, is_external: isExternal })
     } catch (e) {
       console.error('Error loading estimate:', e)

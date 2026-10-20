@@ -117,10 +117,8 @@ Einstellungen → LLM Provider → Anbieter aufklappen → „API Key" eintragen
 ## 6. Stolpersteine
 
 - **Auto-Klassifizierung schreibt direkt.** Vollständige Ergebnisse gehen sofort nach Paperless, auch im Modus „Immer prüfen". In die Prüfliste kommen nur unvollständige Ergebnisse.
-- **Nach einem Neustart den Klassifizierer-Anbieter prüfen.** Bei neuen Installationen springt „Dokument-Klassifizierer" unter Job-Zuweisung beim Neustart des Backends von „Ollama (Lokal)" auf „OpenAI". Wieder auf Ollama stellen. Wer nichts in die Cloud schicken will, hinterlegt keinen OpenAI-Key.
 - **„Ollama Offline", obwohl der Klassifizierer läuft:** Die Anzeige prüft nur die Adresse aus dem OCR-Tab.
 - **„Installierte Modelle laden" zeigt nichts:** erst „Speichern", dann laden. Der Button nimmt die gespeicherte Adresse.
-- **Nach „Speichern" am aktiven Anbieter steht oben „LLM nicht konfiguriert":** Das Speichern nimmt dem Anbieter die Marke „Aktiv". Danach einmal „Aktivieren" klicken.
 - **Status oben links ändert sich nicht:** Seite neu laden.
 - **Zusammenführen und Löschen lassen sich nicht zurücknehmen.** Deshalb das Backup.
 

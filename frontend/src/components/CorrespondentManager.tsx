@@ -208,7 +208,9 @@ export default function CorrespondentManager() {
     try {
       const est = await api.estimateCorrespondents()
       // Check if external LLM
-      const isExternal = est.model ? !est.model.toLowerCase().includes('llama') && !est.model.toLowerCase().includes('mistral') && !est.model.toLowerCase().includes('local') : true
+      // External = anything but local Ollama, judged by the provider the backend reports.
+      // Guessing from the model name called qwen external and Mistral's cloud local.
+      const isExternal = est.provider ? est.provider !== 'ollama' : true
       setConfirmEstimate({ ...est, is_external: isExternal } as any)
     } catch (e) {
       setConfirmEstimate({

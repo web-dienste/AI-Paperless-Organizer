@@ -154,10 +154,12 @@ async def update_llm_provider(
     if not provider:
         raise HTTPException(status_code=404, detail="Provider not found")
     
-    # If setting this provider as active, deactivate others
+    # If setting this provider as active, deactivate the others. Not this one: the bulk
+    # update used to hit it too, and because its loaded value was already True, setting it
+    # True again wrote nothing back – saving the active provider deactivated it.
     if data.is_active:
         await db.execute(
-            LLMProvider.__table__.update().values(is_active=False)
+            LLMProvider.__table__.update().where(LLMProvider.id != provider_id).values(is_active=False)
         )
     
     # Keep old key if *** or empty string is sent (don't accidentally clear the key)

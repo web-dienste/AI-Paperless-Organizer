@@ -68,6 +68,7 @@ async def estimate_correspondents(
         "estimated_tokens": estimated_tokens,
         "token_limit": token_limit,
         "model": model_name,
+        "provider": model_info.get("provider_name") if model_info else None,
         "recommended_batches": recommended_batches,
         "warning": f"~{estimated_tokens:,} Tokens > {safe_limit:,} Limit. Wird in {recommended_batches} Batches aufgeteilt." if needs_batching else None
     }

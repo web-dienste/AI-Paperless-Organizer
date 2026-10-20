@@ -6,6 +6,11 @@ Alle wichtigen Änderungen an AI Paperless Organizer.
 
 ## 2026-10-20
 
+### Drei Fehler bei den KI-Einstellungen behoben
+- **Klassifizierer-Anbieter kippte nach Neustart auf OpenAI**: Eine Übernahme alter Einstellungen lief bei jedem Backend-Start statt einmal. Auf Neuinstallationen stellte sie „Dokument-Klassifizierer" von „Ollama (Lokal)" auf „OpenAI" zurück und füllte ein leeres Klassifizierer-Modell mit `qwen2.5:8b`. Mit hinterlegtem OpenAI-Key gingen Dokumenttexte dann in die Cloud, obwohl Ollama gewählt war. Jetzt läuft die Übernahme nur noch beim ersten Start nach dem Umstieg von einer Version vor März 2026.
+- **„Speichern" am aktiven Anbieter deaktivierte ihn**: Danach stand oben „LLM nicht konfiguriert" und das Aufräumen hatte keinen Anbieter. Behoben.
+- **Hinweis „externer LLM-Anbieter" falsch**: Der Dialog vor einer KI-Analyse riet anhand des Modellnamens. Lokales Ollama mit `qwen` galt als extern, die Cloud von Mistral AI dagegen als lokal, dort fehlte die Warnung. Jetzt entscheidet der tatsächlich aktive Anbieter.
+
 ### Schritt-für-Schritt-Anleitung und Demo-Animation
 - **Neu**: [docs/QUICKSTART.md](docs/QUICKSTART.md) – wo welche KI-Einstellung liegt, welche Ollama-Adresse im Docker-Container gilt, ein sinnvoller erster Durchlauf und die bekannten Stolpersteine mit Umgehung.
 - **README**: Oben zeigt jetzt eine kurze Animation das Zusammenführen doppelter Korrespondenten (erfundene Beispieldaten, echte Analyse mit lokalem Ollama). Das Dashboard-Bild steht eine Stufe tiefer.
