@@ -2,7 +2,7 @@
 
 🤖 **Cleanup companion for a grown Paperless-ngx archive** – merge duplicate correspondents, tags and document types, tag wizard, re-OCR with local vision models, duplicate invoices, classification, chat.
 
-📖 [GitHub](https://github.com/web-dienste/AI-Paperless-Organizer) · 🇬🇧 [English README](https://github.com/web-dienste/AI-Paperless-Organizer/blob/main/README.en.md) · 🇩🇪 [Deutsche README](https://github.com/web-dienste/AI-Paperless-Organizer/blob/main/README.md) · 🐛 [Issues](https://github.com/web-dienste/AI-Paperless-Organizer/issues)
+🌐 [Project page (German)](https://www.web-dienste.com/ai-paperless-organizer/) · 📖 [GitHub](https://github.com/web-dienste/AI-Paperless-Organizer) · 🇬🇧 [English README](https://github.com/web-dienste/AI-Paperless-Organizer/blob/main/README.en.md) · 🇩🇪 [Deutsche README](https://github.com/web-dienste/AI-Paperless-Organizer/blob/main/README.md) · 🐛 [Issues](https://github.com/web-dienste/AI-Paperless-Organizer/issues)
 
 > **⚠️ Beta – always make a full Paperless-ngx backup before use.** This tool modifies documents, tags, correspondents and metadata in your Paperless instance. No warranty, no liability.
 
