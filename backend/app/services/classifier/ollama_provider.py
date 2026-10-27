@@ -24,6 +24,7 @@ from app.services.classifier.base_provider import (
     BaseClassifierProvider, ClassificationResult, DocumentContext,
 )
 from app.services.classifier.tool_executor import ToolExecutor
+from app.services.ui_lang import EN_CLASSIFIER_HINT, is_en
 from app.services.classifier.prompts import (
     SYSTEM_PROMPT_OLLAMA_ANALYZE,
     SYSTEM_PROMPT_OLLAMA_STORAGE_PATH,
@@ -620,6 +621,8 @@ class OllamaMultiCallProvider(BaseClassifierProvider):
         thinking models (bypasses chat template that triggers thinking),
         /api/chat with format=json/schema for standard models.
         """
+        if is_en():
+            system_prompt += EN_CLASSIFIER_HINT
         if self._is_thinking:
             return await self._call_ollama_generate(
                 system_prompt, user_message, max_tokens, keep_alive, json_schema

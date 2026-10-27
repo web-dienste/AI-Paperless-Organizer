@@ -13,6 +13,16 @@ EN_REASONING_HINT = (
     "Keep all names exactly as they appear in the list."
 )
 
+# An Klassifizierer-Prompts angehängt: Begründungen englisch, Titel in der Sprache des Dokuments.
+EN_CLASSIFIER_HINT = (
+    "\n\nIMPORTANT: Write every explanation or reason text in English. "
+    "Keep the document title in the language of the document. "
+    "Keep existing tag, correspondent, document type and storage path names exactly as listed."
+)
+
+# An den Chat-System-Prompt angehängt.
+EN_CHAT_HINT = "\n\nAnswer in English, unless the user's question is written in another language."
+
 
 def is_en() -> bool:
     return ui_lang.get() == "en"

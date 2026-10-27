@@ -15,6 +15,7 @@ from app.services.classifier.tool_definitions import (
 )
 from app.services.classifier.tool_executor import ToolExecutor
 from app.services.classifier.prompts import SYSTEM_PROMPT_OPENAI, get_correspondent_rules
+from app.services.ui_lang import EN_CLASSIFIER_HINT, is_en
 
 logger = logging.getLogger(__name__)
 
@@ -81,6 +82,8 @@ class OpenAIToolCallingProvider(BaseClassifierProvider):
         enabled_fields = self._get_enabled_fields(config)
 
         system_prompt = config.get("system_prompt") or SYSTEM_PROMPT_OPENAI
+        if is_en():
+            system_prompt += EN_CLASSIFIER_HINT
         system_prompt += f"\n\nAktivierte Felder: {', '.join(enabled_fields)}"
         tags_min = config.get("tags_min", 1)
         tags_max = config.get("tags_max", 5)

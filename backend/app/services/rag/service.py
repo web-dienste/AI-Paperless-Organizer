@@ -11,7 +11,7 @@ from app.services.rag.search_engine import SearchEngine, SearchResult
 from app.services.rag.indexer import Indexer
 from app.services.rag.rerank_service import RerankService
 from app.services import ollama_lock
-from app.services.ui_lang import ui_text
+from app.services.ui_lang import EN_CHAT_HINT, is_en, ui_text
 
 logger = logging.getLogger(__name__)
 
@@ -393,6 +393,8 @@ class RAGService:
             "Du bist ein hilfreicher Assistent der Fragen zu Dokumenten beantwortet. "
             "Antworte basierend auf dem bereitgestellten Kontext."
         )
+        if is_en():
+            system_prompt += EN_CHAT_HINT
 
         messages = [{"role": "system", "content": system_prompt}]
         messages.extend(chat_history)
@@ -406,6 +408,8 @@ class RAGService:
                 f"z.B. [3] für 'Quelle 3', [7] für 'Quelle 7'. "
                 f"Wenn du nach Fakten wie Geburtsdaten suchst, liste ALLE Fundstellen aus allen Quellen auf."
             )
+        if is_en():
+            user_content += "\n\nAnswer in English."
         messages.append({"role": "user", "content": user_content})
 
         # Yield session info first

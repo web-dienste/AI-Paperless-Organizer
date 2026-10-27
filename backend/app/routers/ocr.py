@@ -20,7 +20,7 @@ from app.services.paperless_client import PaperlessClient, get_paperless_client
 from app.services.ocr_service import OcrService, batch_state, watchdog_state, single_ocr_running, ocr_page_progress, load_review_queue, save_review_queue, load_ocr_ignore_list, save_ocr_ignore_list, load_ocr_error_list, save_ocr_error_list, load_ocr_error_counts, save_ocr_error_counts, DEFAULT_OLLAMA_URL, DEFAULT_OCR_MODEL
 import app.services.ocr_service as ocr_service_module
 from app.services.llm_provider import LLMProviderService, get_llm_service
-from app.services.ui_lang import ui_text
+from app.services.ui_lang import is_en, ui_text
 
 logger = logging.getLogger(__name__)
 
@@ -1403,6 +1403,8 @@ WICHTIG:
 - Sei STRENG aber FAIR. Ein falsches Datum ist schlimmer als 5 Tippfehler.
 - Wenn du nicht sicher bist ob ein Wert richtig ist, vergleiche die Versionen untereinander.
 """
+    if is_en():
+        prompt = prompt.replace("auf Deutsch", "in English") + "\n\nWrite all text values in the JSON in English."
 
     try:
         used_model = eval_model or llm_service.provider.model
