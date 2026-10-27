@@ -35,7 +35,7 @@ import {
 } from 'lucide-react'
 import clsx from 'clsx'
 import * as api from '../services/api'
-import { tr } from '../i18n'
+import { tr, locale } from '../i18n'
 
 interface LayoutProps {
   children: ReactNode
@@ -317,7 +317,7 @@ export default function Layout({ children }: LayoutProps) {
             )}
             <span className={clsx(
               paperlessConnected ? 'text-emerald-400' : 'text-surface-400'
-            )}>{tr("Paperless ")}{paperlessConnected ? 'verbunden' : tr("nicht verbunden")}
+            )}>{tr("Paperless ")}{paperlessConnected ? tr("verbunden") : tr("nicht verbunden")}
             </span>
           </div>
           <div className="flex items-center gap-2 text-sm">
@@ -330,7 +330,7 @@ export default function Layout({ children }: LayoutProps) {
             )}
             <span className={clsx(
               llmConfigured ? 'text-emerald-400' : 'text-surface-400'
-            )}>{tr("LLM ")}{llmConfigured ? 'konfiguriert' : tr("nicht konfiguriert")}
+            )}>{tr("LLM ")}{llmConfigured ? tr("konfiguriert") : tr("nicht konfiguriert")}
             </span>
           </div>
           <div className="flex items-center gap-2 text-sm">
@@ -357,7 +357,7 @@ export default function Layout({ children }: LayoutProps) {
             >
               <AlertCircle className="w-4 h-4 text-amber-400 animate-pulse flex-shrink-0" />
               <span className="text-amber-400 font-medium">
-                {reviewCount}{tr(" OCR-Prüfung")}{reviewCount !== 1 ? 'en' : ''}{tr(" offen")}</span>
+                {tr(reviewCount !== 1 ? "{count} OCR-Prüfungen offen" : "{count} OCR-Prüfung offen", { count: reviewCount })}</span>
             </Link>
           )}
           {errorCount > 0 && (
@@ -484,7 +484,7 @@ export default function Layout({ children }: LayoutProps) {
                   </span>
                 </div>
                 {watchdogStatus.last_run && !watchdogStatus.running && (
-                  <p className="text-xs text-surface-500 ml-6 mt-0.5">{tr("Zuletzt: ")}{new Date(watchdogStatus.last_run).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })}
+                  <p className="text-xs text-surface-500 ml-6 mt-0.5">{tr("Zuletzt: ")}{new Date(watchdogStatus.last_run).toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })}
                   </p>
                 )}
               </Link>

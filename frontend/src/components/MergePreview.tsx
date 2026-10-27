@@ -3,7 +3,7 @@ import React from 'react'
 import { Check, X, ChevronDown, ChevronUp, FileText, Loader2, Eye, ExternalLink, Ban } from 'lucide-react'
 import clsx from 'clsx'
 import * as api from '../services/api'
-import { tr } from '../i18n'
+import { tr, locale } from '../i18n'
 
 interface Member {
   id: number
@@ -470,7 +470,7 @@ export default function MergePreview({ groups, entityType, analysisType: _analys
                                           {doc.title}
                                         </p>
                                         <p className="text-[10px] text-surface-500">
-                                          {new Date(doc.created).toLocaleDateString('de-DE')}
+                                          {new Date(doc.created).toLocaleDateString(locale)}
                                         </p>
                                       </div>
                                       <ExternalLink className="w-3 h-3 text-surface-500 group-hover:text-primary-400 flex-shrink-0" />

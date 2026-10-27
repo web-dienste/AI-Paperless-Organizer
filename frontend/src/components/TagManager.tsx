@@ -4,7 +4,7 @@ import { Sparkles, RefreshCw, Loader2, Tag, AlertCircle, Info, Trash2, X, Wand2,
 import clsx from 'clsx'
 import * as api from '../services/api'
 import MergePreview from './MergePreview'
-import { tr } from '../i18n'
+import { tr, locale } from '../i18n'
 
 interface TagItem {
   id: number
@@ -155,9 +155,9 @@ export default function TagManager() {
     const diffSec = Math.floor(diffMs / 1000)
     const diffMin = Math.floor(diffSec / 60)
     
-    if (diffSec < 60) return `vor ${diffSec}s`
-    if (diffMin < 60) return `vor ${diffMin}m`
-    return lastSync.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })
+    if (diffSec < 60) return tr("vor {n}s", { n: diffSec })
+    if (diffMin < 60) return tr("vor {n}m", { n: diffMin })
+    return lastSync.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })
   }
 
   const handleAnalyzeClick = async () => {
@@ -357,7 +357,7 @@ export default function TagManager() {
               <span>
                 <span className="text-surface-400">{tr("Tokens:")}</span>
                 <span className="ml-1 text-surface-100 font-medium">
-                  ~{estimate.estimated_tokens.toLocaleString()}
+                  ~{estimate.estimated_tokens.toLocaleString(locale)}
                   {estimate.token_limit && (
                     <span className="text-surface-500"> / {(estimate.token_limit / 1000).toFixed(0)}{tr("k Limit")}</span>
                   )}
@@ -393,7 +393,7 @@ export default function TagManager() {
               {analysisLoadedAt && (
                 <div className="flex items-center gap-1 px-2 py-1 rounded bg-primary-500/10 border border-primary-500/30">
                   <History className="w-3 h-3 text-primary-400" />
-                  <span className="text-primary-400 text-xs">{tr("Geladen: ")}{new Date(analysisLoadedAt).toLocaleString('de-DE')}
+                  <span className="text-primary-400 text-xs">{tr("Geladen: ")}{new Date(analysisLoadedAt).toLocaleString(locale)}
                   </span>
                 </div>
               )}
@@ -404,7 +404,7 @@ export default function TagManager() {
               <div>
                 <span className="text-surface-400">{tr("Tokens:")}</span>
                 <span className="ml-2 text-surface-100 font-medium">
-                  ~{stats.estimated_total_tokens?.toLocaleString() || 0}
+                  ~{stats.estimated_total_tokens?.toLocaleString(locale) || 0}
                 </span>
               </div>
               {stats.batches_total && stats.batches_total > 1 && (
@@ -553,7 +553,7 @@ export default function TagManager() {
                                         {doc.title}
                                       </p>
                                       <p className="text-[10px] text-surface-500">
-                                        {new Date(doc.created).toLocaleDateString('de-DE')}
+                                        {new Date(doc.created).toLocaleDateString(locale)}
                                       </p>
                                     </div>
                                     <ExternalLink className="w-3 h-3 text-surface-500 group-hover:text-primary-400 flex-shrink-0" />
@@ -601,7 +601,7 @@ export default function TagManager() {
                   <span className="text-surface-400">{tr("Erstellt am:")}</span>
                   <span className="text-surface-100">
                     {savedAnalysis.created_at 
-                      ? new Date(savedAnalysis.created_at).toLocaleString('de-DE') 
+                      ? new Date(savedAnalysis.created_at).toLocaleString(locale) 
                       : tr("Unbekannt")}
                   </span>
                 </div>

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { Save, Check, X, Eye, EyeOff, TestTube, Loader2, ChevronDown, ChevronUp, Cpu, Lock, Bug, Trash2, Ban, Key, Copy, Power, Code2 } from 'lucide-react'
 import clsx from 'clsx'
 import * as api from '../services/api'
-import { tr } from '../i18n'
+import { tr, locale } from '../i18n'
 
 interface LLMProvider {
   id: number
@@ -909,7 +909,7 @@ export default function SettingsPanel() {
                        item.analysis_type === 'doctype_match' ? tr("Dokumententyp-Match") : tr("Ähnlich")}
                     </span>
                   </div>
-                  <p className="text-xs text-surface-500 mt-1">{tr("Ignoriert am ")}{new Date(item.created_at).toLocaleDateString('de-DE')}
+                  <p className="text-xs text-surface-500 mt-1">{tr("Ignoriert am ")}{new Date(item.created_at).toLocaleDateString(locale)}
                   </p>
                 </div>
                 <button
@@ -989,8 +989,8 @@ export default function SettingsPanel() {
                     <div>
                       <div className="text-sm font-medium text-surface-100">{k.name}</div>
                       <div className="text-xs text-surface-400">
-                        {k.key_prefix}{tr("... | Erstellt: ")}{k.created_at ? new Date(k.created_at).toLocaleDateString('de-DE') : '-'}
-                        {k.last_used_at && <>{tr(" | Zuletzt: ")}{new Date(k.last_used_at).toLocaleDateString('de-DE')}</>}
+                        {k.key_prefix}{tr("... | Erstellt: ")}{k.created_at ? new Date(k.created_at).toLocaleDateString(locale) : '-'}
+                        {k.last_used_at && <>{tr(" | Zuletzt: ")}{new Date(k.last_used_at).toLocaleDateString(locale)}</>}
                       </div>
                     </div>
                   </div>

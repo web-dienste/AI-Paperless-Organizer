@@ -6,7 +6,7 @@ import {
 } from 'lucide-react'
 import clsx from 'clsx'
 import * as api from '../services/api'
-import { tr } from '../i18n'
+import { tr, locale } from '../i18n'
 
 // Confirmation modal for AI analysis
 interface AnalysisConfirmInfo {
@@ -238,7 +238,7 @@ export default function TagCleanupWizard() {
                       {doc.title}
                     </p>
                     <p className="text-[10px] text-surface-500">
-                      {new Date(doc.created).toLocaleDateString('de-DE')}
+                      {new Date(doc.created).toLocaleDateString(locale)}
                     </p>
                   </div>
                   <ExternalLink className="w-3 h-3 text-surface-500 group-hover:text-primary-400 flex-shrink-0" />
@@ -446,7 +446,7 @@ export default function TagCleanupWizard() {
         const elapsed = Date.now() - startTime
         setLoadTime(elapsed)
         if (elapsed < 1000) {
-          setCachedInfo('(aus Cache)')
+          setCachedInfo(tr("(aus Cache)"))
         }
       }
     }
@@ -942,7 +942,7 @@ export default function TagCleanupWizard() {
                 </h4>
                 <p className="text-surface-400 mb-6 max-w-md mx-auto">
                   {savedNonsenseInfo?.exists 
-                    ? tr("Letzte Analyse: {v0}", { v0: savedNonsenseInfo.created_at ? new Date(savedNonsenseInfo.created_at).toLocaleString('de-DE') : 'Unbekannt' }) 
+                    ? tr("Letzte Analyse: {v0}", { v0: savedNonsenseInfo.created_at ? new Date(savedNonsenseInfo.created_at).toLocaleString(locale) : 'Unbekannt' }) 
                     : tr("Die KI analysiert alle Tags und identifiziert unsinnige, generische oder sinnlose Tags wie \"test\", \"Dokument\", \"Sonstige\" etc.")}
                 </p>
                 
@@ -1087,7 +1087,7 @@ export default function TagCleanupWizard() {
               </h4>
               <p className="text-surface-400 mb-6 max-w-md mx-auto">
                 {savedCorrespondentInfo?.exists 
-                  ? tr("Letzte Analyse: {v0}", { v0: savedCorrespondentInfo.created_at ? new Date(savedCorrespondentInfo.created_at).toLocaleString('de-DE') : 'Unbekannt' }) 
+                  ? tr("Letzte Analyse: {v0}", { v0: savedCorrespondentInfo.created_at ? new Date(savedCorrespondentInfo.created_at).toLocaleString(locale) : 'Unbekannt' }) 
                   : tr("Die KI analysiert alle Tags und findet Tags die eigentlich Firmen oder Personen (Korrespondenten) sind.")}
               </p>
               
@@ -1221,7 +1221,7 @@ export default function TagCleanupWizard() {
               </h4>
               <p className="text-surface-400 mb-6 max-w-md mx-auto">
                 {savedDoctypeInfo?.exists 
-                  ? tr("Letzte Analyse: {v0}", { v0: savedDoctypeInfo.created_at ? new Date(savedDoctypeInfo.created_at).toLocaleString('de-DE') : 'Unbekannt' }) 
+                  ? tr("Letzte Analyse: {v0}", { v0: savedDoctypeInfo.created_at ? new Date(savedDoctypeInfo.created_at).toLocaleString(locale) : 'Unbekannt' }) 
                   : tr("Die KI analysiert alle Tags und findet Tags die eigentlich Dokumententypen sind (z.B. \"Rechnung\", \"Vertrag\").")}
               </p>
               
@@ -1355,7 +1355,7 @@ export default function TagCleanupWizard() {
               </h4>
               <p className="text-surface-400 mb-6 max-w-md mx-auto">
                 {savedSimilarInfo?.exists 
-                  ? tr("Letzte Analyse: {v0}", { v0: savedSimilarInfo.created_at ? new Date(savedSimilarInfo.created_at).toLocaleString('de-DE') : 'Unbekannt' }) 
+                  ? tr("Letzte Analyse: {v0}", { v0: savedSimilarInfo.created_at ? new Date(savedSimilarInfo.created_at).toLocaleString(locale) : 'Unbekannt' }) 
                   : tr("Die KI findet ähnliche Tags wie \"Hoster\", \"Webhoster\", \"Web-Hoster\" und schlägt vor, sie zusammenzulegen.")}
               </p>
               
@@ -1722,7 +1722,7 @@ export default function TagCleanupWizard() {
                       <Tag className="w-4 h-4 text-surface-500 flex-shrink-0" />
                       <div className="min-w-0">
                         <span className="text-surface-200 font-medium block truncate">{item.item_name}</span>
-                        <span className="text-xs text-surface-500">{tr("Ignoriert am ")}{new Date(item.created_at).toLocaleDateString('de-DE')}
+                        <span className="text-xs text-surface-500">{tr("Ignoriert am ")}{new Date(item.created_at).toLocaleDateString(locale)}
                         </span>
                       </div>
                     </div>
@@ -1784,11 +1784,11 @@ export default function TagCleanupWizard() {
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-surface-400">{tr("Geschätzte Tokens")}</span>
-                    <span className="text-surface-200">~{confirmEstimate.estimated_tokens.toLocaleString()}</span>
+                    <span className="text-surface-200">~{confirmEstimate.estimated_tokens.toLocaleString(locale)}</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-surface-400">{tr("Token-Limit")}</span>
-                    <span className="text-surface-200">{confirmEstimate.token_limit.toLocaleString()}</span>
+                    <span className="text-surface-200">{confirmEstimate.token_limit.toLocaleString(locale)}</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-surface-400">{tr("Auslastung")}</span>
