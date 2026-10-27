@@ -7,7 +7,7 @@ from app.database import get_db
 from app.models import PaperlessSettings, LLMProvider, CustomPrompt, IgnoredTag, AppSettings
 import hashlib
 from app.prompts.default_prompts import DEFAULT_PROMPTS
-from app.services.ui_lang import ui_text
+from app.services.ui_lang import SUPPORTED_LANGS, set_saved_lang, ui_text
 
 router = APIRouter()
 
@@ -371,6 +371,7 @@ class AppSettingsSchema(BaseModel):
     show_debug_menu: Optional[bool] = None
     sidebar_compact: Optional[bool] = None
     classifier_provider: Optional[str] = None
+    ui_language: Optional[str] = None
 
 
 class PasswordVerifySchema(BaseModel):
@@ -401,6 +402,7 @@ async def get_app_settings(db: AsyncSession = Depends(get_db)):
         "show_debug_menu": settings.show_debug_menu,
         "sidebar_compact": settings.sidebar_compact,
         "classifier_provider": getattr(settings, "classifier_provider", "ollama") or "ollama",
+        "ui_language": settings.ui_language if settings.ui_language in SUPPORTED_LANGS else "de",
     }
 
 
@@ -431,9 +433,16 @@ async def update_app_settings(
 
     if data.classifier_provider is not None:
         settings.classifier_provider = data.classifier_provider
-    
+
+    if data.ui_language is not None:
+        if data.ui_language not in SUPPORTED_LANGS:
+            raise HTTPException(status_code=400, detail=ui_text("Unbekannte Sprache", "Unknown language"))
+        settings.ui_language = data.ui_language
+
     await db.commit()
-    
+    if data.ui_language is not None:
+        set_saved_lang(data.ui_language)
+
     return {"success": True}
 
 

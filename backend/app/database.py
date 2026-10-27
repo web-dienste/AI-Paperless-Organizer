@@ -74,6 +74,7 @@ async def _migrate_columns(conn):
         ("llm_providers", "vision_model", "TEXT DEFAULT ''"),
         # Job assignment in app_settings
         ("app_settings", "classifier_provider", "TEXT DEFAULT 'ollama'"),
+        ("app_settings", "ui_language", "VARCHAR(5) DEFAULT 'de'"),
         # RAG: LLM Query Rewriting + Contextual Retrieval
         ("rag_config", "query_rewrite_enabled", "BOOLEAN DEFAULT 1"),
         ("rag_config", "contextual_retrieval_enabled", "BOOLEAN DEFAULT 0"),

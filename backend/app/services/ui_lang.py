@@ -1,11 +1,23 @@
-"""Sprache der Oberfläche für die laufende Anfrage.
+"""Sprache der Oberfläche.
 
-Das Frontend schickt die Kopfzeile X-UI-Lang: en nur im (noch internen) englischen Modus.
-Ohne Kopfzeile bleibt alles wie bisher deutsch.
+Die Sprache wird in den App-Einstellungen gespeichert (Standard: Deutsch).
+Das Frontend schickt die Sprache, in der es gerade anzeigt, als Kopfzeile X-UI-Lang mit.
+Ohne Kopfzeile (z. B. Watchdog, Autostart nach Neustart) gilt die gespeicherte Sprache.
 """
 from contextvars import ContextVar
+from typing import Optional
 
-ui_lang: ContextVar[str] = ContextVar("ui_lang", default="de")
+SUPPORTED_LANGS = ("de", "en")
+
+ui_lang: ContextVar[Optional[str]] = ContextVar("ui_lang", default=None)
+
+_saved_lang = "de"
+
+
+def set_saved_lang(value: Optional[str]) -> None:
+    """Gespeicherte Sprache übernehmen (beim Start und nach dem Speichern)."""
+    global _saved_lang
+    _saved_lang = value if value in SUPPORTED_LANGS else "de"
 
 # An Aufräum-Prompts angehängt, damit Begründungen auf Englisch kommen. Namen bleiben unverändert.
 EN_REASONING_HINT = (
@@ -25,7 +37,7 @@ EN_CHAT_HINT = "\n\nAnswer in English, unless the user's question is written in 
 
 
 def is_en() -> bool:
-    return ui_lang.get() == "en"
+    return (ui_lang.get() or _saved_lang) == "en"
 
 
 def ui_text(de: str, en: str) -> str:

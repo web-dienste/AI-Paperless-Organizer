@@ -20,7 +20,7 @@ export async function fetchJson<T>(url: string, options?: RequestInit & { timeou
       signal: fetchOptions?.signal ?? controller.signal,
       headers: {
         'Content-Type': 'application/json',
-        ...(lang === 'en' ? { 'X-UI-Lang': 'en' } : {}),
+        'X-UI-Lang': lang,
         ...fetchOptions?.headers,
       },
     })
@@ -131,6 +131,7 @@ export interface AppSettingsResponse {
   show_debug_menu: boolean
   sidebar_compact: boolean
   classifier_provider: string
+  ui_language: string
 }
 
 export const getAppSettings = () =>
@@ -142,6 +143,7 @@ export const updateAppSettings = (data: {
   show_debug_menu?: boolean
   sidebar_compact?: boolean
   classifier_provider?: string
+  ui_language?: string
 }) =>
   fetchJson<{ success: boolean }>('/settings/app', {
     method: 'PUT',

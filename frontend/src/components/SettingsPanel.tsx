@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
-import { Save, Check, X, Eye, EyeOff, TestTube, Loader2, ChevronDown, ChevronUp, Cpu, Lock, Bug, Trash2, Ban, Key, Copy, Power, Code2 } from 'lucide-react'
+import { Save, Check, X, Eye, EyeOff, TestTube, Loader2, ChevronDown, ChevronUp, Cpu, Lock, Bug, Trash2, Ban, Key, Copy, Power, Code2, Globe } from 'lucide-react'
 import clsx from 'clsx'
 import * as api from '../services/api'
-import { tr, locale } from '../i18n'
+import { tr, locale, lang, applyLang } from '../i18n'
 
 interface LLMProvider {
   id: number
@@ -47,11 +47,13 @@ export default function SettingsPanel() {
     show_debug_menu: false,
     sidebar_compact: false,
     classifier_provider: 'ollama',
+    ui_language: lang as string,
   })
   const [newPassword, setNewPassword] = useState('')
   const [showNewPassword, setShowNewPassword] = useState(false)
   const [savingAppSettings, setSavingAppSettings] = useState(false)
   const [appSettingsSaved, setAppSettingsSaved] = useState(false)
+  const [savingLanguage, setSavingLanguage] = useState(false)
   
   // Ignored Items
   const [ignoredItems, setIgnoredItems] = useState<api.IgnoredItem[]>([])
@@ -179,6 +181,17 @@ export default function SettingsPanel() {
       console.error('Error saving app settings:', e)
     } finally {
       setSavingAppSettings(false)
+    }
+  }
+
+  const saveLanguage = async (value: string) => {
+    setSavingLanguage(true)
+    try {
+      await api.updateAppSettings({ ui_language: value })
+      applyLang(value)
+    } catch (e) {
+      console.error('Error saving language:', e)
+      setSavingLanguage(false)
     }
   }
 
@@ -352,6 +365,24 @@ export default function SettingsPanel() {
 
   return (
     <div className="space-y-8 max-w-4xl">
+      {/* Sprache – Überschrift bewusst zweisprachig, damit man sie in beiden Sprachen findet */}
+      <div className="card p-6 flex items-center justify-between gap-4">
+        <div>
+          <h2 className="font-display font-semibold text-lg text-surface-100 flex items-center gap-2">
+            <Globe className="w-5 h-5 text-primary-400" />Sprache / Language</h2>
+          <p className="text-sm text-surface-400 mt-1">{tr("Gilt für die ganze Installation, auch für Hintergrund-Jobs.")}</p>
+        </div>
+        <select
+          value={lang}
+          disabled={savingLanguage}
+          onChange={(e) => saveLanguage(e.target.value)}
+          className="input w-40 text-sm"
+        >
+          <option value="de">Deutsch</option>
+          <option value="en">English</option>
+        </select>
+      </div>
+
       {/* Paperless Settings */}
       <div className="card p-6">
         <h2 className="font-display font-semibold text-xl text-surface-100 mb-6">{tr("Paperless-ngx Verbindung")}</h2>

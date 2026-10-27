@@ -35,7 +35,7 @@ import {
 } from 'lucide-react'
 import clsx from 'clsx'
 import * as api from '../services/api'
-import { tr, locale } from '../i18n'
+import { tr, locale, applyLang } from '../i18n'
 import { version as appVersion } from '../../package.json'
 
 interface LayoutProps {
@@ -161,6 +161,7 @@ export default function Layout({ children }: LayoutProps) {
     // First check if password is required
     api.getAppSettings()
       .then(appSettings => {
+        applyLang(appSettings.ui_language)
         setShowDebugMenu(appSettings.show_debug_menu)
 
         // Check if password is required - this blocks EVERYTHING

@@ -359,6 +359,7 @@ const en: Record<string, string> = {
   "Ähnlich": "Similar",
   "Wieder aktivieren": "Re-enable",
   "Externe API (RAG Chat)": "External API (RAG chat)",
+  "Gilt für die ganze Installation, auch für Hintergrund-Jobs.": "Applies to the whole installation, including background jobs.",
   "Binde den Dokumenten-Chat in deine eigene Software ein. Generiere einen API-Key und nutze die REST-API, um per Chat Dokumente zu finden und Fragen zu beantworten.": "Embed the document chat in your own software. Generate an API key and use the REST API to find documents and answer questions via chat.",
   "API-Keys verwalten": "Manage API keys",
   "Name für den Key (z.B. 'Mein ERP-System')": "Name for the key (e.g. 'My ERP system')",

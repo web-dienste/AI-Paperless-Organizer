@@ -81,6 +81,8 @@ class AppSettings(Base):
     show_debug_menu = Column(Boolean, default=False)
     # Theme/Display
     sidebar_compact = Column(Boolean, default=False)
+    # Sprache der Oberfläche ("de" oder "en")
+    ui_language = Column(String(5), default="de")
 
     # Job → Provider assignments (store provider name, e.g. "openai", "ollama")
     classifier_provider = Column(String(100), default="ollama")

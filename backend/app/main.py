@@ -16,7 +16,7 @@ from app.routers import paperless, correspondents, tags, document_types, setting
 from app.routers.ocr import ocr_settings, get_ocr_service
 from app.services.ocr_service import watchdog_state
 from app.services.paperless_client import PaperlessClient
-from app.services.ui_lang import ui_lang
+from app.services.ui_lang import SUPPORTED_LANGS, set_saved_lang, ui_lang
 
 
 @asynccontextmanager
@@ -28,6 +28,16 @@ async def lifespan(app: FastAPI):
 
     # Startup: Create database tables
     await create_tables()
+
+    # Load saved UI language (used by background jobs without a request)
+    try:
+        from app.models.settings_model import AppSettings
+        async with async_session() as db_sess:
+            result = await db_sess.execute(sa_select(AppSettings).where(AppSettings.id == 1))
+            app_settings = result.scalar_one_or_none()
+        set_saved_lang(getattr(app_settings, "ui_language", None))
+    except Exception as e:
+        logging.getLogger(__name__).error(f"Loading UI language failed: {e}")
 
     # Auto-start watchdog if it was enabled before shutdown
     if ocr_settings.get("watchdog_enabled"):
@@ -182,8 +192,9 @@ app.add_middleware(
 
 @app.middleware("http")
 async def ui_lang_middleware(request, call_next):
-    """Sprache der Oberfläche je Anfrage merken (Standard: Deutsch)."""
-    token = ui_lang.set("en" if request.headers.get("x-ui-lang") == "en" else "de")
+    """Sprache der Oberfläche je Anfrage merken (ohne Kopfzeile: gespeicherte Sprache)."""
+    header = request.headers.get("x-ui-lang")
+    token = ui_lang.set(header if header in SUPPORTED_LANGS else None)
     try:
         return await call_next(request)
     finally:
