@@ -6,7 +6,7 @@
 
 > **⚠️ Beta – always make a full Paperless-ngx backup before use.** This tool modifies documents, tags, correspondents and metadata in your Paperless instance. No warranty, no liability.
 
-> **🔒 No login:** the Organizer has no authentication of its own. Run it on your home network or behind a VPN only. **The UI is German only.** Images are `amd64` only.
+> **🔒 No login:** the Organizer has no authentication of its own. Run it on your home network or behind a VPN only. **UI in German and English** (Settings → “Sprache / Language”). Images are `amd64` only.
 
 ## Compatibility
 

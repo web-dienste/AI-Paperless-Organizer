@@ -32,6 +32,7 @@
 
 ## 🆕 Neu
 
+- **Oberfläche jetzt auch auf Englisch** – in den Einstellungen unter „Sprache / Language“ umschaltbar. Deutsch bleibt Standard. Im englischen Modus kommen auch Begründungen, Chat-Antworten und Meldungen der Hintergrund-Jobs auf Englisch.
 - **Schritt-für-Schritt-Anleitung** – [docs/QUICKSTART.md](docs/QUICKSTART.md): wo welche KI-Einstellung liegt, welche Ollama-Adresse im Docker-Container gilt und wie man die typischen Stolpersteine umgeht.
 - **Aufräumen mit `qwen3.5` repariert** – „Mit KI analysieren" lieferte mit Denk-Modellen keine Antwort. Behoben. Fürs Aufräumen empfiehlt sich `qwen3.5:9b` als „Bereinigung-Modell".
 - **Paperless-ngx v3 wird unterstützt** – geprüft bis einschließlich 3.3.1, lesend wie schreibend. Eine Anpassung war nötig: Die Titelsuche in „Dokumente Aufräumen" traf durch die neue Suchmaschine viel zu viele Dokumente (462 statt 14) – bei einem Feature, das löscht. Behoben. Details unter [Kompatibilität](#kompatibilität).

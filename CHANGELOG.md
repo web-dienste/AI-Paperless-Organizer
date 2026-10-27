@@ -4,6 +4,19 @@ Alle wichtigen Änderungen an AI Paperless Organizer.
 
 ---
 
+## 2026-10-27
+
+### Oberfläche auch auf Englisch
+- **Neu**: In den Einstellungen ganz oben „Sprache / Language“ mit Deutsch und English. Die Wahl wird auf dem Server gespeichert und gilt für alle Geräte, auch für Hintergrund-Jobs wie Watchdog, Auto-Klassifizierer und OCR nach einem Neustart. Deutsch bleibt Standard, an der deutschen Oberfläche ändert sich nichts.
+- Im englischen Modus schreibt die KI Begründungen (Aufräumen, Klassifizierer, OCR-Bewertung) und Chat-Antworten auf Englisch. Titel und Zusammenfassung des Klassifizierers bleiben in der Sprache des Dokuments.
+
+### Kleinere Korrekturen
+- **Login**: Der Hinweis „Passwort vergessen?“ nennt jetzt den richtigen Befehl zum Zurücksetzen.
+- **Kopfzeile**: Tag-Wizard und „Individuelle KI-Lösungen“ zeigen den richtigen Titel, die Versionsangabe in der Seitenleiste stimmt wieder.
+- **Einstellungen**: Kaputte Umlaute repariert. Die Beschreibung der API für eigene Programme steht jetzt im Wiki unter [API](https://github.com/web-dienste/AI-Paperless-Organizer/wiki/API).
+- **Tag-Wizard**: Im letzten Schritt führt „Vorschläge ansehen“ direkt zu den gespeicherten Vorschlägen.
+- Einzahl und Mehrzahl in Zählern („1 Modell“ statt „1 Modelle“), Tippfehler „KI-Vorschlage“.
+
 ## 2026-10-20
 
 ### README: Installation korrigiert, Aussagen geradegerückt

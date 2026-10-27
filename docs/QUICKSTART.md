@@ -2,7 +2,7 @@
 
 Du musst das nicht lesen. Es spart dir aber die Stellen, an denen man beim ersten Mal sucht: wo die KI eingestellt wird und welche Adresse Ollama im Docker-Container braucht.
 
-Stand: Oktober 2026. Oberfläche und Standard-Prompts sind deutsch.
+Stand: Oktober 2026. Die Oberfläche gibt es auf Deutsch und Englisch (Einstellungen → „Sprache / Language“), die Standard-Prompts sind deutsch.
 
 ## 1. Was du brauchst
 

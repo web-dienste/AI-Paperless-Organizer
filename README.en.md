@@ -17,7 +17,7 @@
 
 ![Merging duplicate correspondents: the AI suggests, you confirm](docs/demo-zusammenfuehren.gif)
 
-<sub>Four spellings of Telekom become one correspondent · local AI via Ollama · sample data · the UI is German</sub>
+<sub>Four spellings of Telekom become one correspondent · local AI via Ollama · sample data · shown in German, the UI is also available in English</sub>
 
 </div>
 
@@ -26,7 +26,9 @@
 
 > **🔒 No login:** the Organizer has no authentication of its own. Run it on your home network or behind a VPN only, never expose it to the internet.
 >
-> **The UI is German only.** Built with the help of AI coding assistants. There are no automated tests in the repo yet; it is tested against a real archive of 5,000+ documents.
+> **UI in German and English** – switch under Settings → “Sprache / Language”. The default prompts are German; in English mode the AI writes its explanations and chat answers in English, document titles stay in the language of the document.
+>
+> Built with the help of AI coding assistants. There are no automated tests in the repo yet; it is tested against a real archive of 5,000+ documents.
 
 ---
 
