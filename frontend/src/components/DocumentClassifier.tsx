@@ -8,6 +8,7 @@ import {
 } from 'lucide-react'
 import clsx from 'clsx'
 import * as api from '../services/api'
+import { tr } from '../i18n'
 
 type Tab = 'classify' | 'benchmark' | 'settings' | 'history' | 'review' | 'tag_ideas'
 
@@ -687,14 +688,11 @@ export default function DocumentClassifier() {
             <Sparkles className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h1 className="text-2xl font-display font-bold text-surface-100">
-              KI-Klassifizierer
-            </h1>
-            <p className="text-sm text-surface-400">
-              Automatische Dokumentenklassifizierung mit {
-                config?.active_provider === 'openai' ? 'OpenAI' :
-                config?.active_provider === 'mistral' ? 'Mistral' :
-                config?.active_provider === 'openrouter' ? 'OpenRouter' : 'Ollama'
+            <h1 className="text-2xl font-display font-bold text-surface-100">{tr("KI-Klassifizierer")}</h1>
+            <p className="text-sm text-surface-400">{tr("Automatische Dokumentenklassifizierung mit ")}{
+                config?.active_provider === 'openai' ? tr("OpenAI") :
+                config?.active_provider === 'mistral' ? tr("Mistral") :
+                config?.active_provider === 'openrouter' ? tr("OpenRouter") : tr("Ollama")
               }
             </p>
           </div>
@@ -732,13 +730,13 @@ export default function DocumentClassifier() {
         <div className="space-y-6">
           {/* Input */}
           <div className="card p-6">
-            <h2 className="text-lg font-semibold text-surface-100 mb-4">Dokument analysieren</h2>
+            <h2 className="text-lg font-semibold text-surface-100 mb-4">{tr("Dokument analysieren")}</h2>
             <div className="flex gap-3">
               <input
                 type="number"
                 value={documentId}
                 onChange={(e) => setDocumentId(e.target.value)}
-                placeholder="Dokument-ID eingeben..."
+                placeholder={tr("Dokument-ID eingeben...")}
                 className="input flex-1"
                 min={1}
                 onKeyDown={(e) => e.key === 'Enter' && handleClassify()}
@@ -753,12 +751,10 @@ export default function DocumentClassifier() {
                 ) : (
                   <Sparkles className="w-4 h-4" />
                 )}
-                {classifying ? 'Analysiere...' : 'Analysieren'}
+                {classifying ? tr("Analysiere...") : tr("Analysieren")}
               </button>
             </div>
-            <p className="text-xs text-surface-500 mt-2">
-              Die Dokument-ID findest du in der Paperless-URL: /documents/<strong>123</strong>/details
-            </p>
+            <p className="text-xs text-surface-500 mt-2">{tr("Die Dokument-ID findest du in der Paperless-URL: /documents/")}<strong>123</strong>{tr("/details")}</p>
           </div>
 
           {/* Loading skeleton while classifying (no result yet) */}
@@ -767,7 +763,7 @@ export default function DocumentClassifier() {
               <div className="lg:col-span-3 card p-6 space-y-5">
                 <div className="flex items-center gap-3 mb-2">
                   <Loader2 className="w-5 h-5 text-primary-400 animate-spin" />
-                  <span className="text-sm text-primary-300 font-medium">KI analysiert Dokument...</span>
+                  <span className="text-sm text-primary-300 font-medium">{tr("KI analysiert Dokument...")}</span>
                 </div>
                 {[120, 80, 100, 60, 90].map((w, i) => (
                   <div key={i} className="space-y-1.5">
@@ -779,7 +775,7 @@ export default function DocumentClassifier() {
               <div className="lg:col-span-2 card p-4 flex items-center justify-center">
                 <div className="text-center space-y-2">
                   <Loader2 className="w-8 h-8 text-surface-600 animate-spin mx-auto" />
-                  <p className="text-xs text-surface-500">Lade Vorschau...</p>
+                  <p className="text-xs text-surface-500">{tr("Lade Vorschau...")}</p>
                 </div>
               </div>
             </div>
@@ -794,7 +790,7 @@ export default function DocumentClassifier() {
                   <div className="flex items-start gap-3 p-4 bg-red-500/10 border border-red-500/30 rounded-lg">
                     <AlertCircle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
                     <div>
-                      <p className="text-red-400 font-medium">Fehler bei der Analyse</p>
+                      <p className="text-red-400 font-medium">{tr("Fehler bei der Analyse")}</p>
                       <p className="text-red-300/70 text-sm mt-1">{result.error}</p>
                     </div>
                   </div>
@@ -803,10 +799,9 @@ export default function DocumentClassifier() {
                     {/* Header: stats + reset */}
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <h2 className="text-lg font-semibold text-surface-100">Vorschlaege</h2>
+                        <h2 className="text-lg font-semibold text-surface-100">{tr("Vorschlaege")}</h2>
                         <span className="text-xs text-surface-500 bg-surface-800 px-2 py-0.5 rounded-full flex items-center gap-1">
-                          <Pencil className="w-2.5 h-2.5" /> bearbeitbar
-                        </span>
+                          <Pencil className="w-2.5 h-2.5" />{tr(" bearbeitbar")}</span>
                       </div>
                       <div className="flex items-center gap-3 text-xs text-surface-500">
                         <span className="flex items-center gap-1">
@@ -815,8 +810,7 @@ export default function DocumentClassifier() {
                         </span>
                         <span className="flex items-center gap-1">
                           <Hash className="w-3 h-3" />
-                          {result.tokens_input + result.tokens_output} Tokens
-                        </span>
+                          {result.tokens_input + result.tokens_output}{tr(" Tokens")}</span>
                         {result.cost_usd > 0 ? (
                           <span className="flex items-center gap-1 text-amber-400">
                             <Coins className="w-3 h-3" />
@@ -824,65 +818,52 @@ export default function DocumentClassifier() {
                           </span>
                         ) : (
                           <span className="flex items-center gap-1 text-emerald-400">
-                            <Coins className="w-3 h-3" />
-                            kostenlos
-                          </span>
+                            <Coins className="w-3 h-3" />{tr("kostenlos")}</span>
                         )}
                         <button
                           onClick={() => initEditState(result)}
                           className="text-surface-500 hover:text-surface-300 text-xs underline"
-                          title="KI-Vorschlaege wiederherstellen"
-                        >
-                          Zuruecksetzen
-                        </button>
+                          title={tr("KI-Vorschlaege wiederherstellen")}
+                        >{tr("Zuruecksetzen")}</button>
                         <button
                           onClick={handleClassify}
                           disabled={classifying}
                           className="flex items-center gap-1 text-xs text-amber-400 hover:text-amber-300 disabled:opacity-50"
-                          title="Dokument erneut analysieren"
+                          title={tr("Dokument erneut analysieren")}
                         >
                           {classifying ? (
                             <Loader2 className="w-3 h-3 animate-spin" />
                           ) : (
                             <RefreshCw className="w-3 h-3" />
-                          )}
-                          Neu analysieren
-                        </button>
+                          )}{tr("Neu analysieren")}</button>
                       </div>
                     </div>
 
                     {/* Titel */}
                     <div>
                       <label className="text-xs text-surface-500 flex items-center gap-1 mb-1">
-                        <FileText className="w-3 h-3" /> Titel
-                      </label>
+                        <FileText className="w-3 h-3" />{tr(" Titel")}</label>
                       <input
                         type="text"
                         value={editTitle}
                         onChange={e => setEditTitle(e.target.value)}
                         className="input w-full text-sm"
-                        placeholder="Titel..."
+                        placeholder={tr("Titel...")}
                       />
                     </div>
 
                     {/* Korrespondent */}
                     <div className="relative">
                       <label className="text-xs text-surface-500 flex items-center gap-1 mb-1">
-                        <Users className="w-3 h-3" /> Korrespondent
-                        {isUnchanged('correspondent', result) && (
-                          <span className="ml-1 text-[10px] px-1.5 py-0.5 rounded-full bg-surface-700 text-surface-400 border border-surface-600">
-                            unveraendert
-                          </span>
+                        <Users className="w-3 h-3" />{tr(" Korrespondent")}{isUnchanged('correspondent', result) && (
+                          <span className="ml-1 text-[10px] px-1.5 py-0.5 rounded-full bg-surface-700 text-surface-400 border border-surface-600">{tr("unveraendert")}</span>
                         )}
                         {!isUnchanged('correspondent', result) && result.correspondent && result.existing_correspondent && result.correspondent !== result.existing_correspondent && (
-                          <span className="ml-1 text-[10px] px-1.5 py-0.5 rounded-full bg-primary-500/20 text-primary-300 border border-primary-500/30">
-                            war: {result.existing_correspondent}
+                          <span className="ml-1 text-[10px] px-1.5 py-0.5 rounded-full bg-primary-500/20 text-primary-300 border border-primary-500/30">{tr("war: ")}{result.existing_correspondent}
                           </span>
                         )}
                         {result.correspondent_is_new && editCorrespondent === result.correspondent && (
-                          <span className="ml-1 text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30">
-                            Neu -- wird erstellt
-                          </span>
+                          <span className="ml-1 text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30">{tr("Neu -- wird erstellt")}</span>
                         )}
                       </label>
                       <div className="relative">
@@ -893,7 +874,7 @@ export default function DocumentClassifier() {
                           onFocus={() => { setCorrSearch(editCorrespondent); setShowCorrDropdown(true) }}
                           onBlur={() => setTimeout(() => setShowCorrDropdown(false), 150)}
                           className="input w-full text-sm pr-8"
-                          placeholder="Korrespondent suchen oder eingeben..."
+                          placeholder={tr("Korrespondent suchen oder eingeben...")}
                         />
                         <Search className="w-3.5 h-3.5 text-surface-500 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                       </div>
@@ -916,8 +897,7 @@ export default function DocumentClassifier() {
                               onMouseDown={() => { setEditCorrespondent(corrSearch); setShowCorrDropdown(false) }}
                               className="w-full text-left px-3 py-2 text-sm text-amber-400 hover:bg-surface-700 border-t border-surface-700"
                             >
-                              + "{corrSearch}" neu erstellen
-                            </button>
+                              + "{corrSearch}{tr("\" neu erstellen")}</button>
                           )}
                         </div>
                       )}
@@ -926,15 +906,11 @@ export default function DocumentClassifier() {
                     {/* Dokumenttyp */}
                     <div>
                       <label className="text-xs text-surface-500 flex items-center gap-1 mb-1">
-                        <FileText className="w-3 h-3" /> Dokumenttyp
-                        {isUnchanged('document_type', result) && (
-                          <span className="ml-1 text-[10px] px-1.5 py-0.5 rounded-full bg-surface-700 text-surface-400 border border-surface-600">
-                            unveraendert
-                          </span>
+                        <FileText className="w-3 h-3" />{tr(" Dokumenttyp")}{isUnchanged('document_type', result) && (
+                          <span className="ml-1 text-[10px] px-1.5 py-0.5 rounded-full bg-surface-700 text-surface-400 border border-surface-600">{tr("unveraendert")}</span>
                         )}
                         {!isUnchanged('document_type', result) && result.document_type && result.existing_document_type && result.document_type !== result.existing_document_type && (
-                          <span className="ml-1 text-[10px] px-1.5 py-0.5 rounded-full bg-primary-500/20 text-primary-300 border border-primary-500/30">
-                            war: {result.existing_document_type}
+                          <span className="ml-1 text-[10px] px-1.5 py-0.5 rounded-full bg-primary-500/20 text-primary-300 border border-primary-500/30">{tr("war: ")}{result.existing_document_type}
                           </span>
                         )}
                       </label>
@@ -943,7 +919,7 @@ export default function DocumentClassifier() {
                         onChange={e => setEditDocType(e.target.value)}
                         className="input w-full text-sm"
                       >
-                        <option value="">-- kein Typ --</option>
+                        <option value="">{tr("-- kein Typ --")}</option>
                         {paperlessDocTypes.map(dt => (
                           <option key={dt.id} value={dt.name}>{dt.name}</option>
                         ))}
@@ -954,8 +930,7 @@ export default function DocumentClassifier() {
                     <div className="grid grid-cols-2 gap-3">
                       <div>
                         <label className="text-xs text-surface-500 flex items-center gap-1 mb-1">
-                          <Calendar className="w-3 h-3" /> Erstelldatum
-                        </label>
+                          <Calendar className="w-3 h-3" />{tr(" Erstelldatum")}</label>
                         <input
                           type="date"
                           value={editCreatedDate}
@@ -965,15 +940,11 @@ export default function DocumentClassifier() {
                       </div>
                       <div>
                         <label className="text-xs text-surface-500 flex items-center gap-1 mb-1">
-                          <FolderOpen className="w-3 h-3" /> Speicherpfad
-                          {isUnchanged('storage_path', result) && (
-                            <span className="ml-1 text-[10px] px-1.5 py-0.5 rounded-full bg-surface-700 text-surface-400 border border-surface-600">
-                              unveraendert
-                            </span>
+                          <FolderOpen className="w-3 h-3" />{tr(" Speicherpfad")}{isUnchanged('storage_path', result) && (
+                            <span className="ml-1 text-[10px] px-1.5 py-0.5 rounded-full bg-surface-700 text-surface-400 border border-surface-600">{tr("unveraendert")}</span>
                           )}
                           {!isUnchanged('storage_path', result) && result.storage_path_id && result.existing_storage_path_id && result.storage_path_id !== result.existing_storage_path_id && (
-                            <span className="ml-1 text-[10px] px-1.5 py-0.5 rounded-full bg-primary-500/20 text-primary-300 border border-primary-500/30">
-                              war: {result.existing_storage_path_name}
+                            <span className="ml-1 text-[10px] px-1.5 py-0.5 rounded-full bg-primary-500/20 text-primary-300 border border-primary-500/30">{tr("war: ")}{result.existing_storage_path_name}
                             </span>
                           )}
                         </label>
@@ -982,7 +953,7 @@ export default function DocumentClassifier() {
                           onChange={e => setEditStoragePathId(e.target.value ? parseInt(e.target.value) : null)}
                           className="input w-full text-sm"
                         >
-                          <option value="">-- kein Pfad --</option>
+                          <option value="">{tr("-- kein Pfad --")}</option>
                           {paperlessStoragePaths.map((sp: any) => (
                             <option key={sp.id} value={sp.id}>{sp.name}</option>
                           ))}
@@ -991,7 +962,7 @@ export default function DocumentClassifier() {
                           <details className="mt-1 group">
                             <summary className="text-xs text-surface-500 cursor-pointer hover:text-surface-300 transition-colors select-none">
                               {result.storage_path_reason.split('.')[0]}.
-                              <span className="ml-1 text-surface-600 group-open:hidden">▸ mehr</span>
+                              <span className="ml-1 text-surface-600 group-open:hidden">{tr("▸ mehr")}</span>
                             </summary>
                             <p className="text-xs text-surface-500 mt-1 italic pl-2 border-l border-surface-700">
                               {result.storage_path_reason.split('. ').slice(1).join('. ')}
@@ -1004,11 +975,9 @@ export default function DocumentClassifier() {
                     {/* Tags */}
                     <div>
                       <label className="text-xs text-surface-500 flex items-center gap-1 mb-2">
-                        <Tags className="w-3 h-3" />
-                        Tags
-                        <span className="text-surface-600">
-                          ({editTags.length} KI-Vorschlag{editTags.length !== 1 ? 'e' : ''}
-                          {editExistingTags.length > 0 && ` + ${editExistingTags.length} vorhanden`})
+                        <Tags className="w-3 h-3" />{tr("Tags")}<span className="text-surface-600">
+                          ({editTags.length}{tr(" KI-Vorschlag")}{editTags.length !== 1 ? 'e' : ''}
+                          {editExistingTags.length > 0 && tr(" + {length} vorhanden", { length: editExistingTags.length })})
                         </span>
                       </label>
                       <div className="flex flex-wrap gap-1.5 mb-2 min-h-[2rem]">
@@ -1026,11 +995,11 @@ export default function DocumentClassifier() {
                               )}
                             >
                               {tag}
-                              {isNew && <span className="text-[9px] font-bold uppercase opacity-70">Neu</span>}
+                              {isNew && <span className="text-[9px] font-bold uppercase opacity-70">{tr("Neu")}</span>}
                               <button
                                 onClick={() => setEditTags(prev => prev.filter(t => t !== tag))}
                                 className="opacity-50 hover:opacity-100 ml-0.5"
-                                title="Tag entfernen"
+                                title={tr("Tag entfernen")}
                               >
                                 <X className="w-2.5 h-2.5" />
                               </button>
@@ -1042,13 +1011,13 @@ export default function DocumentClassifier() {
                           <span
                             key={`existing-${tag}`}
                             className="px-2.5 py-1 rounded-full text-xs border flex items-center gap-1 bg-surface-700/50 text-surface-400 border-surface-600/50"
-                            title="Vorhandener Tag (wird behalten)"
+                            title={tr("Vorhandener Tag (wird behalten)")}
                           >
                             {tag}
                             <button
                               onClick={() => setEditExistingTags(prev => prev.filter(t => t !== tag))}
                               className="opacity-40 hover:opacity-90 hover:text-red-400 ml-0.5"
-                              title="Tag entfernen"
+                              title={tr("Tag entfernen")}
                             >
                               <X className="w-2.5 h-2.5" />
                             </button>
@@ -1066,7 +1035,7 @@ export default function DocumentClassifier() {
                             onChange={e => { setTagSearch(e.target.value); setShowTagDropdown(true) }}
                             onFocus={() => setShowTagDropdown(true)}
                             onBlur={() => setTimeout(() => setShowTagDropdown(false), 150)}
-                            placeholder="Tag suchen und hinzufuegen..."
+                            placeholder={tr("Tag suchen und hinzufuegen...")}
                             className="bg-transparent text-sm text-surface-200 py-1.5 outline-none w-full placeholder-surface-600"
                           />
                         </div>
@@ -1098,12 +1067,11 @@ export default function DocumentClassifier() {
                                 }}
                                 className="w-full text-left px-3 py-2 text-sm text-amber-400 hover:bg-surface-700 border-t border-surface-700"
                               >
-                                + "{tagSearch}" neu erstellen
-                              </button>
+                                + "{tagSearch}{tr("\" neu erstellen")}</button>
                             )}
                             {paperlessTags.filter(t => t.name.toLowerCase().includes(tagSearch.toLowerCase()) && !editTags.includes(t.name)).length === 0 &&
                               paperlessTags.find(t => t.name.toLowerCase() === tagSearch.toLowerCase()) && (
-                              <p className="px-3 py-2 text-sm text-surface-500 italic">Bereits hinzugefuegt</p>
+                              <p className="px-3 py-2 text-sm text-surface-500 italic">{tr("Bereits hinzugefuegt")}</p>
                             )}
                           </div>
                         )}
@@ -1114,8 +1082,7 @@ export default function DocumentClassifier() {
                     {Object.keys(editCustomFields).length > 0 && (
                       <div>
                         <label className="text-xs text-surface-500 flex items-center gap-1 mb-2">
-                          <Hash className="w-3 h-3" /> Custom Fields
-                          <span className="text-surface-600 ml-1">— Klick auf Namen zum Deaktivieren</span>
+                          <Hash className="w-3 h-3" />{tr(" Custom Fields")}<span className="text-surface-600 ml-1">{tr("— Klick auf Namen zum Deaktivieren")}</span>
                         </label>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                           {Object.entries(editCustomFields).map(([key, value]) => {
@@ -1143,7 +1110,7 @@ export default function DocumentClassifier() {
                                   onChange={e => setEditCustomFields(prev => ({ ...prev, [key]: e.target.value || null }))}
                                   disabled={isDisabled}
                                   className={clsx('input w-full text-sm font-mono', isDisabled && 'bg-surface-900 text-surface-600')}
-                                  placeholder="nicht gefunden"
+                                  placeholder={tr("nicht gefunden")}
                                 />
                               </div>
                             )
@@ -1157,8 +1124,8 @@ export default function DocumentClassifier() {
                       {/* Review mode indicator */}
                       {reviewMode && (
                         <div className="flex items-center justify-between text-xs bg-amber-500/10 border border-amber-500/20 rounded-lg px-3 py-1.5">
-                          <span className="text-amber-300 font-medium">Prüf-Modus — {reviewQueue.length} weitere in Warteschlange</span>
-                          <button onClick={() => setReviewMode(false)} className="text-surface-500 hover:text-surface-300 underline">Beenden</button>
+                          <span className="text-amber-300 font-medium">{tr("Prüf-Modus — ")}{reviewQueue.length}{tr(" weitere in Warteschlange")}</span>
+                          <button onClick={() => setReviewMode(false)} className="text-surface-500 hover:text-surface-300 underline">{tr("Beenden")}</button>
                         </div>
                       )}
                       {/* Status message for apply-and-next */}
@@ -1171,9 +1138,7 @@ export default function DocumentClassifier() {
                       <div className="flex justify-end gap-2">
                         {applied && !applyingAndNext ? (
                           <div className="flex items-center gap-2 text-emerald-400 text-sm">
-                            <Check className="w-4 h-4" />
-                            Angewendet
-                          </div>
+                            <Check className="w-4 h-4" />{tr("Angewendet")}</div>
                         ) : (
                           <>
                             <button
@@ -1185,9 +1150,7 @@ export default function DocumentClassifier() {
                                 <Loader2 className="w-3.5 h-3.5 animate-spin" />
                               ) : (
                                 <Check className="w-3.5 h-3.5" />
-                              )}
-                              Anwenden
-                            </button>
+                              )}{tr("Anwenden")}</button>
                             <button
                               onClick={handleApplyAndNext}
                               disabled={applying || applyingAndNext}
@@ -1198,7 +1161,7 @@ export default function DocumentClassifier() {
                               ) : (
                                 <Check className="w-3.5 h-3.5" />
                               )}
-                              {reviewMode ? 'Anwenden & Nächste Prüfung' : 'Anwenden & Weiter'}
+                              {reviewMode ? tr("Anwenden & Nächste Prüfung") : tr("Anwenden & Weiter")}
                               {!applyingAndNext && (
                                 <ChevronRight className="w-3.5 h-3.5 opacity-70" />
                               )}
@@ -1214,13 +1177,12 @@ export default function DocumentClassifier() {
               {/* Right: Document Preview */}
               <div className="lg:col-span-2 card p-4 flex flex-col">
                 <h3 className="text-sm font-medium text-surface-400 mb-3 flex items-center gap-2">
-                  <FileText className="w-4 h-4" /> Dokument-Vorschau
-                </h3>
+                  <FileText className="w-4 h-4" />{tr(" Dokument-Vorschau")}</h3>
                 <div className="rounded-lg overflow-hidden bg-surface-900 border border-surface-700/50 flex-1 min-h-[600px] relative">
                   <embed
                     src={`${api.getClassifierDocumentPreviewUrl(parseInt(documentId))}#toolbar=0&navpanes=0&view=FitH`}
                     type="application/pdf"
-                    title={`Vorschau Dokument ${documentId}`}
+                    title={tr("Vorschau Dokument {documentId}", { documentId: documentId })}
                     className="w-full h-full min-h-[600px] border-0 absolute inset-0"
                     style={{ background: '#fff' }}
                   />
@@ -1231,9 +1193,7 @@ export default function DocumentClassifier() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="px-3 py-1.5 bg-surface-800/90 hover:bg-surface-700 text-surface-300 hover:text-white rounded-lg text-xs transition-colors border border-surface-600/50 backdrop-blur-sm"
-                    >
-                      PDF in neuem Tab
-                    </a>
+                    >{tr("PDF in neuem Tab")}</a>
                   </div>
                 </div>
               </div>
@@ -1247,12 +1207,10 @@ export default function DocumentClassifier() {
         <div className="space-y-6">
           <div className="card p-6">
             <div className="flex items-center justify-between mb-2">
-              <h2 className="text-lg font-semibold text-surface-100">Provider-Benchmark</h2>
-              <span className="text-xs text-surface-500">{benchSlots.length} Modelle</span>
+              <h2 className="text-lg font-semibold text-surface-100">{tr("Provider-Benchmark")}</h2>
+              <span className="text-xs text-surface-500">{benchSlots.length}{tr(" Modelle")}</span>
             </div>
-            <p className="text-sm text-surface-400 mb-4">
-              Waehle 2-6 Provider/Modelle und vergleiche die Klassifizierung Side-by-Side.
-            </p>
+            <p className="text-sm text-surface-400 mb-4">{tr("Waehle 2-6 Provider/Modelle und vergleiche die Klassifizierung Side-by-Side.")}</p>
 
             {/* Slot Selection */}
             <div className="space-y-2 mb-4">
@@ -1269,27 +1227,27 @@ export default function DocumentClassifier() {
                       onChange={(e) => updateBenchSlot(idx, 'provider', e.target.value)}
                       className="input text-sm py-1.5 w-36 shrink-0"
                     >
-                      <option value="openai">OpenAI</option>
-                      <option value="mistral">Mistral</option>
-                      <option value="openrouter">OpenRouter</option>
-                      <option value="anthropic">Anthropic</option>
-                      <option value="ollama">Ollama</option>
+                      <option value="openai">{tr("OpenAI")}</option>
+                      <option value="mistral">{tr("Mistral")}</option>
+                      <option value="openrouter">{tr("OpenRouter")}</option>
+                      <option value="anthropic">{tr("Anthropic")}</option>
+                      <option value="ollama">{tr("Ollama")}</option>
                     </select>
                     {slot.provider === 'openai' ? (
                       <select value={slot.model} onChange={(e) => updateBenchSlot(idx, 'model', e.target.value)} className="input text-sm py-1.5 flex-1">
-                        <option value="">Standard</option>
-                        <option value="gpt-4o-mini">gpt-4o-mini</option>
-                        <option value="gpt-4o">gpt-4o</option>
+                        <option value="">{tr("Standard")}</option>
+                        <option value="gpt-4o-mini">{tr("gpt-4o-mini")}</option>
+                        <option value="gpt-4o">{tr("gpt-4o")}</option>
                       </select>
                     ) : slot.provider === 'mistral' ? (
                         <select value={slot.model} onChange={(e) => updateBenchSlot(idx, 'model', e.target.value)} className="input text-sm py-1.5 flex-1">
-                        <option value="">Standard</option>
-                        <option value="mistral-small-latest">mistral-small</option>
-                        <option value="mistral-medium-latest">mistral-medium</option>
-                        <option value="mistral-large-latest">mistral-large</option>
-                        <option value="open-mistral-nemo">open-mistral-nemo</option>
-                        <option value="ministral-8b-latest">ministral-8b</option>
-                        <option value="codestral-latest">codestral</option>
+                        <option value="">{tr("Standard")}</option>
+                        <option value="mistral-small-latest">{tr("mistral-small")}</option>
+                        <option value="mistral-medium-latest">{tr("mistral-medium")}</option>
+                        <option value="mistral-large-latest">{tr("mistral-large")}</option>
+                        <option value="open-mistral-nemo">{tr("open-mistral-nemo")}</option>
+                        <option value="ministral-8b-latest">{tr("ministral-8b")}</option>
+                        <option value="codestral-latest">{tr("codestral")}</option>
                       </select>
                     ) : slot.provider === 'openrouter' || slot.provider === 'anthropic' ? (
                       <input
@@ -1297,15 +1255,15 @@ export default function DocumentClassifier() {
                         value={slot.model}
                         onChange={(e) => updateBenchSlot(idx, 'model', e.target.value)}
                         className="input text-sm py-1.5 flex-1"
-                        placeholder="Modellname eingeben"
+                        placeholder={tr("Modellname eingeben")}
                       />
                     ) : (
                       <select value={slot.model} onChange={(e) => updateBenchSlot(idx, 'model', e.target.value)} className="input text-sm py-1.5 flex-1">
                         {ollamaLoading ? (
-                          <option value="">Lade Modelle...</option>
+                          <option value="">{tr("Lade Modelle...")}</option>
                         ) : ollamaModels?.installed && ollamaModels.installed.length > 0 ? (
                           <>
-                            <option value="">Standard</option>
+                            <option value="">{tr("Standard")}</option>
                             {ollamaModels.installed
                               .sort((a: any, b: any) => {
                                 if (a.is_thinking && !b.is_thinking) return 1
@@ -1314,17 +1272,16 @@ export default function DocumentClassifier() {
                               })
                               .map((m: any) => (
                               <option key={m.name} value={m.name}>
-                                {m.is_thinking ? '\u26A0 ' : ''}{m.name} ({m.size_gb}GB)
-                              </option>
+                                {m.is_thinking ? '\u26A0 ' : ''}{m.name} ({m.size_gb}{tr("GB)")}</option>
                             ))}
                           </>
                         ) : (
-                          <option value="">Keine Modelle -- Ollama pruefen</option>
+                          <option value="">{tr("Keine Modelle -- Ollama pruefen")}</option>
                         )}
                       </select>
                     )}
                     {benchSlots.length > 2 && (
-                      <button onClick={() => removeBenchSlot(idx)} className="p-1 text-surface-500 hover:text-red-400 transition-colors" title="Entfernen">
+                      <button onClick={() => removeBenchSlot(idx)} className="p-1 text-surface-500 hover:text-red-400 transition-colors" title={tr("Entfernen")}>
                         <Minus className="w-4 h-4" />
                       </button>
                     )}
@@ -1336,8 +1293,7 @@ export default function DocumentClassifier() {
                   onClick={addBenchSlot}
                   className="flex items-center gap-2 text-sm text-surface-400 hover:text-primary-400 transition-colors p-2 w-full rounded-lg border border-dashed border-surface-700/50 hover:border-primary-500/30"
                 >
-                  <Plus className="w-4 h-4" /> Modell hinzufuegen
-                </button>
+                  <Plus className="w-4 h-4" />{tr(" Modell hinzufuegen")}</button>
               )}
             </div>
 
@@ -1347,7 +1303,7 @@ export default function DocumentClassifier() {
                 type="number"
                 value={benchmarkDocId}
                 onChange={(e) => setBenchmarkDocId(e.target.value)}
-                placeholder="Dokument-ID eingeben..."
+                placeholder={tr("Dokument-ID eingeben...")}
                 className="input flex-1"
                 min={1}
                 onKeyDown={(e) => e.key === 'Enter' && handleBenchmark()}
@@ -1362,27 +1318,23 @@ export default function DocumentClassifier() {
                 ) : (
                   <Scale className="w-4 h-4" />
                 )}
-                {benchmarkRunning ? 'Laeuft...' : `${benchSlots.length} Modelle vergleichen`}
+                {benchmarkRunning ? tr("Laeuft...") : tr("{length} Modelle vergleichen", { length: benchSlots.length })}
               </button>
             </div>
             {benchmarkRunning && (
               <p className="text-xs text-amber-400 mt-2 flex items-center gap-1">
                 <Loader2 className="w-3 h-3 animate-spin" />
-                {benchSlots.length} Provider laufen nacheinander -- das kann je nach Anzahl etwas dauern.
-              </p>
+                {benchSlots.length}{tr(" Provider laufen nacheinander -- das kann je nach Anzahl etwas dauern.")}</p>
             )}
             {!ollamaModels?.connected && (
-              <p className="text-xs text-surface-500 mt-2">
-                Tipp: Lade Ollama-Modelle unter Einstellungen, damit du sie hier auswaehlen kannst.
-              </p>
+              <p className="text-xs text-surface-500 mt-2">{tr("Tipp: Lade Ollama-Modelle unter Einstellungen, damit du sie hier auswaehlen kannst.")}</p>
             )}
           </div>
 
           {benchmarkResult && benchmarkResult.results && (
             <>
               {benchmarkResult.document_title && (
-                <p className="text-sm text-surface-400">
-                  Dokument: <strong className="text-surface-200">#{benchmarkResult.document_id} -- {benchmarkResult.document_title}</strong>
+                <p className="text-sm text-surface-400">{tr("Dokument: ")}<strong className="text-surface-200">#{benchmarkResult.document_id} -- {benchmarkResult.document_title}</strong>
                 </p>
               )}
 
@@ -1440,7 +1392,7 @@ export default function DocumentClassifier() {
                       results: debugData,
                     }, null, 2)
                     navigator.clipboard.writeText(text)
-                      .then(() => alert('Debug-Daten in Zwischenablage kopiert!'))
+                      .then(() => alert(tr("Debug-Daten in Zwischenablage kopiert!")))
                       .catch(() => {
                         const w = window.open('', '_blank')
                         if (w) { w.document.write(`<pre>${text}</pre>`) }
@@ -1449,20 +1401,18 @@ export default function DocumentClassifier() {
                   className="btn text-sm flex items-center gap-2 bg-surface-700 hover:bg-surface-600 text-surface-300"
                 >
                   <Bug className="w-4 h-4" />
-                  <Copy className="w-4 h-4" />
-                  Debug Copy
-                </button>
+                  <Copy className="w-4 h-4" />{tr("Debug Copy")}</button>
               </div>
 
               {/* Metrics comparison table */}
               {benchmarkResult.results.filter(r => !r.result.error).length >= 2 && (
                 <div className="card p-6">
-                  <h3 className="text-sm font-semibold text-surface-300 mb-3">Vergleich</h3>
+                  <h3 className="text-sm font-semibold text-surface-300 mb-3">{tr("Vergleich")}</h3>
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                       <thead>
                         <tr className="border-b border-surface-700/50">
-                          <th className="text-left text-xs text-surface-500 py-2 pr-4">Metrik</th>
+                          <th className="text-left text-xs text-surface-500 py-2 pr-4">{tr("Metrik")}</th>
                           {benchmarkResult.results.map((res, idx) => (
                             <th key={idx} className="text-center text-xs text-surface-400 py-2 px-2">
                               {res.model}
@@ -1531,27 +1481,24 @@ export default function DocumentClassifier() {
         <div className="space-y-6">
           {/* Provider (read-only, configured in Settings) */}
           <div className="card p-6">
-            <h2 className="text-lg font-semibold text-surface-100 mb-4">Provider</h2>
+            <h2 className="text-lg font-semibold text-surface-100 mb-4">{tr("Provider")}</h2>
             <div className="flex items-center justify-between p-4 rounded-xl border-2 border-primary-500 bg-primary-500/10">
               <div>
                 <p className="font-semibold text-surface-100">
-                  {config.active_provider === 'openai' ? 'OpenAI' :
-                   config.active_provider === 'mistral' ? 'Mistral' :
-                   config.active_provider === 'openrouter' ? 'OpenRouter' :
-                   config.active_provider === 'ollama' ? 'Ollama (Lokal)' :
-                   config.active_provider === 'anthropic' ? 'Anthropic' :
+                  {config.active_provider === 'openai' ? tr("OpenAI") :
+                   config.active_provider === 'mistral' ? tr("Mistral") :
+                   config.active_provider === 'openrouter' ? tr("OpenRouter") :
+                   config.active_provider === 'ollama' ? tr("Ollama (Lokal)") :
+                   config.active_provider === 'anthropic' ? tr("Anthropic") :
                    config.active_provider}
                 </p>
-                <p className="text-sm text-surface-400 mt-1">
-                  Modell: <span className="text-surface-200">{config.active_model || 'Standard'}</span>
+                <p className="text-sm text-surface-400 mt-1">{tr("Modell: ")}<span className="text-surface-200">{config.active_model || tr("Standard")}</span>
                 </p>
               </div>
               <a
                 href="/settings"
                 className="btn bg-surface-700 hover:bg-surface-600 text-surface-300 text-sm"
-              >
-                In Einstellungen aendern
-              </a>
+              >{tr("In Einstellungen aendern")}</a>
             </div>
 
           </div>
@@ -1559,25 +1506,23 @@ export default function DocumentClassifier() {
           {/* Fields with collapsible filter sections */}
           <div className="card p-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-surface-100">Aktive Felder &amp; Filter</h2>
+              <h2 className="text-lg font-semibold text-surface-100">{tr("Aktive Felder & Filter")}</h2>
               <div className="flex items-center gap-2">
                 {paperlessItemsLoading && <Loader2 className="w-4 h-4 animate-spin text-primary-400" />}
                 <button
                   onClick={handleRefreshCache}
                   disabled={cacheRefreshing}
                   className="btn text-xs flex items-center gap-1.5 bg-surface-700 hover:bg-surface-600 text-surface-300"
-                  title="Tags, Korrespondenten, Typen neu von Paperless laden"
+                  title={tr("Tags, Korrespondenten, Typen neu von Paperless laden")}
                 >
-                  <RefreshCw className={clsx('w-3 h-3', cacheRefreshing && 'animate-spin')} />
-                  Paperless sync
-                </button>
+                  <RefreshCw className={clsx('w-3 h-3', cacheRefreshing && 'animate-spin')} />{tr("Paperless sync")}</button>
               </div>
             </div>
             <div className="space-y-2">
               {/* Titel -- aufklappbar */}
               <FieldToggle
                 icon={FileText}
-                label="Titel"
+                label={tr("Titel")}
                 checked={config.enable_title}
                 onChange={(v) => setConfig({ ...config, enable_title: v })}
                 expandable
@@ -1590,14 +1535,14 @@ export default function DocumentClassifier() {
                   defaultPrompt={promptDefaults?.title}
                   userPrompt={config.prompt_title}
                   onUserPromptChange={(v) => setConfig({ ...config, prompt_title: v })}
-                  placeholder='z.B.: "Immer Dokumentnummer mit in den Titel" oder "Produktnamen bevorzugen"'
+                  placeholder={tr("z.B.: \"Immer Dokumentnummer mit in den Titel\" oder \"Produktnamen bevorzugen\"")}
                 />
               )}
 
               {/* Tags -- aufklappbar */}
               <FieldToggle
                 icon={Tags}
-                label="Tags"
+                label={tr("Tags")}
                 checked={config.enable_tags}
                 onChange={(v) => setConfig({ ...config, enable_tags: v })}
                 expandable
@@ -1611,29 +1556,29 @@ export default function DocumentClassifier() {
                     defaultPrompt={promptDefaults?.tags}
                     userPrompt={config.prompt_tags}
                     onUserPromptChange={(v) => setConfig({ ...config, prompt_tags: v })}
-                    placeholder='z.B.: "Immer den Lebensbereich taggen (KFZ, Wohnen, Gesundheit...)"'
+                    placeholder={tr("z.B.: \"Immer den Lebensbereich taggen (KFZ, Wohnen, Gesundheit...)\"")}
                   />
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="text-sm text-surface-400">Tag-Verhalten</label>
+                      <label className="text-sm text-surface-400">{tr("Tag-Verhalten")}</label>
                       <select
                         value={config.tag_behavior}
                         onChange={(e) => setConfig({ ...config, tag_behavior: e.target.value })}
                         className="input mt-1"
                       >
-                        <option value="existing_only">Nur bestehende Tags -- keine neuen</option>
-                        <option value="suggest_new">Bestehende bevorzugen + neue vorschlagen (Review)</option>
-                        <option value="auto_create">Bestehende + neue automatisch anlegen</option>
+                        <option value="existing_only">{tr("Nur bestehende Tags -- keine neuen")}</option>
+                        <option value="suggest_new">{tr("Bestehende bevorzugen + neue vorschlagen (Review)")}</option>
+                        <option value="auto_create">{tr("Bestehende + neue automatisch anlegen")}</option>
                       </select>
                       <p className="text-xs text-surface-600 mt-1">
-                        {config.tag_behavior === 'existing_only' && 'KI waehlt nur aus vorhandenen Tags in Paperless.'}
-                        {config.tag_behavior === 'suggest_new' && 'KI bevorzugt vorhandene, darf aber neue vorschlagen. Du entscheidest vor dem Anwenden.'}
-                        {config.tag_behavior === 'auto_create' && 'KI darf neue Tags vorschlagen die beim Anwenden automatisch erstellt werden.'}
+                        {config.tag_behavior === 'existing_only' && tr("KI waehlt nur aus vorhandenen Tags in Paperless.")}
+                        {config.tag_behavior === 'suggest_new' && tr("KI bevorzugt vorhandene, darf aber neue vorschlagen. Du entscheidest vor dem Anwenden.")}
+                        {config.tag_behavior === 'auto_create' && tr("KI darf neue Tags vorschlagen die beim Anwenden automatisch erstellt werden.")}
                       </p>
                     </div>
                     <div className="grid grid-cols-2 gap-2">
                       <div>
-                        <label className="text-sm text-surface-400">Min Tags</label>
+                        <label className="text-sm text-surface-400">{tr("Min Tags")}</label>
                         <input
                           type="number"
                           value={config.tags_min}
@@ -1644,7 +1589,7 @@ export default function DocumentClassifier() {
                         />
                       </div>
                       <div>
-                        <label className="text-sm text-surface-400">Max Tags</label>
+                        <label className="text-sm text-surface-400">{tr("Max Tags")}</label>
                         <input
                           type="number"
                           value={config.tags_max}
@@ -1659,11 +1604,11 @@ export default function DocumentClassifier() {
                   {/* Keep existing tags toggle */}
                   <label className="flex items-center justify-between p-2 rounded bg-surface-700/30 cursor-pointer">
                     <div>
-                      <span className="text-sm text-surface-300">Bestehende Tags behalten</span>
+                      <span className="text-sm text-surface-300">{tr("Bestehende Tags behalten")}</span>
                       <p className="text-xs text-surface-600">
                         {config.tags_keep_existing
-                          ? 'Vorhandene Tags bleiben erhalten, neue werden hinzugefuegt.'
-                          : 'Vorhandene Tags werden durch die KI-Vorschlaege ersetzt (geschuetzte bleiben).'
+                          ? tr("Vorhandene Tags bleiben erhalten, neue werden hinzugefuegt.")
+                          : tr("Vorhandene Tags werden durch die KI-Vorschlaege ersetzt (geschuetzte bleiben).")
                         }
                       </p>
                     </div>
@@ -1678,11 +1623,11 @@ export default function DocumentClassifier() {
                   {/* Protected tags -- only visible when NOT keeping all existing tags */}
                   {!config.tags_keep_existing && (
                     <div className="p-2.5 rounded-lg bg-amber-500/5 border border-amber-500/20">
-                      <label className="text-sm text-amber-300 font-medium">Geschuetzte Tags (bleiben beim Ersetzen erhalten)</label>
+                      <label className="text-sm text-amber-300 font-medium">{tr("Geschuetzte Tags (bleiben beim Ersetzen erhalten)")}</label>
                       <div className="flex gap-2 mt-1.5">
                         <input
                           type="text"
-                          placeholder="z.B. INBOX, ocr*, ai-* ..."
+                          placeholder={tr("z.B. INBOX, ocr*, ai-* ...")}
                           className="input flex-1 text-sm"
                           onKeyDown={(e) => {
                             if (e.key === 'Enter') {
@@ -1706,25 +1651,22 @@ export default function DocumentClassifier() {
                               <button
                                 onClick={() => setConfig({ ...config, tags_protected: (config.tags_protected || []).filter(t => t !== tag) })}
                                 className="hover:text-amber-200"
-                              >&times;</button>
+                              >{tr("×")}</button>
                             </span>
                           ))}
                         </div>
                       )}
-                      <p className="text-xs text-surface-500 mt-1.5">
-                        Diese Tags bleiben am Dokument, auch wenn die KI sie nicht vorschlaegt.
-                        Wildcards: <code className="text-amber-400">ocr*</code> schuetzt ocrfehler, ocrfinish usw.
-                      </p>
+                      <p className="text-xs text-surface-500 mt-1.5">{tr("Diese Tags bleiben am Dokument, auch wenn die KI sie nicht vorschlaegt. Wildcards: ")}<code className="text-amber-400">{tr("ocr*")}</code>{tr(" schuetzt ocrfehler, ocrfinish usw.")}</p>
                     </div>
                   )}
 
                   {/* Ignore tags */}
                   <div>
-                    <label className="text-sm text-surface-400">Ignore-Tags (nie anfassen/vorschlagen)</label>
+                    <label className="text-sm text-surface-400">{tr("Ignore-Tags (nie anfassen/vorschlagen)")}</label>
                     <div className="flex gap-2 mt-1">
                       <input
                         type="text"
-                        placeholder="Tag-Name eingeben, Enter druecken..."
+                        placeholder={tr("Tag-Name eingeben, Enter druecken...")}
                         className="input flex-1 text-sm"
                         onKeyDown={(e) => {
                           if (e.key === 'Enter') {
@@ -1748,22 +1690,17 @@ export default function DocumentClassifier() {
                             <button
                               onClick={() => setConfig({ ...config, tags_ignore: (config.tags_ignore || []).filter(t => t !== tag) })}
                               className="hover:text-red-300"
-                            >&times;</button>
+                            >{tr("×")}</button>
                           </span>
                         ))}
                       </div>
                     )}
-                    <p className="text-xs text-surface-600 mt-1">
-                      Diese Tags werden nie vorgeschlagen und beim Anwenden nicht angetastet.
-                      Wildcards moeglich: <code className="text-primary-400">Steuer*</code> ignoriert alle Tags die mit "Steuer" beginnen.
-                    </p>
+                    <p className="text-xs text-surface-600 mt-1">{tr("Diese Tags werden nie vorgeschlagen und beim Anwenden nicht angetastet. Wildcards moeglich: ")}<code className="text-primary-400">{tr("Steuer*")}</code>{tr(" ignoriert alle Tags die mit \"Steuer\" beginnen.")}</p>
                   </div>
 
                   {/* Tag exclusion list */}
                   <div>
-                    <p className="text-xs text-surface-500 mb-2">
-                      Tags fuer KI-Vorschlaege deaktivieren:
-                    </p>
+                    <p className="text-xs text-surface-500 mb-2">{tr("Tags fuer KI-Vorschlaege deaktivieren:")}</p>
                     <div className="max-h-48 overflow-y-auto space-y-1">
                       {paperlessTags.map(tag => {
                         const excluded = (config.excluded_tag_ids || []).includes(tag.id)
@@ -1788,13 +1725,13 @@ export default function DocumentClassifier() {
                               ignored && 'text-red-400/60'
                             )}>
                               {tag.name}
-                              {ignored && <span className="text-red-400/60 text-xs ml-1">(ignoriert)</span>}
+                              {ignored && <span className="text-red-400/60 text-xs ml-1">{tr("(ignoriert)")}</span>}
                             </span>
                           </label>
                         )
                       })}
                       {paperlessTags.length === 0 && (
-                        <p className="text-xs text-surface-600">Keine Tags geladen</p>
+                        <p className="text-xs text-surface-600">{tr("Keine Tags geladen")}</p>
                       )}
                     </div>
                   </div>
@@ -1804,7 +1741,7 @@ export default function DocumentClassifier() {
               {/* Korrespondent -- aufklappbar */}
               <FieldToggle
                 icon={Users}
-                label="Korrespondent"
+                label={tr("Korrespondent")}
                 checked={config.enable_correspondent}
                 onChange={(v) => setConfig({ ...config, enable_correspondent: v })}
                 expandable
@@ -1818,29 +1755,29 @@ export default function DocumentClassifier() {
                     defaultPrompt={promptDefaults?.correspondent}
                     userPrompt={config.prompt_correspondent}
                     onUserPromptChange={(v) => setConfig({ ...config, prompt_correspondent: v })}
-                    placeholder='z.B.: "Offizielle Firmennamen verwenden, keine Abkuerzungen"'
+                    placeholder={tr("z.B.: \"Offizielle Firmennamen verwenden, keine Abkuerzungen\"")}
                   />
                   <div>
-                    <label className="text-sm text-surface-400">Korrespondent-Verhalten</label>
+                    <label className="text-sm text-surface-400">{tr("Korrespondent-Verhalten")}</label>
                     <select
                       value={config.correspondent_behavior}
                       onChange={(e) => setConfig({ ...config, correspondent_behavior: e.target.value })}
                       className="input mt-1"
                     >
-                      <option value="existing_only">Nur bestehende -- keine neuen anlegen</option>
-                      <option value="suggest_new">Bestehende bevorzugen + neue vorschlagen &amp; anlegen</option>
+                      <option value="existing_only">{tr("Nur bestehende -- keine neuen anlegen")}</option>
+                      <option value="suggest_new">{tr("Bestehende bevorzugen + neue vorschlagen & anlegen")}</option>
                     </select>
                     <p className="text-xs text-surface-600 mt-1">
                       {config.correspondent_behavior === 'existing_only'
-                        ? 'KI matcht nur vorhandene Korrespondenten. Unbekannte werden uebersprungen.'
-                        : 'KI bevorzugt vorhandene, darf aber neue erkennen. Neue werden mit "Neu"-Badge angezeigt und beim Anwenden erstellt.'
+                        ? tr("KI matcht nur vorhandene Korrespondenten. Unbekannte werden uebersprungen.")
+                        : tr("KI bevorzugt vorhandene, darf aber neue erkennen. Neue werden mit \"Neu\"-Badge angezeigt und beim Anwenden erstellt.")
                       }
                     </p>
                   </div>
 
                   {/* ── Namens-Trimming ── */}
                   <div className="pt-2 border-t border-surface-700/40 space-y-3">
-                    <p className="text-sm font-medium text-surface-300">Namens-Trimming</p>
+                    <p className="text-sm font-medium text-surface-300">{tr("Namens-Trimming")}</p>
 
                     <label className="flex items-start gap-3 cursor-pointer group">
                       <div className="relative mt-0.5 shrink-0">
@@ -1854,15 +1791,11 @@ export default function DocumentClassifier() {
                         <div className="absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform peer-checked:translate-x-4" />
                       </div>
                       <div>
-                        <span className="text-sm text-surface-200 group-hover:text-white transition-colors">
-                          KI-Prompt: Kurznamen bevorzugen
-                        </span>
-                        <p className="text-xs text-surface-500 mt-0.5">
-                          Ändert den Prompt so, dass die KI nur den Kernmarkennamen zurückgibt –
-                          z.B. <span className="text-primary-400 font-mono">"Telekom"</span> statt{' '}
-                          <span className="text-surface-400 font-mono">"Deutsche Telekom AG"</span>,{' '}
-                          <span className="text-primary-400 font-mono">"IKEA"</span> statt{' '}
-                          <span className="text-surface-400 font-mono">"IKEA Deutschland GmbH & Co. KG"</span>
+                        <span className="text-sm text-surface-200 group-hover:text-white transition-colors">{tr("KI-Prompt: Kurznamen bevorzugen")}</span>
+                        <p className="text-xs text-surface-500 mt-0.5">{tr("Ändert den Prompt so, dass die KI nur den Kernmarkennamen zurückgibt – z.B. ")}<span className="text-primary-400 font-mono">{tr("\"Telekom\"")}</span>{tr(" statt")}{' '}
+                          <span className="text-surface-400 font-mono">{tr("\"Deutsche Telekom AG\"")}</span>,{' '}
+                          <span className="text-primary-400 font-mono">{tr("\"IKEA\"")}</span>{tr(" statt")}{' '}
+                          <span className="text-surface-400 font-mono">{tr("\"IKEA Deutschland GmbH & Co. KG\"")}</span>
                         </p>
                       </div>
                     </label>
@@ -1879,14 +1812,8 @@ export default function DocumentClassifier() {
                         <div className="absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform peer-checked:translate-x-4" />
                       </div>
                       <div>
-                        <span className="text-sm text-surface-200 group-hover:text-white transition-colors">
-                          Post-Processing: Rechtsformen entfernen
-                        </span>
-                        <p className="text-xs text-surface-500 mt-0.5">
-                          Schneidet nach der KI-Antwort Rechtsform-Zusätze automatisch ab –
-                          GmbH, AG, KG, GmbH & Co. KG, Ltd., eV, UG, SE usw.
-                          Funktioniert unabhängig vom KI-Prompt.
-                        </p>
+                        <span className="text-sm text-surface-200 group-hover:text-white transition-colors">{tr("Post-Processing: Rechtsformen entfernen")}</span>
+                        <p className="text-xs text-surface-500 mt-0.5">{tr("Schneidet nach der KI-Antwort Rechtsform-Zusätze automatisch ab – GmbH, AG, KG, GmbH & Co. KG, Ltd., eV, UG, SE usw. Funktioniert unabhängig vom KI-Prompt.")}</p>
                         <div className="flex flex-wrap gap-1 mt-1.5">
                           {['GmbH', 'AG', 'KG', 'GmbH & Co. KG', 'Ltd.', 'eV', 'UG', 'SE', 'OHG', 'GbR'].map(f => (
                             <span key={f} className="text-[10px] px-1.5 py-0.5 rounded bg-surface-700/60 text-surface-400 font-mono">{f}</span>
@@ -1909,19 +1836,10 @@ export default function DocumentClassifier() {
                           <div className="absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform peer-checked:translate-x-4" />
                         </div>
                         <div>
-                          <span className="text-sm text-surface-200 group-hover:text-white transition-colors inline-flex items-center gap-2 flex-wrap">
-                            Intelligente Korrespondenten-Zuordnung
-                            <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-400 font-semibold uppercase tracking-wide">Beta / Test</span>
+                          <span className="text-sm text-surface-200 group-hover:text-white transition-colors inline-flex items-center gap-2 flex-wrap">{tr("Intelligente Korrespondenten-Zuordnung")}<span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-400 font-semibold uppercase tracking-wide">{tr("Beta / Test")}</span>
                           </span>
-                          <p className="text-xs text-surface-500 mt-0.5">
-                            Ordnet einen von der KI vorgeschlagenen Korrespondenten einem bereits vorhandenen zu,
-                            wenn die Namen nach Normalisierung (Groß-/Kleinschreibung, Umlaute, Bindestriche,
-                            „&amp;" vs. „und", optional Rechtsform wie „GmbH") praktisch identisch sind. So entstehen
-                            weniger Dubletten wie <span className="text-amber-400 font-mono">„Muster-Technik"</span> und{' '}
-                            <span className="text-surface-400 font-mono">„Muster Technik"</span>.
-                            Nichts wird gelöscht oder umbenannt – es wird nur ein bestehender Korrespondent
-                            wiederverwendet statt neu angelegt. Jede Entscheidung steht im Backend-Log.
-                            <span className="text-surface-400"> Standardmäßig deaktiviert.</span>
+                          <p className="text-xs text-surface-500 mt-0.5">{tr("Ordnet einen von der KI vorgeschlagenen Korrespondenten einem bereits vorhandenen zu, wenn die Namen nach Normalisierung (Groß-/Kleinschreibung, Umlaute, Bindestriche, „&\" vs. „und\", optional Rechtsform wie „GmbH\") praktisch identisch sind. So entstehen weniger Dubletten wie ")}<span className="text-amber-400 font-mono">{tr("„Muster-Technik\"")}</span>{tr(" und")}{' '}
+                            <span className="text-surface-400 font-mono">{tr("„Muster Technik\"")}</span>{tr(". Nichts wird gelöscht oder umbenannt – es wird nur ein bestehender Korrespondent wiederverwendet statt neu angelegt. Jede Entscheidung steht im Backend-Log.")}<span className="text-surface-400">{tr(" Standardmäßig deaktiviert.")}</span>
                           </p>
                         </div>
                       </label>
@@ -1940,13 +1858,9 @@ export default function DocumentClassifier() {
                               <div className="absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform peer-checked:translate-x-4" />
                             </div>
                             <div>
-                              <span className="text-sm text-surface-200 group-hover:text-white transition-colors">
-                                Rechtsformen beim Vergleich ignorieren
-                              </span>
-                              <p className="text-xs text-surface-500 mt-0.5">
-                                Behandelt z.B. <span className="font-mono">„Muster GmbH"</span> und{' '}
-                                <span className="font-mono">„Muster"</span> als denselben Korrespondenten.
-                              </p>
+                              <span className="text-sm text-surface-200 group-hover:text-white transition-colors">{tr("Rechtsformen beim Vergleich ignorieren")}</span>
+                              <p className="text-xs text-surface-500 mt-0.5">{tr("Behandelt z.B. ")}<span className="font-mono">{tr("„Muster GmbH\"")}</span>{tr(" und")}{' '}
+                                <span className="font-mono">{tr("„Muster\"")}</span>{tr(" als denselben Korrespondenten.")}</p>
                             </div>
                           </label>
 
@@ -1962,24 +1876,17 @@ export default function DocumentClassifier() {
                               <div className="absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform peer-checked:translate-x-4" />
                             </div>
                             <div>
-                              <span className="text-sm text-surface-200 group-hover:text-white transition-colors">
-                                Auch ähnliche Namen zusammenführen (Tippfehler / OCR)
-                              </span>
-                              <p className="text-xs text-surface-500 mt-0.5">
-                                Erkennt zusätzlich kleine OCR-/Schreibfehler. <span className="text-amber-400">Vorsicht:</span>{' '}
-                                In seltenen Fällen können ähnliche, aber unterschiedliche Firmen zusammengeführt werden.
-                                Echte Namensunterschiede (z.B. <span className="font-mono">„Schmidt"</span> vs.{' '}
-                                <span className="font-mono">„Schmitt"</span>) werden bewusst NICHT zusammengeführt.
-                              </p>
+                              <span className="text-sm text-surface-200 group-hover:text-white transition-colors">{tr("Auch ähnliche Namen zusammenführen (Tippfehler / OCR)")}</span>
+                              <p className="text-xs text-surface-500 mt-0.5">{tr("Erkennt zusätzlich kleine OCR-/Schreibfehler. ")}<span className="text-amber-400">{tr("Vorsicht:")}</span>{' '}{tr("In seltenen Fällen können ähnliche, aber unterschiedliche Firmen zusammengeführt werden. Echte Namensunterschiede (z.B. ")}<span className="font-mono">{tr("„Schmidt\"")}</span>{tr(" vs.")}{' '}
+                                <span className="font-mono">{tr("„Schmitt\"")}</span>{tr(") werden bewusst NICHT zusammengeführt.")}</p>
                             </div>
                           </label>
 
                           {(config.correspondent_smart_fuzzy ?? false) && (
                             <div className="pl-12">
-                              <label className="block text-xs text-surface-400 mb-1">
-                                Ähnlichkeits-Schwelle:{' '}
+                              <label className="block text-xs text-surface-400 mb-1">{tr("Ähnlichkeits-Schwelle:")}{' '}
                                 <span className="text-amber-400 font-mono">{config.correspondent_smart_threshold ?? 90}%</span>
-                                <span className="text-surface-500"> — höher = strenger (sicherer)</span>
+                                <span className="text-surface-500">{tr(" — höher = strenger (sicherer)")}</span>
                               </label>
                               <input
                                 type="range"
@@ -1999,10 +1906,8 @@ export default function DocumentClassifier() {
 
                   {/* ── Korrespondenten-Ignorliste ── */}
                   <div className="pt-2 border-t border-surface-700/40">
-                    <p className="text-sm font-medium text-surface-300 mb-1">Ignorliste</p>
-                    <p className="text-xs text-surface-500 mb-2">
-                      Namen, die NIE als Korrespondent vorgeschlagen werden (z.B. Personennamen aus Speicherpfaden).
-                    </p>
+                    <p className="text-sm font-medium text-surface-300 mb-1">{tr("Ignorliste")}</p>
+                    <p className="text-xs text-surface-500 mb-2">{tr("Namen, die NIE als Korrespondent vorgeschlagen werden (z.B. Personennamen aus Speicherpfaden).")}</p>
                     <div className="flex flex-wrap gap-1.5 mb-2">
                       {(config.correspondent_ignore || []).map((name: string) => (
                         <span
@@ -2020,7 +1925,7 @@ export default function DocumentClassifier() {
                         </span>
                       ))}
                       {(config.correspondent_ignore || []).length === 0 && (
-                        <span className="text-xs text-surface-600 italic">Keine Einträge</span>
+                        <span className="text-xs text-surface-600 italic">{tr("Keine Einträge")}</span>
                       )}
                     </div>
                     <form
@@ -2041,19 +1946,15 @@ export default function DocumentClassifier() {
                       <input
                         name="corrIgnoreInput"
                         type="text"
-                        placeholder="Name eingeben..."
+                        placeholder={tr("Name eingeben...")}
                         className="input text-sm flex-1"
                       />
-                      <button type="submit" className="btn btn-sm bg-surface-700 hover:bg-surface-600 text-surface-300 text-xs px-3">
-                        Hinzufügen
-                      </button>
+                      <button type="submit" className="btn btn-sm bg-surface-700 hover:bg-surface-600 text-surface-300 text-xs px-3">{tr("Hinzufügen")}</button>
                     </form>
                   </div>
 
                   <div>
-                    <p className="text-xs text-surface-500 mb-2">
-                      Deaktiviere Korrespondenten, die die KI nicht vorschlagen soll:
-                    </p>
+                    <p className="text-xs text-surface-500 mb-2">{tr("Deaktiviere Korrespondenten, die die KI nicht vorschlagen soll:")}</p>
                     <div className="max-h-48 overflow-y-auto space-y-1">
                       {paperlessCorrespondents.map(c => {
                         const excluded = (config.excluded_correspondent_ids || []).includes(c.id)
@@ -2076,7 +1977,7 @@ export default function DocumentClassifier() {
                         )
                       })}
                       {paperlessCorrespondents.length === 0 && (
-                        <p className="text-xs text-surface-600">Keine Korrespondenten geladen</p>
+                        <p className="text-xs text-surface-600">{tr("Keine Korrespondenten geladen")}</p>
                       )}
                     </div>
                   </div>
@@ -2086,7 +1987,7 @@ export default function DocumentClassifier() {
               {/* Dokumenttyp -- aufklappbar */}
               <FieldToggle
                 icon={FileText}
-                label="Dokumenttyp"
+                label={tr("Dokumenttyp")}
                 checked={config.enable_document_type}
                 onChange={(v) => setConfig({ ...config, enable_document_type: v })}
                 expandable
@@ -2100,11 +2001,9 @@ export default function DocumentClassifier() {
                     defaultPrompt={promptDefaults?.document_type}
                     userPrompt={config.prompt_document_type}
                     onUserPromptChange={(v) => setConfig({ ...config, prompt_document_type: v })}
-                    placeholder='z.B.: "Im Zweifel lieber null statt falschen Typ"'
+                    placeholder={tr("z.B.: \"Im Zweifel lieber null statt falschen Typ\"")}
                   />
-                  <p className="text-xs text-surface-500">
-                    Deaktiviere Dokumenttypen, die die KI nicht vorschlagen soll:
-                  </p>
+                  <p className="text-xs text-surface-500">{tr("Deaktiviere Dokumenttypen, die die KI nicht vorschlagen soll:")}</p>
                   <div className="max-h-48 overflow-y-auto space-y-1">
                     {paperlessDocTypes.map(dt => {
                       const excluded = (config.excluded_document_type_ids || []).includes(dt.id)
@@ -2127,7 +2026,7 @@ export default function DocumentClassifier() {
                       )
                     })}
                     {paperlessDocTypes.length === 0 && (
-                      <p className="text-xs text-surface-600">Keine Dokumenttypen geladen</p>
+                      <p className="text-xs text-surface-600">{tr("Keine Dokumenttypen geladen")}</p>
                     )}
                   </div>
                 </div>
@@ -2136,7 +2035,7 @@ export default function DocumentClassifier() {
               {/* Speicherpfad -- aufklappbar mit Profil-Editor */}
               <FieldToggle
                 icon={FolderOpen}
-                label="Speicherpfad"
+                label={tr("Speicherpfad")}
                 checked={config.enable_storage_path}
                 onChange={(v) => setConfig({ ...config, enable_storage_path: v })}
                 expandable
@@ -2148,15 +2047,12 @@ export default function DocumentClassifier() {
                 <div className="ml-8 p-3 rounded-lg bg-surface-800/30 border border-surface-700/50 space-y-3">
                   <div className="flex items-start gap-2 p-2 bg-primary-500/10 border border-primary-500/20 rounded text-xs text-primary-300">
                     <Info className="w-4 h-4 shrink-0 mt-0.5" />
-                    <span>
-                      Konfiguriere hier die Speicherpfade als Personen-Profile.
-                      Der Kontext-Prompt hilft der KI zu verstehen, welche Dokumente zu welchem Pfad gehoeren.
-                    </span>
+                    <span>{tr("Konfiguriere hier die Speicherpfade als Personen-Profile. Der Kontext-Prompt hilft der KI zu verstehen, welche Dokumente zu welchem Pfad gehoeren.")}</span>
                   </div>
 
                   {/* Speicherpfad-Verhalten */}
                   <div className="space-y-2">
-                    <p className="text-xs font-medium text-surface-300">Zuweisung bei vorhandenem Pfad</p>
+                    <p className="text-xs font-medium text-surface-300">{tr("Zuweisung bei vorhandenem Pfad")}</p>
                     <div className="space-y-1.5">
                       {[
                         { value: 'always', label: 'Immer zuweisen', desc: 'KI-Vorschlag ersetzt immer den vorhandenen Pfad' },
@@ -2182,13 +2078,11 @@ export default function DocumentClassifier() {
 
                     {(config.storage_path_behavior || 'always') === 'keep_except_list' && (
                       <div className="mt-2 space-y-2">
-                        <p className="text-xs text-surface-400">
-                          Pfad-Namen, die überschrieben werden sollen (z.\u202fB. Platzhalter wie "Zuweisen"):
-                        </p>
+                        <p className="text-xs text-surface-400">{tr("Pfad-Namen, die überschrieben werden sollen (z.\\u202fB. Platzhalter wie \"Zuweisen\"):")}</p>
                         <div className="flex gap-2">
                           <input
                             type="text"
-                            placeholder='z.B. "Zuweisen" — Enter zum Hinzufügen'
+                            placeholder={tr("z.B. \"Zuweisen\" — Enter zum Hinzufügen")}
                             className="input flex-1 text-sm"
                             onKeyDown={(e) => {
                               if (e.key === 'Enter') {
@@ -2212,7 +2106,7 @@ export default function DocumentClassifier() {
                             </span>
                           ))}
                           {(config.storage_path_override_names || []).length === 0 && (
-                            <span className="text-xs text-surface-500 italic">Keine Pfade konfiguriert</span>
+                            <span className="text-xs text-surface-500 italic">{tr("Keine Pfade konfiguriert")}</span>
                           )}
                         </div>
                       </div>
@@ -2246,8 +2140,7 @@ export default function DocumentClassifier() {
                             <div className="flex items-center gap-2">
                               {profile.context_prompt && (
                                 <span className="text-xs text-primary-400 flex items-center gap-1">
-                                  <MessageSquare className="w-3 h-3" /> Prompt
-                                </span>
+                                  <MessageSquare className="w-3 h-3" />{tr(" Prompt")}</span>
                               )}
                               <button
                                 onClick={() => toggleSection(`sp-${profile.paperless_path_id}`)}
@@ -2261,40 +2154,39 @@ export default function DocumentClassifier() {
                             <div className="px-3 pb-3 space-y-2 border-t border-surface-700/30 pt-2">
                               <div className="grid grid-cols-2 gap-2">
                                 <div>
-                                  <label className="text-xs text-surface-500">Person (optional)</label>
+                                  <label className="text-xs text-surface-500">{tr("Person (optional)")}</label>
                                   <input
                                     type="text"
                                     value={profile.person_name || ''}
                                     onChange={(e) => updateStorageProfile(profile.paperless_path_id, 'person_name', e.target.value)}
                                     className="input mt-0.5 text-sm"
-                                    placeholder="z.B. Max Mustermann"
+                                    placeholder={tr("z.B. Max Mustermann")}
                                   />
                                 </div>
                                 <div>
-                                  <label className="text-xs text-surface-500">Typ</label>
+                                  <label className="text-xs text-surface-500">{tr("Typ")}</label>
                                   <select
                                     value={profile.path_type || 'private'}
                                     onChange={(e) => updateStorageProfile(profile.paperless_path_id, 'path_type', e.target.value)}
                                     className="input mt-0.5 text-sm"
                                   >
-                                    <option value="private">Privat</option>
-                                    <option value="business">Geschaeftlich</option>
-                                    <option value="mixed">Gemischt</option>
+                                    <option value="private">{tr("Privat")}</option>
+                                    <option value="business">{tr("Geschaeftlich")}</option>
+                                    <option value="mixed">{tr("Gemischt")}</option>
                                   </select>
                                 </div>
                               </div>
                               <div>
                                 <label className="text-xs text-surface-500 flex items-center gap-1">
-                                  <MessageSquare className="w-3 h-3" /> Kontext-Prompt (optional -- verbessert die Erkennung)
-                                </label>
+                                  <MessageSquare className="w-3 h-3" />{tr(" Kontext-Prompt (optional -- verbessert die Erkennung)")}</label>
                                 <textarea
                                   value={profile.context_prompt || ''}
                                   onChange={(e) => updateStorageProfile(profile.paperless_path_id, 'context_prompt', e.target.value)}
                                   className="input mt-0.5 text-sm"
                                   rows={3}
-                                  placeholder="Erklaere der KI, welche Dokumente hierhin gehoeren...&#10;z.B.: Private Dokumente von [Name]. Rechnungen, Versicherungen, persoenliche Korrespondenz. NICHT geschaeftlich."
+                                  placeholder={tr("Erklaere der KI, welche Dokumente hierhin gehoeren...\nz.B.: Private Dokumente von [Name]. Rechnungen, Versicherungen, persoenliche Korrespondenz. NICHT geschaeftlich.")}
                                 />
-                                <p className="text-xs text-surface-600 mt-1">Ohne Prompt nutzt die KI nur den Pfadnamen zur Zuordnung.</p>
+                                <p className="text-xs text-surface-600 mt-1">{tr("Ohne Prompt nutzt die KI nur den Pfadnamen zur Zuordnung.")}</p>
                               </div>
                             </div>
                           )}
@@ -2302,7 +2194,7 @@ export default function DocumentClassifier() {
                       )
                     })}
                     {storagePathProfiles.length === 0 && (
-                      <p className="text-xs text-surface-600">Keine Speicherpfade in Paperless gefunden</p>
+                      <p className="text-xs text-surface-600">{tr("Keine Speicherpfade in Paperless gefunden")}</p>
                     )}
                   </div>
                   {storagePathProfiles.length > 0 && (
@@ -2312,9 +2204,7 @@ export default function DocumentClassifier() {
                         disabled={settingsSaving}
                         className="btn text-sm flex items-center gap-2 bg-surface-700 hover:bg-surface-600 text-surface-200"
                       >
-                        {settingsSaving ? <Loader2 className="w-3 h-3 animate-spin" /> : <Save className="w-3 h-3" />}
-                        Profile speichern
-                      </button>
+                        {settingsSaving ? <Loader2 className="w-3 h-3 animate-spin" /> : <Save className="w-3 h-3" />}{tr("Profile speichern")}</button>
                     </div>
                   )}
                 </div>
@@ -2323,7 +2213,7 @@ export default function DocumentClassifier() {
               {/* Erstelldatum -- aufklappbar */}
               <FieldToggle
                 icon={Calendar}
-                label="Erstelldatum"
+                label={tr("Erstelldatum")}
                 checked={config.enable_created_date}
                 onChange={(v) => setConfig({ ...config, enable_created_date: v })}
                 expandable
@@ -2337,22 +2227,17 @@ export default function DocumentClassifier() {
                     defaultPrompt={promptDefaults?.date}
                     userPrompt={config.prompt_date}
                     onUserPromptChange={(v) => setConfig({ ...config, prompt_date: v })}
-                    placeholder='z.B.: "Bei Kontoauszuegen das Auszugsdatum nehmen, nicht den Zeitraum"'
+                    placeholder={tr("z.B.: \"Bei Kontoauszuegen das Auszugsdatum nehmen, nicht den Zeitraum\"")}
                   />
                   {/* Datum-Ignorieren-Liste */}
                   <div className="p-3 rounded-lg bg-surface-800/30 border border-surface-700/50 space-y-2">
                     <label className="text-sm text-surface-300 font-medium flex items-center gap-1.5">
-                      <Calendar className="w-3.5 h-3.5 text-amber-400" />
-                      Bekannte Daten ignorieren
-                    </label>
-                    <p className="text-xs text-surface-500">
-                      Daten die nie als Erstelldatum vorgeschlagen werden sollen (z.B. Geburtsdaten).
-                      Format: TT.MM.JJJJ oder JJJJ-MM-TT.
-                    </p>
+                      <Calendar className="w-3.5 h-3.5 text-amber-400" />{tr("Bekannte Daten ignorieren")}</label>
+                    <p className="text-xs text-surface-500">{tr("Daten die nie als Erstelldatum vorgeschlagen werden sollen (z.B. Geburtsdaten). Format: TT.MM.JJJJ oder JJJJ-MM-TT.")}</p>
                     <div className="flex gap-2">
                       <input
                         type="text"
-                        placeholder="z.B. 17.06.1987 oder 1987-06-17, Enter druecken..."
+                        placeholder={tr("z.B. 17.06.1987 oder 1987-06-17, Enter druecken...")}
                         className="input flex-1 text-sm"
                         onKeyDown={(e) => {
                           if (e.key === 'Enter') {
@@ -2376,7 +2261,7 @@ export default function DocumentClassifier() {
                             <button
                               onClick={() => setConfig({ ...config, dates_ignore: (config.dates_ignore || []).filter(x => x !== d) })}
                               className="hover:text-amber-100 ml-0.5"
-                            >&times;</button>
+                            >{tr("×")}</button>
                           </span>
                         ))}
                       </div>
@@ -2388,7 +2273,7 @@ export default function DocumentClassifier() {
               {/* Custom Fields -- aufklappbar */}
               <FieldToggle
                 icon={Hash}
-                label="Custom Fields"
+                label={tr("Custom Fields")}
                 checked={config.enable_custom_fields}
                 onChange={(v) => setConfig({ ...config, enable_custom_fields: v })}
                 expandable
@@ -2400,16 +2285,11 @@ export default function DocumentClassifier() {
                 <div className="ml-8 p-3 rounded-lg bg-surface-800/30 border border-surface-700/50 space-y-3">
                   <div className="flex items-start gap-2 p-2 bg-primary-500/10 border border-primary-500/20 rounded text-xs text-primary-300">
                     <Info className="w-4 h-4 shrink-0 mt-0.5" />
-                    <span>
-                      Aktiviere die Felder, die die KI aus Dokumenten extrahieren soll.
-                      Der Extraktions-Prompt erklaert der KI, was und wie sie suchen soll.
-                    </span>
+                    <span>{tr("Aktiviere die Felder, die die KI aus Dokumenten extrahieren soll. Der Extraktions-Prompt erklaert der KI, was und wie sie suchen soll.")}</span>
                   </div>
 
                   {customFieldMappings.length === 0 && (
-                    <p className="text-xs text-surface-600">
-                      Keine Custom Fields in Paperless gefunden. Erstelle zuerst Felder in Paperless-ngx.
-                    </p>
+                    <p className="text-xs text-surface-600">{tr("Keine Custom Fields in Paperless gefunden. Erstelle zuerst Felder in Paperless-ngx.")}</p>
                   )}
 
                   <div className="space-y-3">
@@ -2431,17 +2311,15 @@ export default function DocumentClassifier() {
                             />
                             <div>
                               <p className="text-sm text-surface-200 font-medium">{mapping.paperless_field_name}</p>
-                              <p className="text-xs text-surface-500">
-                                Typ: {mapping.paperless_field_type}
-                                {mapping.validation_regex && <span className="ml-2 text-primary-400">Validierung aktiv</span>}
+                              <p className="text-xs text-surface-500">{tr("Typ: ")}{mapping.paperless_field_type}
+                                {mapping.validation_regex && <span className="ml-2 text-primary-400">{tr("Validierung aktiv")}</span>}
                               </p>
                             </div>
                           </div>
                           <div className="flex items-center gap-2">
                             {mapping.extraction_prompt && (
                               <span className="text-xs text-primary-400 flex items-center gap-1">
-                                <MessageSquare className="w-3 h-3" /> Prompt
-                              </span>
+                                <MessageSquare className="w-3 h-3" />{tr(" Prompt")}</span>
                             )}
                             <button
                               onClick={() => toggleSection(`cf-${mapping.paperless_field_id}`)}
@@ -2456,54 +2334,50 @@ export default function DocumentClassifier() {
                           <div className="px-3 pb-3 space-y-2 border-t border-surface-700/30 pt-2">
                             <div>
                               <label className="text-xs text-surface-500 flex items-center gap-1">
-                                <MessageSquare className="w-3 h-3" /> Extraktions-Prompt
-                              </label>
+                                <MessageSquare className="w-3 h-3" />{tr(" Extraktions-Prompt")}</label>
                               <textarea
                                 value={mapping.extraction_prompt}
                                 onChange={(e) => updateCustomFieldMapping(mapping.paperless_field_id, 'extraction_prompt', e.target.value)}
                                 className="input mt-0.5 text-sm"
                                 rows={2}
-                                placeholder="Beschreibe, wie die KI dieses Feld extrahieren soll..."
+                                placeholder={tr("Beschreibe, wie die KI dieses Feld extrahieren soll...")}
                               />
                             </div>
                             <div className="grid grid-cols-2 gap-2">
                               <div>
-                                <label className="text-xs text-surface-500">Beispielwerte</label>
+                                <label className="text-xs text-surface-500">{tr("Beispielwerte")}</label>
                                 <input
                                   type="text"
                                   value={mapping.example_values}
                                   onChange={(e) => updateCustomFieldMapping(mapping.paperless_field_id, 'example_values', e.target.value)}
                                   className="input mt-0.5 text-sm"
-                                  placeholder="z.B. RE-2024-001, INV-123"
+                                  placeholder={tr("z.B. RE-2024-001, INV-123")}
                                 />
-                                <p className="text-xs text-surface-600 mt-0.5">Kommagetrennte Beispiele</p>
+                                <p className="text-xs text-surface-600 mt-0.5">{tr("Kommagetrennte Beispiele")}</p>
                               </div>
                               <div>
-                                <label className="text-xs text-surface-500">Validierung (Regex)</label>
+                                <label className="text-xs text-surface-500">{tr("Validierung (Regex)")}</label>
                                 <input
                                   type="text"
                                   value={mapping.validation_regex}
                                   onChange={(e) => updateCustomFieldMapping(mapping.paperless_field_id, 'validation_regex', e.target.value)}
                                   className="input mt-0.5 text-sm font-mono"
-                                  placeholder="z.B. ^RE-\d{4}-\d+$"
+                                  placeholder={tr("z.B. ^RE-\\d{4}-\\d+$")}
                                 />
-                                <p className="text-xs text-surface-600 mt-0.5">Leerlassen = keine Pruefung</p>
+                                <p className="text-xs text-surface-600 mt-0.5">{tr("Leerlassen = keine Pruefung")}</p>
                               </div>
                             </div>
                             <div>
                               <label className="text-xs text-surface-500 flex items-center gap-1">
-                                <XCircle className="w-3 h-3" /> Eigene Werte ignorieren
-                              </label>
+                                <XCircle className="w-3 h-3" />{tr(" Eigene Werte ignorieren")}</label>
                               <input
                                 type="text"
                                 value={mapping.ignore_values}
                                 onChange={(e) => updateCustomFieldMapping(mapping.paperless_field_id, 'ignore_values', e.target.value)}
                                 className="input mt-0.5 text-sm"
-                                placeholder="z.B. DE89370400440532013000, DE12345678901234567890"
+                                placeholder={tr("z.B. DE89370400440532013000, DE12345678901234567890")}
                               />
-                              <p className="text-xs text-surface-600 mt-0.5">
-                                Kommagetrennt. Diese Werte gehoeren dir und werden bei der Extraktion ignoriert (z.B. eigene IBAN).
-                              </p>
+                              <p className="text-xs text-surface-600 mt-0.5">{tr("Kommagetrennt. Diese Werte gehoeren dir und werden bei der Extraktion ignoriert (z.B. eigene IBAN).")}</p>
                             </div>
                           </div>
                         )}
@@ -2518,9 +2392,7 @@ export default function DocumentClassifier() {
                         disabled={customFieldsSaving}
                         className="btn text-sm flex items-center gap-2 bg-surface-700 hover:bg-surface-600 text-surface-200"
                       >
-                        {customFieldsSaving ? <Loader2 className="w-3 h-3 animate-spin" /> : <Save className="w-3 h-3" />}
-                        Felder speichern
-                      </button>
+                        {customFieldsSaving ? <Loader2 className="w-3 h-3 animate-spin" /> : <Save className="w-3 h-3" />}{tr("Felder speichern")}</button>
                     </div>
                   )}
                 </div>
@@ -2530,38 +2402,36 @@ export default function DocumentClassifier() {
 
           {/* Review Mode */}
           <div className="card p-6">
-            <h2 className="text-lg font-semibold text-surface-100 mb-4">Review-Modus</h2>
+            <h2 className="text-lg font-semibold text-surface-100 mb-4">{tr("Review-Modus")}</h2>
             <select
               value={config.review_mode}
               onChange={(e) => setConfig({ ...config, review_mode: e.target.value })}
               className="input"
             >
-              <option value="always">Immer Review vor Anwendung</option>
-              <option value="uncertain_only">Nur bei unsicheren Ergebnissen</option>
-              <option value="auto_apply">Automatisch anwenden</option>
+              <option value="always">{tr("Immer Review vor Anwendung")}</option>
+              <option value="uncertain_only">{tr("Nur bei unsicheren Ergebnissen")}</option>
+              <option value="auto_apply">{tr("Automatisch anwenden")}</option>
             </select>
           </div>
 
           {/* Classification / Status Tags */}
           <div className="card p-6">
-            <h2 className="text-lg font-semibold text-surface-100 mb-1">Status-Tags</h2>
-            <p className="text-xs text-surface-500 mb-4">
-              Optionale Tags, die automatisch in Paperless-ngx gesetzt werden (werden angelegt falls nicht vorhanden).
-            </p>
+            <h2 className="text-lg font-semibold text-surface-100 mb-1">{tr("Status-Tags")}</h2>
+            <p className="text-xs text-surface-500 mb-4">{tr("Optionale Tags, die automatisch in Paperless-ngx gesetzt werden (werden angelegt falls nicht vorhanden).")}</p>
             <div className="space-y-4">
               {/* Klassifiziert */}
               <div className="flex items-center gap-4 p-3 rounded-lg bg-surface-800/50">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-0.5">
-                    <span className="text-sm font-medium text-surface-200">Klassifiziert</span>
-                    <span className="text-xs text-surface-500">– wird gesetzt wenn Klassifizierung angewendet wird</span>
+                    <span className="text-sm font-medium text-surface-200">{tr("Klassifiziert")}</span>
+                    <span className="text-xs text-surface-500">{tr("– wird gesetzt wenn Klassifizierung angewendet wird")}</span>
                   </div>
                   {config.classification_tag_enabled && (
                     <input
                       type="text"
                       value={config.classification_tag_name ?? 'KI-klassifiziert'}
                       onChange={e => setConfig({ ...config, classification_tag_name: e.target.value })}
-                      placeholder="KI-klassifiziert"
+                      placeholder={tr("KI-klassifiziert")}
                       className="input text-sm w-56 mt-1"
                     />
                   )}
@@ -2584,15 +2454,15 @@ export default function DocumentClassifier() {
               <div className="flex items-center gap-4 p-3 rounded-lg bg-surface-800/50">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-0.5">
-                    <span className="text-sm font-medium text-surface-200">Prüfen</span>
-                    <span className="text-xs text-surface-500">– wird gesetzt wenn Dokument in die Prüf-Warteschlange kommt</span>
+                    <span className="text-sm font-medium text-surface-200">{tr("Prüfen")}</span>
+                    <span className="text-xs text-surface-500">{tr("– wird gesetzt wenn Dokument in die Prüf-Warteschlange kommt")}</span>
                   </div>
                   {config.review_tag_enabled && (
                     <input
                       type="text"
                       value={config.review_tag_name ?? 'KI-prüfen'}
                       onChange={e => setConfig({ ...config, review_tag_name: e.target.value })}
-                      placeholder="KI-prüfen"
+                      placeholder={tr("KI-prüfen")}
                       className="input text-sm w-56 mt-1"
                     />
                   )}
@@ -2615,15 +2485,15 @@ export default function DocumentClassifier() {
               <div className="flex items-center gap-4 p-3 rounded-lg bg-surface-800/50">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-0.5">
-                    <span className="text-sm font-medium text-surface-200">Tag-Ideen</span>
-                    <span className="text-xs text-surface-500">– wird gesetzt wenn die KI neue Tag-Vorschläge hat</span>
+                    <span className="text-sm font-medium text-surface-200">{tr("Tag-Ideen")}</span>
+                    <span className="text-xs text-surface-500">{tr("– wird gesetzt wenn die KI neue Tag-Vorschläge hat")}</span>
                   </div>
                   {config.tag_ideas_tag_enabled && (
                     <input
                       type="text"
                       value={config.tag_ideas_tag_name ?? 'KI-tag-ideen'}
                       onChange={e => setConfig({ ...config, tag_ideas_tag_name: e.target.value })}
-                      placeholder="KI-tag-ideen"
+                      placeholder={tr("KI-tag-ideen")}
                       className="input text-sm w-56 mt-1"
                     />
                   )}
@@ -2655,9 +2525,7 @@ export default function DocumentClassifier() {
                 <Loader2 className="w-4 h-4 animate-spin" />
               ) : (
                 <Check className="w-4 h-4" />
-              )}
-              Einstellungen speichern
-            </button>
+              )}{tr("Einstellungen speichern")}</button>
           </div>
         </div>
       )}
@@ -2669,8 +2537,8 @@ export default function DocumentClassifier() {
           <div className="card p-6">
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h2 className="text-lg font-semibold text-surface-100">Auto-Klassifizierung</h2>
-                <p className="text-xs text-surface-500 mt-0.5">Klassifiziert neue Dokumente automatisch im Hintergrund</p>
+                <h2 className="text-lg font-semibold text-surface-100">{tr("Auto-Klassifizierung")}</h2>
+                <p className="text-xs text-surface-500 mt-0.5">{tr("Klassifiziert neue Dokumente automatisch im Hintergrund")}</p>
               </div>
               <div className="flex items-center gap-3 flex-wrap">
                 {autoClassifyStatus?.enabled && (
@@ -2680,11 +2548,10 @@ export default function DocumentClassifier() {
                       borderColor: autoClassifyStatus.filter_mode === 'tag' ? 'rgba(168,85,247,0.3)' : 'rgba(59,130,246,0.3)',
                       color: autoClassifyStatus.filter_mode === 'tag' ? 'rgb(192,132,252)' : 'rgb(147,197,253)',
                     }}>
-                      {autoClassifyStatus.filter_mode === 'tag' ? 'Tag-Modus' : 'DB-Modus'}
+                      {autoClassifyStatus.filter_mode === 'tag' ? tr("Tag-Modus") : tr("DB-Modus")}
                     </span>
                     <span className="text-xs text-surface-500">
-                      {autoClassifyStatus.processed} angewendet · {autoClassifyStatus.reviewed} zur Prüfung · {autoClassifyStatus.errors} Fehler
-                    </span>
+                      {autoClassifyStatus.processed}{tr(" angewendet · ")}{autoClassifyStatus.reviewed}{tr(" zur Prüfung · ")}{autoClassifyStatus.errors}{tr(" Fehler")}</span>
                   </div>
                 )}
                 {!autoClassifyStatus?.enabled && (
@@ -2698,13 +2565,13 @@ export default function DocumentClassifier() {
                       }}
                       className="input text-xs py-1.5 px-2"
                     >
-                      <option value="db">Neue Dokumente (DB-Modus)</option>
-                      <option value="tag">Nur mit Tag (Tag-Modus)</option>
+                      <option value="db">{tr("Neue Dokumente (DB-Modus)")}</option>
+                      <option value="tag">{tr("Nur mit Tag (Tag-Modus)")}</option>
                     </select>
                     <p className="text-[10px] text-surface-600 max-w-xs">
                       {autoFilterMode === 'db'
-                        ? 'Klassifiziert nur Dokumente die noch nie verarbeitet wurden.'
-                        : 'Klassifiziert nur Dokumente mit dem konfigurierten Tag – auch bereits verarbeitete (Neuklassifizierung).'}
+                        ? tr("Klassifiziert nur Dokumente die noch nie verarbeitet wurden.")
+                        : tr("Klassifiziert nur Dokumente mit dem konfigurierten Tag – auch bereits verarbeitete (Neuklassifizierung).")}
                     </p>
                   </div>
                 )}
@@ -2713,18 +2580,14 @@ export default function DocumentClassifier() {
                   <div className="w-full mt-2 p-3 bg-purple-500/5 border border-purple-500/20 rounded-lg space-y-3">
                     {/* Auslöser-Tag */}
                     <div>
-                      <p className="text-xs font-medium text-purple-300 mb-1">
-                        Auslöser-Tag wählen
-                      </p>
-                      <p className="text-[10px] text-surface-500 mb-2">
-                        Nur Dokumente mit diesem Tag werden klassifiziert. Der Tag wird nach der Klassifizierung automatisch entfernt.
-                      </p>
+                      <p className="text-xs font-medium text-purple-300 mb-1">{tr("Auslöser-Tag wählen")}</p>
+                      <p className="text-[10px] text-surface-500 mb-2">{tr("Nur Dokumente mit diesem Tag werden klassifiziert. Der Tag wird nach der Klassifizierung automatisch entfernt.")}</p>
                       {(config.auto_classify_only_tag_ids || []).filter(id => id > 0).length === 0 && (
-                        <p className="text-xs text-amber-400 mb-2">Wähle einen Auslöser-Tag um starten zu können.</p>
+                        <p className="text-xs text-amber-400 mb-2">{tr("Wähle einen Auslöser-Tag um starten zu können.")}</p>
                       )}
                       <div className="max-h-28 overflow-y-auto space-y-1 bg-surface-900/30 rounded-lg p-2">
                         {paperlessTags.length === 0 ? (
-                          <p className="text-xs text-surface-500 text-center py-1">Tags werden geladen...</p>
+                          <p className="text-xs text-surface-500 text-center py-1">{tr("Tags werden geladen...")}</p>
                         ) : (
                           paperlessTags.map(tag => {
                             const selected = (config.auto_classify_only_tag_ids || []).includes(tag.id)
@@ -2753,9 +2616,8 @@ export default function DocumentClassifier() {
 
                     {/* Status-Tags — direkt ein/ausschaltbar */}
                     <div className="pt-2 border-t border-purple-500/10">
-                      <p className="text-[10px] text-surface-500 mb-1.5">
-                        Status-Tags (klicken zum Ein-/Ausschalten · Tag-Namen anpassen unter{' '}
-                        <button onClick={() => setActiveTab('settings')} className="text-primary-400 hover:text-primary-300 underline underline-offset-2">Einstellungen</button>):
+                      <p className="text-[10px] text-surface-500 mb-1.5">{tr("Status-Tags (klicken zum Ein-/Ausschalten · Tag-Namen anpassen unter")}{' '}
+                        <button onClick={() => setActiveTab('settings')} className="text-primary-400 hover:text-primary-300 underline underline-offset-2">{tr("Einstellungen")}</button>):
                       </p>
                       <div className="flex flex-wrap gap-2 text-[10px]">
                         <button
@@ -2766,8 +2628,7 @@ export default function DocumentClassifier() {
                               ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20'
                               : 'bg-surface-800 text-surface-500 border-surface-700 hover:border-surface-500'
                           )}
-                        >
-                          Fertig-Tag: {config.classification_tag_enabled ? `"${config.classification_tag_name || 'KI-klassifiziert'}"` : 'aus'}
+                        >{tr("Fertig-Tag: ")}{config.classification_tag_enabled ? `"${config.classification_tag_name || 'KI-klassifiziert'}"` : tr("aus")}
                         </button>
                         <button
                           onClick={() => autoSaveConfigField('review_tag_enabled', !config.review_tag_enabled)}
@@ -2777,8 +2638,7 @@ export default function DocumentClassifier() {
                               ? 'bg-amber-500/10 text-amber-400 border-amber-500/20 hover:bg-amber-500/20'
                               : 'bg-surface-800 text-surface-500 border-surface-700 hover:border-surface-500'
                           )}
-                        >
-                          Prüf-Tag: {config.review_tag_enabled ? `"${config.review_tag_name || 'KI-prüfen'}"` : 'aus'}
+                        >{tr("Prüf-Tag: ")}{config.review_tag_enabled ? `"${config.review_tag_name || 'KI-prüfen'}"` : tr("aus")}
                         </button>
                         <button
                           onClick={() => autoSaveConfigField('tag_ideas_tag_enabled', !config.tag_ideas_tag_enabled)}
@@ -2788,12 +2648,11 @@ export default function DocumentClassifier() {
                               ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20 hover:bg-cyan-500/20'
                               : 'bg-surface-800 text-surface-500 border-surface-700 hover:border-surface-500'
                           )}
-                        >
-                          Tag-Ideen: {config.tag_ideas_tag_enabled ? `"${config.tag_ideas_tag_name || 'KI-tag-ideen'}"` : 'aus'}
+                        >{tr("Tag-Ideen: ")}{config.tag_ideas_tag_enabled ? `"${config.tag_ideas_tag_name || 'KI-tag-ideen'}"` : tr("aus")}
                         </button>
                       </div>
                       {config.auto_classify_mode === 'review' && !config.review_tag_enabled && (
-                        <p className="text-[10px] text-amber-400 mt-1.5">Empfehlung: Im Prüf-Modus den Prüf-Tag aktivieren, damit du die Dokumente in Paperless findest.</p>
+                        <p className="text-[10px] text-amber-400 mt-1.5">{tr("Empfehlung: Im Prüf-Modus den Prüf-Tag aktivieren, damit du die Dokumente in Paperless findest.")}</p>
                       )}
                     </div>
                   </div>
@@ -2810,7 +2669,7 @@ export default function DocumentClassifier() {
                         : 'bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30 border border-emerald-500/30'
                   )}
                 >
-                  {autoClassifyStatus?.enabled ? 'Stoppen' : 'Starten'}
+                  {autoClassifyStatus?.enabled ? tr("Stoppen") : tr("Starten")}
                 </button>
               </div>
             </div>
@@ -2818,7 +2677,7 @@ export default function DocumentClassifier() {
             {autoClassifyStatus?.running && autoClassifyStatus.current_doc && (
               <div className="flex items-center gap-2 p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg">
                 <Loader2 className="w-4 h-4 text-amber-400 animate-spin" />
-                <span className="text-sm text-amber-300">Klassifiziert Dokument #{autoClassifyStatus.current_doc}...</span>
+                <span className="text-sm text-amber-300">{tr("Klassifiziert Dokument #")}{autoClassifyStatus.current_doc}...</span>
               </div>
             )}
 
@@ -2826,24 +2685,19 @@ export default function DocumentClassifier() {
             {config && (
               <>
                 <div className="flex items-center gap-4 mt-3 pt-3 border-t border-surface-700/40">
-                  <label className="flex items-center gap-2 text-sm text-surface-300">
-                    Intervall:
-                    <input
+                  <label className="flex items-center gap-2 text-sm text-surface-300">{tr("Intervall:")}<input
                       type="number" min={1} max={60}
                       value={config.auto_classify_interval}
                       onChange={e => setConfig({ ...config, auto_classify_interval: parseInt(e.target.value) || 5 })}
                       className="input w-16 text-sm text-center"
-                    /> Min
-                  </label>
-                  <label className="flex items-center gap-2 text-sm text-surface-300">
-                    Modus:
-                    <select
+                    />{tr(" Min")}</label>
+                  <label className="flex items-center gap-2 text-sm text-surface-300">{tr("Modus:")}<select
                       value={config.auto_classify_mode}
                       onChange={e => setConfig({ ...config, auto_classify_mode: e.target.value })}
                       className="input text-sm"
                     >
-                      <option value="review">Immer prüfen</option>
-                      <option value="auto_apply">Auto-Anwenden (nur unsichere prüfen)</option>
+                      <option value="review">{tr("Immer prüfen")}</option>
+                      <option value="auto_apply">{tr("Auto-Anwenden (nur unsichere prüfen)")}</option>
                     </select>
                   </label>
                 </div>
@@ -2852,20 +2706,17 @@ export default function DocumentClassifier() {
                 <div className="mt-3 pt-3 border-t border-surface-700/40">
                   <div className="flex items-center justify-between mb-2">
                     <div>
-                      <p className="text-sm font-medium text-surface-200">Dokumente mit diesen Tags überspringen</p>
-                      <p className="text-xs text-surface-500 mt-0.5">
-                        Dokumente die einen dieser Tags haben, werden von der Auto-Klassifizierung komplett ignoriert (z.B. wenn sie von einem n8n-Workflow bereits klassifiziert wurden).
-                      </p>
+                      <p className="text-sm font-medium text-surface-200">{tr("Dokumente mit diesen Tags überspringen")}</p>
+                      <p className="text-xs text-surface-500 mt-0.5">{tr("Dokumente die einen dieser Tags haben, werden von der Auto-Klassifizierung komplett ignoriert (z.B. wenn sie von einem n8n-Workflow bereits klassifiziert wurden).")}</p>
                     </div>
                     {(config.auto_classify_skip_tag_ids || []).length > 0 && (
                       <span className="text-xs px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 border border-amber-500/30">
-                        {config.auto_classify_skip_tag_ids.length} aktiv
-                      </span>
+                        {config.auto_classify_skip_tag_ids.length}{tr(" aktiv")}</span>
                     )}
                   </div>
                   <div className="max-h-40 overflow-y-auto space-y-1 bg-surface-900/30 rounded-lg p-2 border border-surface-700/30">
                     {paperlessTags.length === 0 ? (
-                      <p className="text-xs text-surface-500 text-center py-2">Keine Tags gefunden</p>
+                      <p className="text-xs text-surface-500 text-center py-2">{tr("Keine Tags gefunden")}</p>
                     ) : (
                       paperlessTags.map(tag => {
                         const skip = (config.auto_classify_skip_tag_ids || []).includes(tag.id)
@@ -2907,28 +2758,24 @@ export default function DocumentClassifier() {
           <div className="card p-6">
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h2 className="text-lg font-semibold text-surface-100">Prüf-Warteschlange</h2>
+                <h2 className="text-lg font-semibold text-surface-100">{tr("Prüf-Warteschlange")}</h2>
                 <p className="text-xs text-surface-500 mt-0.5">
-                  {reviewQueue.length} Dokument{reviewQueue.length !== 1 ? 'e' : ''} zur manuellen Prüfung
-                </p>
+                  {reviewQueue.length}{tr(" Dokument")}{reviewQueue.length !== 1 ? 'e' : ''}{tr(" zur manuellen Prüfung")}</p>
               </div>
               <div className="flex items-center gap-2">
                 <button onClick={loadReviewQueue} className="btn btn-sm bg-surface-700 hover:bg-surface-600 text-surface-300 text-xs">
-                  <RefreshCw className="w-3 h-3 mr-1" /> Aktualisieren
-                </button>
+                  <RefreshCw className="w-3 h-3 mr-1" />{tr(" Aktualisieren")}</button>
                 {reviewQueue.length > 0 && (
                   <button
                     onClick={async () => {
-                      if (!confirm(`Alle ${reviewQueue.length} Einträge aus der Warteschlange entfernen?`)) return
+                      if (!confirm(tr("Alle {length} Einträge aus der Warteschlange entfernen?", { length: reviewQueue.length }))) return
                       try {
                         await api.fetchJson('/classifier/review-queue/clear', { method: 'POST' })
                         loadReviewQueue()
                       } catch {}
                     }}
                     className="btn btn-sm bg-red-900/30 hover:bg-red-900/50 text-red-300 border border-red-800/30 text-xs"
-                  >
-                    Alle verwerfen
-                  </button>
+                  >{tr("Alle verwerfen")}</button>
                 )}
               </div>
             </div>
@@ -2938,7 +2785,7 @@ export default function DocumentClassifier() {
                 <Loader2 className="w-6 h-6 animate-spin text-primary-400" />
               </div>
             ) : reviewQueue.length === 0 ? (
-              <p className="text-surface-500 text-center py-8">Keine Dokumente zur Prüfung.</p>
+              <p className="text-surface-500 text-center py-8">{tr("Keine Dokumente zur Prüfung.")}</p>
             ) : (
               <div className="space-y-1.5">
                 {reviewQueue.map(entry => {
@@ -2968,7 +2815,7 @@ export default function DocumentClassifier() {
                         <div className="min-w-0">
                           <p className="text-surface-200 text-sm font-medium truncate">
                             <span className="text-surface-500 mr-1">#{entry.document_id}</span>
-                            {entry.document_title || 'Unbekannt'}
+                            {entry.document_title || tr("Unbekannt")}
                           </p>
                           <p className="text-xs text-amber-400/70 mt-0.5 truncate">{entry.error_message}</p>
                         </div>
@@ -2997,21 +2844,16 @@ export default function DocumentClassifier() {
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <h2 className="text-lg font-semibold text-surface-100 flex items-center gap-2">
-                    <Tags className="w-4 h-4 text-cyan-400" />
-                    Vorgeschlagene neue Tags
-                  </h2>
+                    <Tags className="w-4 h-4 text-cyan-400" />{tr("Vorgeschlagene neue Tags")}</h2>
                   <p className="text-xs text-surface-500 mt-0.5">
-                    {tagIdeasStats.unique_tags} verschiedene Tags &middot; {tagIdeasStats.total_ideas} Vorschläge &middot; {tagIdeasStats.documents_with_ideas} Dokumente
-                  </p>
+                    {tagIdeasStats.unique_tags}{tr(" verschiedene Tags · ")}{tagIdeasStats.total_ideas}{tr(" Vorschläge · ")}{tagIdeasStats.documents_with_ideas}{tr(" Dokumente")}</p>
                 </div>
                 <button
                   onClick={loadTagIdeas}
                   disabled={tagIdeasLoading}
                   className="btn text-xs flex items-center gap-1.5 bg-surface-700 hover:bg-surface-600 text-surface-300"
                 >
-                  <RefreshCw className={clsx('w-3 h-3', tagIdeasLoading && 'animate-spin')} />
-                  Aktualisieren
-                </button>
+                  <RefreshCw className={clsx('w-3 h-3', tagIdeasLoading && 'animate-spin')} />{tr("Aktualisieren")}</button>
               </div>
               <div className="space-y-1.5">
                 {tagIdeasStats.top_tags.map((tag: any, i: number) => {
@@ -3024,8 +2866,7 @@ export default function DocumentClassifier() {
                         <div className="flex items-center gap-2 mb-0.5">
                           <span className="text-sm text-surface-200 truncate">{tag.name}</span>
                           <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 shrink-0">
-                            {tag.count}x vorgeschlagen
-                          </span>
+                            {tag.count}{tr("x vorgeschlagen")}</span>
                         </div>
                         <div className="w-full bg-surface-700/40 rounded-full h-1.5">
                           <div
@@ -3046,9 +2887,7 @@ export default function DocumentClassifier() {
                             } catch { /* ignore */ }
                           }}
                           className="px-2 py-1 rounded text-[11px] font-medium bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30 border border-emerald-500/30 transition-colors whitespace-nowrap"
-                        >
-                          Erstellen &amp; Zuweisen
-                        </button>
+                        >{tr("Erstellen & Zuweisen")}</button>
                         <button
                           onClick={async () => {
                             try {
@@ -3060,9 +2899,7 @@ export default function DocumentClassifier() {
                             } catch { /* ignore */ }
                           }}
                           className="px-2 py-1 rounded text-[11px] font-medium bg-surface-700 text-surface-400 hover:bg-surface-600 hover:text-surface-300 transition-colors"
-                        >
-                          Verwerfen
-                        </button>
+                        >{tr("Verwerfen")}</button>
                       </div>
                     </div>
                   )
@@ -3073,13 +2910,13 @@ export default function DocumentClassifier() {
 
           {/* Document List */}
           <div className="card p-6">
-            <h2 className="text-lg font-semibold text-surface-100 mb-4">Dokumente mit Tag-Ideen</h2>
+            <h2 className="text-lg font-semibold text-surface-100 mb-4">{tr("Dokumente mit Tag-Ideen")}</h2>
             {tagIdeasLoading ? (
               <div className="flex justify-center py-8">
                 <Loader2 className="w-6 h-6 animate-spin text-primary-400" />
               </div>
             ) : tagIdeas.length === 0 ? (
-              <p className="text-surface-500 text-center py-8">Keine neuen Tag-Vorschläge vorhanden.</p>
+              <p className="text-surface-500 text-center py-8">{tr("Keine neuen Tag-Vorschläge vorhanden.")}</p>
             ) : (
               <div className="space-y-2">
                 {tagIdeas.map(entry => (
@@ -3089,7 +2926,7 @@ export default function DocumentClassifier() {
                       <div className="min-w-0 flex-1">
                         <p className="text-surface-200 text-sm font-medium truncate">
                           <span className="text-surface-500 mr-1">#{entry.document_id}</span>
-                          {entry.document_title || 'Unbekannt'}
+                          {entry.document_title || tr("Unbekannt")}
                         </p>
                         <span className="text-surface-600 text-[11px]">
                           {entry.created_at ? new Date(entry.created_at).toLocaleString('de-DE', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : ''}
@@ -3108,13 +2945,13 @@ export default function DocumentClassifier() {
                       {entry.result_json && (
                         <div className="grid grid-cols-2 gap-2 text-xs">
                           {entry.result_json.correspondent && (
-                            <div><span className="text-surface-500">Korrespondent:</span> <span className="text-surface-300">{entry.result_json.correspondent}</span></div>
+                            <div><span className="text-surface-500">{tr("Korrespondent:")}</span> <span className="text-surface-300">{entry.result_json.correspondent}</span></div>
                           )}
                           {entry.result_json.document_type && (
-                            <div><span className="text-surface-500">Typ:</span> <span className="text-surface-300">{entry.result_json.document_type}</span></div>
+                            <div><span className="text-surface-500">{tr("Typ:")}</span> <span className="text-surface-300">{entry.result_json.document_type}</span></div>
                           )}
                           {entry.result_json.tags && entry.result_json.tags.length > 0 && (
-                            <div className="col-span-2"><span className="text-surface-500">Bestehende Tags:</span> <span className="text-surface-300">{entry.result_json.tags.join(', ')}</span></div>
+                            <div className="col-span-2"><span className="text-surface-500">{tr("Bestehende Tags:")}</span> <span className="text-surface-300">{entry.result_json.tags.join(', ')}</span></div>
                           )}
                         </div>
                       )}
@@ -3127,15 +2964,11 @@ export default function DocumentClassifier() {
                               <button
                                 onClick={() => approveTagIdea(entry.id, tag)}
                                 className="px-3 py-1 rounded text-xs font-medium bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30 border border-emerald-500/30 transition-colors"
-                              >
-                                Erstellen &amp; Zuweisen
-                              </button>
+                              >{tr("Erstellen & Zuweisen")}</button>
                               <button
                                 onClick={() => dismissTagIdea(entry.id, tag)}
                                 className="px-3 py-1 rounded text-xs font-medium bg-surface-700 text-surface-400 hover:bg-surface-600 hover:text-surface-300 transition-colors"
-                              >
-                                Verwerfen
-                              </button>
+                              >{tr("Verwerfen")}</button>
                             </div>
                           </div>
                         ))}
@@ -3144,9 +2977,7 @@ export default function DocumentClassifier() {
                         <button
                           onClick={() => approveAllTagIdeas(entry.id)}
                           className="w-full py-1.5 rounded text-xs font-medium bg-cyan-500/10 text-cyan-300 hover:bg-cyan-500/20 border border-cyan-500/20 transition-colors"
-                        >
-                          Alle Tags erstellen &amp; zuweisen
-                        </button>
+                        >{tr("Alle Tags erstellen & zuweisen")}</button>
                       )}
                       {/* Bestehenden Tag zuweisen */}
                       <TagIdeaAssignExisting entryId={entry.id} paperlessTags={paperlessTags} onAssigned={loadTagIdeas} />
@@ -3172,25 +3003,25 @@ export default function DocumentClassifier() {
               {/* Key Metrics */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 <StatCard
-                  label="Dokumente gesamt"
+                  label={tr("Dokumente gesamt")}
                   value={stats.total_documents_paperless.toLocaleString('de-DE')}
                   sub="in Paperless"
                   color="surface"
                 />
                 <StatCard
-                  label="Klassifiziert"
+                  label={tr("Klassifiziert")}
                   value={stats.unique_applied.toLocaleString('de-DE')}
                   sub={`von ${stats.total_documents_paperless} (${stats.total_documents_paperless > 0 ? Math.round(stats.unique_applied / stats.total_documents_paperless * 100) : 0}%)`}
                   color="emerald"
                 />
                 <StatCard
-                  label="Noch offen"
+                  label={tr("Noch offen")}
                   value={stats.remaining.toLocaleString('de-DE')}
                   sub="nicht klassifiziert"
                   color="amber"
                 />
                 <StatCard
-                  label="Cloud-Kosten"
+                  label={tr("Cloud-Kosten")}
                   value={stats.total_cost_usd > 0 ? `$${stats.total_cost_usd.toFixed(4)}` : '$0.0000'}
                   sub={(() => {
                     const cloudProviders = stats.by_provider.filter(p => p.provider === 'openai' && p.cost > 0)
@@ -3208,7 +3039,7 @@ export default function DocumentClassifier() {
               {stats.total_documents_paperless > 0 && (
                 <div className="card p-4">
                   <div className="flex justify-between text-xs text-surface-400 mb-2">
-                    <span>Fortschritt</span>
+                    <span>{tr("Fortschritt")}</span>
                     <span>{stats.unique_applied} / {stats.total_documents_paperless}</span>
                   </div>
                   <div className="w-full bg-surface-700/50 rounded-full h-3">
@@ -3223,30 +3054,30 @@ export default function DocumentClassifier() {
               {/* Run Stats + Provider Breakdown */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="card p-4">
-                  <h3 className="text-sm font-semibold text-surface-300 mb-3">Ausfuehrungen</h3>
+                  <h3 className="text-sm font-semibold text-surface-300 mb-3">{tr("Ausfuehrungen")}</h3>
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
-                      <span className="text-surface-400">Gesamt-Runs</span>
+                      <span className="text-surface-400">{tr("Gesamt-Runs")}</span>
                       <span className="text-surface-200 font-mono">{stats.total_runs}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-surface-400">Angewendet</span>
+                      <span className="text-surface-400">{tr("Angewendet")}</span>
                       <span className="text-emerald-400 font-mono">{stats.total_applied}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-surface-400">Fehler</span>
+                      <span className="text-surface-400">{tr("Fehler")}</span>
                       <span className={clsx('font-mono', stats.total_errors > 0 ? 'text-red-400' : 'text-surface-500')}>{stats.total_errors}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-surface-400">Durchschn. Dauer</span>
+                      <span className="text-surface-400">{tr("Durchschn. Dauer")}</span>
                       <span className="text-surface-200 font-mono">{stats.avg_duration_seconds}s</span>
                     </div>
                   </div>
                 </div>
                 <div className="card p-4">
-                  <h3 className="text-sm font-semibold text-surface-300 mb-3">Pro Provider/Modell</h3>
+                  <h3 className="text-sm font-semibold text-surface-300 mb-3">{tr("Pro Provider/Modell")}</h3>
                   {stats.by_provider.length === 0 ? (
-                    <p className="text-xs text-surface-500">Noch keine Daten</p>
+                    <p className="text-xs text-surface-500">{tr("Noch keine Daten")}</p>
                   ) : (
                     <div className="space-y-2.5 text-sm">
                       {stats.by_provider.map(p => (
@@ -3259,7 +3090,7 @@ export default function DocumentClassifier() {
                       p.provider === 'openrouter' ? 'bg-violet-500/20 text-violet-400' :
                               'bg-emerald-500/20 text-emerald-400'
                             )}>
-                              {p.provider === 'ollama' ? 'Lokal' : 'Cloud'}
+                              {p.provider === 'ollama' ? tr("Lokal") : tr("Cloud")}
                             </span>
                             <span className="text-surface-200 text-xs font-mono">{p.model || p.provider}</span>
                           </div>
@@ -3268,7 +3099,7 @@ export default function DocumentClassifier() {
                             <span className="text-surface-500">{p.avg_duration}s</span>
                             {p.cost > 0
                               ? <span className="text-amber-400 font-mono">${p.cost.toFixed(4)}</span>
-                              : <span className="text-emerald-400 font-mono">0\u20ac</span>
+                              : <span className="text-emerald-400 font-mono">{tr("0\\u20ac")}</span>
                             }
                           </div>
                         </div>
@@ -3284,8 +3115,8 @@ export default function DocumentClassifier() {
           <div className="card p-6">
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h2 className="text-lg font-semibold text-surface-100">Verlauf</h2>
-                <p className="text-xs text-surface-500 mt-0.5">Klicken zum Anschauen &amp; Nachbessern</p>
+                <h2 className="text-lg font-semibold text-surface-100">{tr("Verlauf")}</h2>
+                <p className="text-xs text-surface-500 mt-0.5">{tr("Klicken zum Anschauen & Nachbessern")}</p>
               </div>
               <div className="flex items-center gap-2">
                 <button
@@ -3293,9 +3124,7 @@ export default function DocumentClassifier() {
                   disabled={historyLoading || statsLoading}
                   className="btn text-xs flex items-center gap-1.5 bg-surface-700 hover:bg-surface-600 text-surface-300"
                 >
-                  <RefreshCw className={clsx('w-3 h-3', (historyLoading || statsLoading) && 'animate-spin')} />
-                  Aktualisieren
-                </button>
+                  <RefreshCw className={clsx('w-3 h-3', (historyLoading || statsLoading) && 'animate-spin')} />{tr("Aktualisieren")}</button>
               </div>
             </div>
             {historyLoading ? (
@@ -3303,7 +3132,7 @@ export default function DocumentClassifier() {
                 <Loader2 className="w-6 h-6 animate-spin text-primary-400" />
               </div>
             ) : history.length === 0 ? (
-              <p className="text-surface-500 text-center py-8">Noch keine Klassifizierungen durchgefuehrt.</p>
+              <p className="text-surface-500 text-center py-8">{tr("Noch keine Klassifizierungen durchgefuehrt.")}</p>
             ) : (
               <div className="space-y-1.5">
                 {history.map(entry => {
@@ -3329,7 +3158,7 @@ export default function DocumentClassifier() {
                           ? 'bg-surface-800/50 hover:bg-surface-700/70 cursor-pointer'
                           : 'bg-surface-800/30 cursor-not-allowed opacity-60'
                       )}
-                      title={entry.result_json ? 'Klicken um Ergebnis anzuschauen und zu bearbeiten' : 'Kein gespeichertes Ergebnis'}
+                      title={entry.result_json ? tr("Klicken um Ergebnis anzuschauen und zu bearbeiten") : tr("Kein gespeichertes Ergebnis")}
                     >
                       {/* Status dot */}
                       <div className={clsx(
@@ -3344,7 +3173,7 @@ export default function DocumentClassifier() {
                       <div className="min-w-0 flex-1">
                         <p className="text-surface-200 text-sm font-medium truncate">
                           <span className="text-surface-500 mr-1">#{entry.document_id}</span>
-                          {entry.document_title || 'Unbekannt'}
+                          {entry.document_title || tr("Unbekannt")}
                         </p>
                         <div className="flex items-center gap-2 mt-0.5">
                           <span className={clsx(
@@ -3365,8 +3194,7 @@ export default function DocumentClassifier() {
                       <div className="flex items-center gap-2 shrink-0">
                         <div className="flex flex-col items-end gap-0.5 max-w-[280px]">
                           {isReview && (
-                            <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                              Prüfen{entry.error_message ? `: ${entry.error_message.substring(0, 40)}` : ''}
+                            <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30">{tr("Prüfen")}{entry.error_message ? `: ${entry.error_message.substring(0, 40)}` : ''}
                             </span>
                           )}
                           {(hasNewCorr || (corrChanged && !hasNewCorr)) && (
@@ -3385,17 +3213,15 @@ export default function DocumentClassifier() {
                             </span>
                           )}
                           {dtChanged && (
-                            <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 truncate max-w-full">
-                              Typ: {rj.document_type}
+                            <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 truncate max-w-full">{tr("Typ: ")}{rj.document_type}
                             </span>
                           )}
                           {spChanged && (
-                            <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-teal-500/20 text-teal-300 border border-teal-500/30 truncate max-w-full">
-                              Pfad: {rj.storage_path_name}
+                            <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-teal-500/20 text-teal-300 border border-teal-500/30 truncate max-w-full">{tr("Pfad: ")}{rj.storage_path_name}
                             </span>
                           )}
                           {!hasBadges && entry.status === 'applied' && (
-                            <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-emerald-500/10 text-emerald-500/60 border border-emerald-500/20">OK</span>
+                            <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-emerald-500/10 text-emerald-500/60 border border-emerald-500/20">{tr("OK")}</span>
                           )}
                         </div>
                         {entry.result_json && (
@@ -3415,12 +3241,9 @@ export default function DocumentClassifier() {
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <h2 className="text-lg font-semibold text-surface-100 flex items-center gap-2">
-                    <Tags className="w-4 h-4 text-primary-400" />
-                    Tag-Statistik
-                  </h2>
+                    <Tags className="w-4 h-4 text-primary-400" />{tr("Tag-Statistik")}</h2>
                   <p className="text-xs text-surface-500 mt-0.5">
-                    {tagStats.total_unique_tags} verschiedene Tags &middot; {tagStats.total_tag_assignments.toLocaleString('de-DE')} Zuweisungen &middot; {tagStats.total_new_tags_created} neue erstellt
-                  </p>
+                    {tagStats.total_unique_tags}{tr(" verschiedene Tags · ")}{tagStats.total_tag_assignments.toLocaleString('de-DE')}{tr(" Zuweisungen · ")}{tagStats.total_new_tags_created}{tr(" neue erstellt")}</p>
                 </div>
               </div>
               <div className="space-y-1.5">
@@ -3435,8 +3258,7 @@ export default function DocumentClassifier() {
                           <span className="text-sm text-surface-200 truncate">{tag.name}</span>
                           {tag.new_count > 0 && (
                             <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30 shrink-0">
-                              {tag.new_count}x neu
-                            </span>
+                              {tag.new_count}{tr("x neu")}</span>
                           )}
                         </div>
                         <div className="w-full bg-surface-700/40 rounded-full h-1.5">
@@ -3448,7 +3270,7 @@ export default function DocumentClassifier() {
                       </div>
                       <span className="text-xs font-mono text-surface-400 shrink-0 w-8 text-right">{tag.count}x</span>
                       {tag.applied_count > 0 && tag.applied_count !== tag.count && (
-                        <span className="text-xs font-mono text-emerald-500 shrink-0 w-8 text-right" title="davon angewendet">
+                        <span className="text-xs font-mono text-emerald-500 shrink-0 w-8 text-right" title={tr("davon angewendet")}>
                           ✓{tag.applied_count}
                         </span>
                       )}
@@ -3482,22 +3304,17 @@ function PromptSection({ defaultPrompt, userPrompt, onUserPromptChange, placehol
     )}>
       <div className="flex items-center justify-between">
         <label className="text-xs text-surface-400 flex items-center gap-1 font-medium">
-          <MessageSquare className="w-3 h-3" /> Anweisung (direkt bearbeitbar)
-        </label>
+          <MessageSquare className="w-3 h-3" />{tr(" Anweisung (direkt bearbeitbar)")}</label>
         <div className="flex items-center gap-2">
           {isCustomized && (
-            <span className="text-xs px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-400 border border-amber-500/30">
-              Angepasst
-            </span>
+            <span className="text-xs px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-400 border border-amber-500/30">{tr("Angepasst")}</span>
           )}
           {isCustomized && defaultPrompt && (
             <button
               onClick={() => onUserPromptChange('')}
               className="text-xs text-surface-500 hover:text-surface-300 underline transition-colors"
-              title="Auf Standard zuruecksetzen"
-            >
-              Zuruecksetzen
-            </button>
+              title={tr("Auf Standard zuruecksetzen")}
+            >{tr("Zuruecksetzen")}</button>
           )}
         </div>
       </div>
@@ -3513,8 +3330,8 @@ function PromptSection({ defaultPrompt, userPrompt, onUserPromptChange, placehol
       />
       <p className="text-xs text-surface-600">
         {isCustomized
-          ? 'Deine angepasste Version wird verwendet. Klicke "Zuruecksetzen" fuer den Standard.'
-          : 'Standard-Anweisung aktiv. Direkt bearbeiten um anzupassen.'
+          ? tr("Deine angepasste Version wird verwendet. Klicke \"Zuruecksetzen\" fuer den Standard.")
+          : tr("Standard-Anweisung aktiv. Direkt bearbeiten um anzupassen.")
         }
       </p>
     </div>
@@ -3554,30 +3371,30 @@ function BenchmarkColumn({ title, provider, accent }: {
           <>
             {r.title && (
               <div className="p-2 rounded bg-surface-800/50">
-                <p className="text-xs text-surface-500 mb-0.5">Titel</p>
+                <p className="text-xs text-surface-500 mb-0.5">{tr("Titel")}</p>
                 <p className="text-surface-200 text-sm font-medium">{r.title}</p>
               </div>
             )}
             {r.correspondent && (
               <div className="p-2 rounded bg-surface-800/50">
-                <p className="text-xs text-surface-500 mb-0.5">Korrespondent</p>
+                <p className="text-xs text-surface-500 mb-0.5">{tr("Korrespondent")}</p>
                 <div className="flex items-center gap-2">
                   <p className="text-surface-200 text-sm">{r.correspondent}</p>
                   {r.correspondent_is_new && (
-                    <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30">Neu</span>
+                    <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30">{tr("Neu")}</span>
                   )}
                 </div>
               </div>
             )}
             {r.document_type && (
               <div className="p-2 rounded bg-surface-800/50">
-                <p className="text-xs text-surface-500 mb-0.5">Dokumenttyp</p>
+                <p className="text-xs text-surface-500 mb-0.5">{tr("Dokumenttyp")}</p>
                 <p className="text-surface-200 text-sm">{r.document_type}</p>
               </div>
             )}
             {r.created_date && (
               <div className="p-2 rounded bg-surface-800/50">
-                <p className="text-xs text-surface-500 mb-0.5">Erstelldatum</p>
+                <p className="text-xs text-surface-500 mb-0.5">{tr("Erstelldatum")}</p>
                 <p className="text-surface-200 text-sm">{(() => {
                   const m = r.created_date?.match(/^(\d{4})-(\d{2})-(\d{2})$/)
                   return m ? `${m[3]}.${m[2]}.${m[1]}` : r.created_date
@@ -3586,14 +3403,14 @@ function BenchmarkColumn({ title, provider, accent }: {
             )}
             {r.storage_path_id && (
               <div className="p-2 rounded bg-surface-800/50">
-                <p className="text-xs text-surface-500 mb-0.5">Speicherpfad</p>
-                <p className="text-surface-200 text-sm">{r.storage_path_name || `ID: ${r.storage_path_id}`}</p>
+                <p className="text-xs text-surface-500 mb-0.5">{tr("Speicherpfad")}</p>
+                <p className="text-surface-200 text-sm">{r.storage_path_name || tr("ID: {storage_path_id}", { storage_path_id: r.storage_path_id })}</p>
                 {r.storage_path_reason && <p className="text-xs text-surface-500 mt-0.5">{r.storage_path_reason}</p>}
               </div>
             )}
             {r.tags.length > 0 && (
               <div>
-                <p className="text-xs text-surface-500 mb-1">Tags ({r.tags.length})</p>
+                <p className="text-xs text-surface-500 mb-1">{tr("Tags (")}{r.tags.length})</p>
                 <div className="flex flex-wrap gap-1.5">
                   {r.tags.map((tag: string) => {
                     const isNew = (r.tags_new || []).includes(tag)
@@ -3613,7 +3430,7 @@ function BenchmarkColumn({ title, provider, accent }: {
             )}
             {Object.keys(r.custom_fields).length > 0 && (
               <div>
-                <p className="text-xs text-surface-500 mb-1">Custom Fields</p>
+                <p className="text-xs text-surface-500 mb-1">{tr("Custom Fields")}</p>
                 {Object.entries(r.custom_fields).map(([k, v]) => (
                   <div key={k} className="flex justify-between p-1.5 rounded bg-surface-800/50 text-xs mb-1">
                     <span className="text-surface-400">{k}</span>
@@ -3731,9 +3548,7 @@ function TagIdeaAssignExisting({
         onClick={() => setOpen(true)}
         className="w-full py-1.5 rounded text-xs font-medium bg-surface-700/50 text-surface-400 hover:bg-surface-700 hover:text-surface-300 border border-surface-700/50 transition-colors flex items-center justify-center gap-1.5"
       >
-        <Tags className="w-3 h-3" />
-        Bestehenden Tag zuweisen
-      </button>
+        <Tags className="w-3 h-3" />{tr("Bestehenden Tag zuweisen")}</button>
     )
   }
 
@@ -3743,7 +3558,7 @@ function TagIdeaAssignExisting({
         type="text"
         value={search}
         onChange={e => setSearch(e.target.value)}
-        placeholder="Tag suchen..."
+        placeholder={tr("Tag suchen...")}
         autoFocus
         onBlur={() => setTimeout(() => setOpen(false), 200)}
         className="w-full px-3 py-1.5 bg-surface-900 border border-surface-600 rounded text-sm text-white focus:border-primary-500 focus:outline-none"

@@ -7,6 +7,7 @@ import {
 import clsx from 'clsx'
 import * as ragApi from '../services/ragApi'
 import { getPaperlessSettings } from '../services/api'
+import { tr } from '../i18n'
 
 interface LocalMessage {
   role: 'user' | 'assistant'
@@ -45,7 +46,7 @@ function renderAnswerWithCitations(
                   href={url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  title={`${src.title} (${(src.score * 100).toFixed(0)}% Relevanz) – In Paperless öffnen`}
+                  title={tr("{title} ({v1}% Relevanz) – In Paperless öffnen", { title: src.title, v1: (src.score * 100).toFixed(0) })}
                   className="inline-flex items-center justify-center w-5 h-5 rounded bg-primary-500/20 border border-primary-500/50 text-primary-300 text-xs font-bold hover:bg-primary-500/40 hover:border-primary-400 transition-colors cursor-pointer"
                 >
                   {idx}
@@ -291,18 +292,12 @@ export default function RagChat() {
                             flex items-center justify-center shadow-lg shadow-primary-600/30">
               <Search className="w-8 h-8 text-white" />
             </div>
-            <h2 className="text-xl font-bold text-surface-100 mb-2">Dokumenten-Chat aktivieren</h2>
-            <p className="text-surface-400 text-sm mb-4 leading-relaxed">
-              Der Dokumenten-Chat durchsucht deine Paperless-Dokumente mit KI (RAG – Retrieval Augmented Generation).
-              Alle Dokumente werden einmalig lokal indexiert – das belegt CPU, RAM und Speicher.
-            </p>
+            <h2 className="text-xl font-bold text-surface-100 mb-2">{tr("Dokumenten-Chat aktivieren")}</h2>
+            <p className="text-surface-400 text-sm mb-4 leading-relaxed">{tr("Der Dokumenten-Chat durchsucht deine Paperless-Dokumente mit KI (RAG – Retrieval Augmented Generation). Alle Dokumente werden einmalig lokal indexiert – das belegt CPU, RAM und Speicher.")}</p>
             <div className="flex items-start gap-3 p-3 rounded-lg bg-amber-500/10 border border-amber-500/20 text-left mb-6">
               <ShieldAlert className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
               <p className="text-xs text-amber-300 leading-relaxed">
-                <strong>Ressourcenhinweis:</strong> Das Embedding-Modell (z.B. mxbai-embed-large) muss in Ollama geladen sein.
-                Die Erstindexierung kann je nach Dokumentenanzahl mehrere Minuten dauern.
-                Wer diese Funktion nicht braucht, sollte sie deaktiviert lassen.
-              </p>
+                <strong>{tr("Ressourcenhinweis:")}</strong>{tr(" Das Embedding-Modell (z.B. mxbai-embed-large) muss in Ollama geladen sein. Die Erstindexierung kann je nach Dokumentenanzahl mehrere Minuten dauern. Wer diese Funktion nicht braucht, sollte sie deaktiviert lassen.")}</p>
             </div>
             <button
               onClick={async () => {
@@ -311,9 +306,7 @@ export default function RagChat() {
               }}
               className="w-full btn btn-primary flex items-center justify-center gap-2 py-3"
             >
-              <Zap className="w-4 h-4" />
-              Dokumenten-Chat aktivieren
-            </button>
+              <Zap className="w-4 h-4" />{tr("Dokumenten-Chat aktivieren")}</button>
           </div>
         </div>
       </div>
@@ -334,16 +327,12 @@ export default function RagChat() {
             onClick={startNewChat}
             className="w-full flex items-center gap-2 px-3 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors text-sm font-medium"
           >
-            <Plus className="w-4 h-4" />
-            Neuer Chat
-          </button>
+            <Plus className="w-4 h-4" />{tr("Neuer Chat")}</button>
         </div>
 
         <div className="flex-1 overflow-y-auto">
           {sessions.length === 0 ? (
-            <div className="p-4 text-sm text-surface-500 text-center">
-              Noch keine Chats vorhanden
-            </div>
+            <div className="p-4 text-sm text-surface-500 text-center">{tr("Noch keine Chats vorhanden")}</div>
           ) : (
             sessions.map((session) => (
               <div
@@ -358,8 +347,7 @@ export default function RagChat() {
                 <div className="flex-1 min-w-0">
                   <div className="text-sm font-medium text-surface-100 truncate">{session.title}</div>
                   <div className="text-xs text-surface-500">
-                    {session.message_count} Nachrichten
-                  </div>
+                    {session.message_count}{tr(" Nachrichten")}</div>
                 </div>
                 <button
                   onClick={(e) => {
@@ -378,13 +366,13 @@ export default function RagChat() {
         {/* Index Status */}
         <div className="p-3 border-t border-surface-700/50 bg-surface-950/50">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-semibold text-surface-400 uppercase tracking-wider">Index</span>
+            <span className="text-xs font-semibold text-surface-400 uppercase tracking-wider">{tr("Index")}</span>
             <div className="flex gap-1">
               <button
                 onClick={() => startIndex(false)}
                 disabled={indexStatus?.status === 'indexing'}
                 className="p-1 text-surface-500 hover:text-primary-400 disabled:opacity-40 transition-colors"
-                title="Neue Dokumente indexieren"
+                title={tr("Neue Dokumente indexieren")}
               >
                 <RefreshCw className={clsx('w-3.5 h-3.5', indexStatus?.status === 'indexing' && 'animate-spin')} />
               </button>
@@ -392,7 +380,7 @@ export default function RagChat() {
                 onClick={() => startIndex(true)}
                 disabled={indexStatus?.status === 'indexing'}
                 className="p-1 text-surface-500 hover:text-amber-400 disabled:opacity-40 transition-colors"
-                title="Komplett neu indexieren"
+                title={tr("Komplett neu indexieren")}
               >
                 <Database className="w-3.5 h-3.5" />
               </button>
@@ -411,11 +399,10 @@ export default function RagChat() {
                   <Database className="w-3 h-3 text-surface-500" />
                 )}
                 <span className="text-surface-300">
-                  {indexStatus.indexed_documents}/{indexStatus.total_documents} Dokumente
-                </span>
+                  {indexStatus.indexed_documents}/{indexStatus.total_documents}{tr(" Dokumente")}</span>
               </div>
               {indexStatus.chunks_in_index > 0 && (
-                <div className="text-surface-500">{indexStatus.chunks_in_index} Chunks im Index</div>
+                <div className="text-surface-500">{indexStatus.chunks_in_index}{tr(" Chunks im Index")}</div>
               )}
               {indexStatus.status === 'indexing' && (
                 <div className="w-full bg-surface-700 rounded-full h-1.5 mt-1">
@@ -443,9 +430,7 @@ export default function RagChat() {
             >
               <ChevronRight className={clsx('w-4 h-4 transition-transform', sidebarOpen && 'rotate-180')} />
             </button>
-            <h2 className="text-sm font-semibold text-surface-100 font-display">
-              RAG Dokumenten-Chat
-            </h2>
+            <h2 className="text-sm font-semibold text-surface-100 font-display">{tr("RAG Dokumenten-Chat")}</h2>
           </div>
           <button
             onClick={() => setShowSettings(!showSettings)}
@@ -463,7 +448,7 @@ export default function RagChat() {
           <div className="bg-surface-800/60 border-b border-surface-700/50 p-4">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
               <div>
-                <label className="block text-xs font-medium text-surface-400 mb-1">Embedding-Modell</label>
+                <label className="block text-xs font-medium text-surface-400 mb-1">{tr("Embedding-Modell")}</label>
                 <input
                   type="text"
                   value={config.embedding_model}
@@ -473,7 +458,7 @@ export default function RagChat() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-surface-400 mb-1">Chat-Modell</label>
+                <label className="block text-xs font-medium text-surface-400 mb-1">{tr("Chat-Modell")}</label>
                 <input
                   type="text"
                   value={config.chat_model}
@@ -483,7 +468,7 @@ export default function RagChat() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-surface-400 mb-1">BM25 Gewicht</label>
+                <label className="block text-xs font-medium text-surface-400 mb-1">{tr("BM25 Gewicht")}</label>
                 <input
                   type="number"
                   step="0.1"
@@ -496,7 +481,7 @@ export default function RagChat() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-surface-400 mb-1">Max. Quellen</label>
+                <label className="block text-xs font-medium text-surface-400 mb-1">{tr("Max. Quellen")}</label>
                 <input
                   type="number"
                   min="1"
@@ -527,10 +512,8 @@ export default function RagChat() {
                     config.query_rewrite_enabled ? 'translate-x-4' : 'translate-x-0.5'
                   )} />
                 </div>
-                <span className="text-xs text-surface-300 group-hover:text-surface-100 transition-colors">
-                  KI-Anfrage-Verbesserung
-                </span>
-                <span className="text-xs text-surface-500" title="LLM erweitert die Suchanfrage automatisch um Synonyme und Fachbegriffe für bessere Treffer">ⓘ</span>
+                <span className="text-xs text-surface-300 group-hover:text-surface-100 transition-colors">{tr("KI-Anfrage-Verbesserung")}</span>
+                <span className="text-xs text-surface-500" title={tr("LLM erweitert die Suchanfrage automatisch um Synonyme und Fachbegriffe für bessere Treffer")}>ⓘ</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer group">
                 <div
@@ -549,10 +532,8 @@ export default function RagChat() {
                     config.contextual_retrieval_enabled ? 'translate-x-4' : 'translate-x-0.5'
                   )} />
                 </div>
-                <span className="text-xs text-surface-300 group-hover:text-surface-100 transition-colors">
-                  Kontextueller Index
-                </span>
-                <span className="text-xs text-surface-500" title="LLM generiert Kontext-Header für kurze Dokumente beim Indexieren (benötigt Re-Index, erhöht Indexierungszeit)">ⓘ</span>
+                <span className="text-xs text-surface-300 group-hover:text-surface-100 transition-colors">{tr("Kontextueller Index")}</span>
+                <span className="text-xs text-surface-500" title={tr("LLM generiert Kontext-Header für kurze Dokumente beim Indexieren (benötigt Re-Index, erhöht Indexierungszeit)")}>ⓘ</span>
               </label>
             </div>
           </div>
@@ -565,28 +546,20 @@ export default function RagChat() {
               <div className="w-16 h-16 rounded-2xl bg-surface-800 border border-surface-700/50 flex items-center justify-center mb-4">
                 <Search className="w-7 h-7 text-primary-400" />
               </div>
-              <h3 className="text-lg font-semibold text-surface-100 mb-2 font-display">Dokumenten-Chat</h3>
-              <p className="text-sm text-surface-400 max-w-md">
-                Stelle Fragen zu deinen Dokumenten. Der KI-Assistent durchsucht alle indexierten
-                Dokumente und gibt dir Antworten mit Quellenangaben.
-              </p>
+              <h3 className="text-lg font-semibold text-surface-100 mb-2 font-display">{tr("Dokumenten-Chat")}</h3>
+              <p className="text-sm text-surface-400 max-w-md">{tr("Stelle Fragen zu deinen Dokumenten. Der KI-Assistent durchsucht alle indexierten Dokumente und gibt dir Antworten mit Quellenangaben.")}</p>
               {!indexStatusLoaded ? (
                 <div className="mt-4 flex items-center gap-2 text-sm text-surface-500">
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  Index-Status wird geladen...
-                </div>
+                  <Loader2 className="w-4 h-4 animate-spin" />{tr("Index-Status wird geladen...")}</div>
               ) : indexStatus && indexStatus.indexed_documents === 0 && indexStatus.status !== 'indexing' ? (
                 <button
                   onClick={() => startIndex(false)}
                   className="mt-4 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg text-sm flex items-center gap-2 transition-colors"
                 >
-                  <Database className="w-4 h-4" />
-                  Dokumente jetzt indexieren
-                </button>
+                  <Database className="w-4 h-4" />{tr("Dokumente jetzt indexieren")}</button>
               ) : indexStatus && indexStatus.status === 'indexing' ? (
                 <div className="mt-4 text-sm text-primary-400 flex items-center gap-2">
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  Indexierung läuft ({indexStatus.indexed_documents}/{indexStatus.total_documents})...
+                  <Loader2 className="w-4 h-4 animate-spin" />{tr("Indexierung läuft (")}{indexStatus.indexed_documents}/{indexStatus.total_documents})...
                 </div>
               ) : null}
             </div>
@@ -608,12 +581,10 @@ export default function RagChat() {
                         <div className="flex items-center gap-1.5 mb-2">
                           <FileText className="w-3.5 h-3.5 text-surface-500" />
                           <span className="text-xs font-semibold text-surface-500 uppercase tracking-wider">
-                            {msg.sources.length} Quellen
-                          </span>
+                            {msg.sources.length}{tr(" Quellen")}</span>
                           {msg.citedSources && msg.citedSources.length > 0 && (
                             <span className="text-xs text-primary-400 ml-1">
-                              · {msg.citedSources.length} verwendet
-                            </span>
+                              · {msg.citedSources.length}{tr(" verwendet")}</span>
                           )}
                         </div>
                         <div className="flex flex-wrap gap-1.5">
@@ -630,7 +601,7 @@ export default function RagChat() {
                                 href={paperlessUrl ? `${paperlessUrl}/documents/${src.document_id}/details` : '#'}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                title={`${src.title} — Score: ${(src.score * 100).toFixed(0)}% ${isCited ? '· Vom KI verwendet' : ''}`}
+                                title={tr("{title} — Score: {v1}% {v2}", { title: src.title, v1: (src.score * 100).toFixed(0), v2: isCited ? '· Vom KI verwendet' : '' })}
                                 className={clsx(
                                   'flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-medium transition-all group border',
                                   isCited
@@ -665,7 +636,7 @@ export default function RagChat() {
                     {msg.isStreaming && !msg.content && (
                       <div className="flex items-center gap-1.5 text-surface-400 pl-1">
                         <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                        <span className="text-xs">{msg.statusMessage || 'Suche relevante Dokumente...'}</span>
+                        <span className="text-xs">{msg.statusMessage || tr("Suche relevante Dokumente...")}</span>
                       </div>
                     )}
 
@@ -691,7 +662,7 @@ export default function RagChat() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Stelle eine Frage zu deinen Dokumenten..."
+              placeholder={tr("Stelle eine Frage zu deinen Dokumenten...")}
               rows={1}
               className="flex-1 resize-none px-4 py-2.5 bg-surface-700 border border-surface-600 rounded-xl text-sm text-surface-100 placeholder-surface-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors"
               style={{ minHeight: '42px', maxHeight: '120px' }}

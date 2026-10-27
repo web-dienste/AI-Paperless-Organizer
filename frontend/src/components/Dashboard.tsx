@@ -6,6 +6,7 @@ import {
 } from 'lucide-react'
 import clsx from 'clsx'
 import * as api from '../services/api'
+import { tr } from '../i18n'
 
 // ── Animated counter ──────────────────────────────────────────────────────────
 function AnimatedNumber({ value, duration = 900 }: { value: number; duration?: number }) {
@@ -153,9 +154,7 @@ export default function Dashboard() {
         {/* Donut Card */}
         <div className="lg:col-span-2 card p-6 flex flex-col items-center bg-surface-800/60 border border-surface-700/50">
           <h3 className="font-display font-semibold text-surface-100 flex items-center gap-2 self-start mb-4 text-base">
-            <BarChart3 className="w-4 h-4 text-primary-400" />
-            Archiv-Übersicht
-          </h3>
+            <BarChart3 className="w-4 h-4 text-primary-400" />{tr("Archiv-Übersicht")}</h3>
           {loading ? (
             <div className="w-48 h-48 rounded-full border-[24px] border-surface-700 animate-pulse my-2" />
           ) : (
@@ -183,7 +182,7 @@ export default function Dashboard() {
               </div>
             ))}
             <div className="pt-1.5 border-t border-surface-700/40 flex justify-between text-xs">
-              <span className="text-surface-500">Gesamt</span>
+              <span className="text-surface-500">{tr("Gesamt")}</span>
               <span className="font-mono font-bold text-surface-200">{totalDocs.toLocaleString('de-DE')}</span>
             </div>
           </div>
@@ -237,7 +236,7 @@ export default function Dashboard() {
               <div className="p-2 rounded-lg bg-cyan-500/15 border border-cyan-500/20">
                 <ScanText className="w-5 h-5 text-cyan-400" />
               </div>
-              <span className="font-display font-semibold text-surface-100">OCR Engine</span>
+              <span className="font-display font-semibold text-surface-100">{tr("OCR Engine")}</span>
             </div>
             <ArrowRight className="w-4 h-4 text-surface-600 group-hover:text-cyan-400 group-hover:translate-x-1 transition-all" />
           </div>
@@ -245,7 +244,7 @@ export default function Dashboard() {
           {/* Big percentage */}
           <div className="flex items-end gap-2 mb-3">
             <span className="font-display text-4xl font-bold text-cyan-300">{ocrPct}%</span>
-            <span className="text-surface-400 text-sm mb-1">abgeschlossen</span>
+            <span className="text-surface-400 text-sm mb-1">{tr("abgeschlossen")}</span>
           </div>
           <Bar pct={ocrPct} color="#22d3ee" glow="#22d3ee66" />
 
@@ -278,14 +277,14 @@ export default function Dashboard() {
               <div className="p-2 rounded-lg bg-violet-500/15 border border-violet-500/20">
                 <Brain className="w-5 h-5 text-violet-400" />
               </div>
-              <span className="font-display font-semibold text-surface-100">KI-Klassifizierer</span>
+              <span className="font-display font-semibold text-surface-100">{tr("KI-Klassifizierer")}</span>
             </div>
             <ArrowRight className="w-4 h-4 text-surface-600 group-hover:text-violet-400 group-hover:translate-x-1 transition-all" />
           </div>
 
           <div className="flex items-end gap-2 mb-3">
             <span className="font-display text-4xl font-bold text-violet-300">{classifiedPct}%</span>
-            <span className="text-surface-400 text-sm mb-1">klassifiziert</span>
+            <span className="text-surface-400 text-sm mb-1">{tr("klassifiziert")}</span>
           </div>
           <Bar pct={parseFloat(classifiedPct)} color="#7c3aed" glow="#7c3aed66" />
 
@@ -305,8 +304,8 @@ export default function Dashboard() {
           {classStats && (
             <div className="mt-3 pt-3 border-t border-surface-700/40 flex justify-between text-xs text-surface-500">
               <span>⌀ {classStats.avg_duration_seconds.toFixed(1)}s</span>
-              <span>{classStats.total_cost_usd > 0 ? `$${classStats.total_cost_usd.toFixed(3)} USD` : '100% lokal'}</span>
-              <span>{((classStats.total_tokens_in + classStats.total_tokens_out) / 1000).toFixed(0)}k Tokens</span>
+              <span>{classStats.total_cost_usd > 0 ? tr("${v0} USD", { v0: classStats.total_cost_usd.toFixed(3) }) : tr("100% lokal")}</span>
+              <span>{((classStats.total_tokens_in + classStats.total_tokens_out) / 1000).toFixed(0)}{tr("k Tokens")}</span>
             </div>
           )}
         </Link>
@@ -318,7 +317,7 @@ export default function Dashboard() {
               <div className="p-2 rounded-lg bg-amber-500/15 border border-amber-500/20">
                 <Wrench className="w-5 h-5 text-amber-400" />
               </div>
-              <span className="font-display font-semibold text-surface-100">Aufräumen</span>
+              <span className="font-display font-semibold text-surface-100">{tr("Aufräumen")}</span>
             </div>
             <ArrowRight className="w-4 h-4 text-surface-600 group-hover:text-amber-400 group-hover:translate-x-1 transition-all" />
           </div>
@@ -339,16 +338,16 @@ export default function Dashboard() {
 
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
-              <span className="text-surface-400">Bereinigt gesamt</span>
+              <span className="text-surface-400">{tr("Bereinigt gesamt")}</span>
               <span className="font-bold text-emerald-400">{totalCleaned}</span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-surface-400">Dokumente aktualisiert</span>
+              <span className="text-surface-400">{tr("Dokumente aktualisiert")}</span>
               <span className="font-bold text-surface-200">{cleanupStats?.total_documents_affected || 0}</span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-surface-400">Zeit gespart</span>
-              <span className="font-bold text-surface-200">{timeSaved} min</span>
+              <span className="text-surface-400">{tr("Zeit gespart")}</span>
+              <span className="font-bold text-surface-200">{timeSaved}{tr(" min")}</span>
             </div>
           </div>
         </Link>
@@ -361,9 +360,7 @@ export default function Dashboard() {
           {/* Provider Breakdown */}
           <div className="lg:col-span-2 card p-6 border border-surface-700/50">
             <h3 className="font-display font-semibold text-surface-100 mb-4 flex items-center gap-2 text-sm">
-              <Zap className="w-4 h-4 text-amber-400" />
-              Modell-Einsatz
-            </h3>
+              <Zap className="w-4 h-4 text-amber-400" />{tr("Modell-Einsatz")}</h3>
             <div className="space-y-4">
               {classStats.by_provider?.map((p: any) => {
                 const pct = (p.count / classStats.total_runs) * 100
@@ -375,7 +372,7 @@ export default function Dashboard() {
                       <div className="flex items-center gap-2 shrink-0">
                         <span className={clsx('text-xs px-1.5 py-0.5 rounded border',
                           isCloud ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' : 'bg-violet-500/10 border-violet-500/20 text-violet-400')}>
-                          {isCloud ? 'Cloud' : 'Lokal'}
+                          {isCloud ? tr("Cloud") : tr("Lokal")}
                         </span>
                         <span className="text-xs text-surface-500">{p.count}×</span>
                       </div>
@@ -387,7 +384,7 @@ export default function Dashboard() {
                     />
                     <div className="flex justify-between text-xs text-surface-600 mt-1">
                       <span>⌀ {p.avg_duration?.toFixed(0)}s</span>
-                      {p.cost > 0 ? <span>${p.cost.toFixed(4)}</span> : <span className="text-violet-400/60">kostenlos</span>}
+                      {p.cost > 0 ? <span>${p.cost.toFixed(4)}</span> : <span className="text-violet-400/60">{tr("kostenlos")}</span>}
                     </div>
                   </div>
                 )
@@ -396,13 +393,13 @@ export default function Dashboard() {
             <div className="mt-4 pt-3 border-t border-surface-700/40 grid grid-cols-2 gap-3">
               <div>
                 <div className="text-xl font-bold text-surface-100">{classStats.avg_duration_seconds.toFixed(1)}s</div>
-                <div className="text-xs text-surface-500">Ø Analysezeit</div>
+                <div className="text-xs text-surface-500">{tr("Ø Analysezeit")}</div>
               </div>
               <div>
                 <div className="text-xl font-bold text-surface-100">
                   {((classStats.total_tokens_in + classStats.total_tokens_out) / 1000).toFixed(0)}k
                 </div>
-                <div className="text-xs text-surface-500">Tokens gesamt</div>
+                <div className="text-xs text-surface-500">{tr("Tokens gesamt")}</div>
               </div>
             </div>
           </div>
@@ -411,11 +408,8 @@ export default function Dashboard() {
           <div className="lg:col-span-3 card p-6 border border-surface-700/50">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-display font-semibold text-surface-100 flex items-center gap-2 text-sm">
-                <Activity className="w-4 h-4 text-violet-400" />
-                Letzte Klassifizierungen
-              </h3>
-              <Link to="/classifier" className="text-xs text-surface-500 hover:text-primary-400 flex items-center gap-1 transition-colors">
-                Alle <ChevronRight className="w-3 h-3" />
+                <Activity className="w-4 h-4 text-violet-400" />{tr("Letzte Klassifizierungen")}</h3>
+              <Link to="/classifier" className="text-xs text-surface-500 hover:text-primary-400 flex items-center gap-1 transition-colors">{tr("Alle ")}<ChevronRight className="w-3 h-3" />
               </Link>
             </div>
             <div className="space-y-1.5">
@@ -447,9 +441,7 @@ export default function Dashboard() {
       {/* ── Schnellzugriff ─────────────────────────────────────────────────── */}
       <div>
         <h3 className="font-display text-xs font-semibold text-surface-500 uppercase tracking-widest mb-3 flex items-center gap-2">
-          <TrendingUp className="w-3.5 h-3.5" />
-          Schnellzugriff
-        </h3>
+          <TrendingUp className="w-3.5 h-3.5" />{tr("Schnellzugriff")}</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {[
             { href: '/classifier', icon: Brain, label: 'Klassifizierer', sub: `${(classStats?.total_documents_paperless || 0) - applied} offen`, color: 'border-violet-500/25 hover:border-violet-500/50', ic: 'text-violet-400', bg: 'bg-violet-500/5' },

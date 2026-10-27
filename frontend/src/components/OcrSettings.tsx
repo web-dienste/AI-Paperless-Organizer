@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Plus, Trash2, Save, Wifi, CheckCircle2, XCircle, Loader2, Server, Clock, Zap, RefreshCw } from 'lucide-react'
 import * as api from '../services/api'
 import clsx from 'clsx'
+import { tr } from '../i18n'
 
 export default function OcrSettings() {
     const [ollamaUrls, setOllamaUrls] = useState<string[]>(['http://localhost:11434'])
@@ -161,7 +162,7 @@ export default function OcrSettings() {
     if (loading) return (
         <div className="flex items-center justify-center p-12 text-surface-400">
             <Loader2 className="w-6 h-6 animate-spin mr-3" />
-            <span>Lade Einstellungen...</span>
+            <span>{tr("Lade Einstellungen...")}</span>
         </div>
     )
 
@@ -173,8 +174,8 @@ export default function OcrSettings() {
                         <Server className="w-5 h-5 text-blue-400" />
                     </div>
                     <div>
-                        <h3 className="font-bold text-lg text-white">OCR Server Konfiguration</h3>
-                        <p className="text-sm text-surface-400">Multi-Server Setup & Failover</p>
+                        <h3 className="font-bold text-lg text-white">{tr("OCR Server Konfiguration")}</h3>
+                        <p className="text-sm text-surface-400">{tr("Multi-Server Setup & Failover")}</p>
                     </div>
                 </div>
             </div>
@@ -182,9 +183,7 @@ export default function OcrSettings() {
             <div className="p-6 space-y-8">
                 {/* OCR Provider Selection */}
                 <div>
-                    <label className="block text-sm font-medium text-surface-300 mb-3">
-                        OCR Provider
-                    </label>
+                    <label className="block text-sm font-medium text-surface-300 mb-3">{tr("OCR Provider")}</label>
                     <div className="grid grid-cols-2 gap-3">
                         <button
                             onClick={async () => {
@@ -207,9 +206,9 @@ export default function OcrSettings() {
                         >
                             <div className="flex items-center gap-2 mb-1">
                                 <Server className={clsx('w-4 h-4', provider === 'ollama' ? 'text-cyan-400' : 'text-surface-400')} />
-                                <span className={clsx('font-medium', provider === 'ollama' ? 'text-cyan-300' : 'text-surface-300')}>Ollama Vision</span>
+                                <span className={clsx('font-medium', provider === 'ollama' ? 'text-cyan-300' : 'text-surface-300')}>{tr("Ollama Vision")}</span>
                             </div>
-                            <p className="text-xs text-surface-500">Lokale Vision-Modelle (qwen3-vl, glm-ocr, ...). Keine Cloud, volle Privatsphäre.</p>
+                            <p className="text-xs text-surface-500">{tr("Lokale Vision-Modelle (qwen3-vl, glm-ocr, ...). Keine Cloud, volle Privatsphäre.")}</p>
                         </button>
                         <button
                             onClick={async () => {
@@ -232,9 +231,9 @@ export default function OcrSettings() {
                         >
                             <div className="flex items-center gap-2 mb-1">
                                 <Zap className={clsx('w-4 h-4', provider === 'mistral-ocr' ? 'text-orange-400' : 'text-surface-400')} />
-                                <span className={clsx('font-medium', provider === 'mistral-ocr' ? 'text-orange-300' : 'text-surface-300')}>Mistral OCR (Cloud)</span>
+                                <span className={clsx('font-medium', provider === 'mistral-ocr' ? 'text-orange-300' : 'text-surface-300')}>{tr("Mistral OCR (Cloud)")}</span>
                             </div>
-                            <p className="text-xs text-surface-500">Sehr schnell, sehr genau. PDFs werden direkt an Mistral gesendet. API-Key unter LLM-Einstellungen.</p>
+                            <p className="text-xs text-surface-500">{tr("Sehr schnell, sehr genau. PDFs werden direkt an Mistral gesendet. API-Key unter LLM-Einstellungen.")}</p>
                         </button>
                     </div>
                 </div>
@@ -242,9 +241,7 @@ export default function OcrSettings() {
                 {/* URLs List — nur bei Ollama anzeigen */}
                 {provider === 'ollama' && (
                 <div>
-                    <label className="block text-sm font-medium text-surface-300 mb-3">
-                        Ollama Server URLs (Priorität von oben nach unten)
-                    </label>
+                    <label className="block text-sm font-medium text-surface-300 mb-3">{tr("Ollama Server URLs (Priorität von oben nach unten)")}</label>
                     <div className="space-y-2 mb-3">
                         {ollamaUrls.map((url, index) => (
                             <div key={index} className="group flex items-center gap-2 p-2 rounded-lg bg-surface-900/50 border border-surface-700/50 hover:border-surface-600 transition-colors">
@@ -262,24 +259,20 @@ export default function OcrSettings() {
                                                     if (e.key === 'Escape') cancelEdit()
                                                 }}
                                             />
-                                            <button onClick={saveEdit} className="text-emerald-400 hover:text-emerald-300">Save</button>
-                                            <button onClick={cancelEdit} className="text-surface-500 hover:text-surface-400">Cancel</button>
+                                            <button onClick={saveEdit} className="text-emerald-400 hover:text-emerald-300">{tr("Save")}</button>
+                                            <button onClick={cancelEdit} className="text-surface-500 hover:text-surface-400">{tr("Cancel")}</button>
                                         </div>
                                     ) : (
                                         <>
                                             <span className="truncate">{url}</span>
                                             <div className="flex items-center gap-2">
                                                 {index === 0 && (
-                                                    <span className="text-[10px] uppercase font-bold tracking-wider bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded">
-                                                        Primär
-                                                    </span>
+                                                    <span className="text-[10px] uppercase font-bold tracking-wider bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded">{tr("Primär")}</span>
                                                 )}
                                                 <button
                                                     onClick={() => startEditing(index)}
                                                     className="opacity-0 group-hover:opacity-100 text-[10px] uppercase font-bold text-surface-500 hover:text-white transition-all"
-                                                >
-                                                    Edit
-                                                </button>
+                                                >{tr("Edit")}</button>
                                             </div>
                                         </>
                                     )}
@@ -287,7 +280,7 @@ export default function OcrSettings() {
                                 <button
                                     onClick={() => removeUrl(url)}
                                     className="p-1.5 text-surface-500 hover:text-red-400 hover:bg-red-500/10 rounded transition-colors"
-                                    title="Entfernen"
+                                    title={tr("Entfernen")}
                                 >
                                     <Trash2 className="w-4 h-4" />
                                 </button>
@@ -310,22 +303,18 @@ export default function OcrSettings() {
                             className="btn bg-surface-700 hover:bg-surface-600 text-white border-surface-600 px-4 flex items-center gap-2"
                         >
                             <Plus className="w-4 h-4" />
-                            <span className="hidden sm:inline">Hinzufügen</span>
+                            <span className="hidden sm:inline">{tr("Hinzufügen")}</span>
                         </button>
                     </div>
                     <p className="text-xs text-surface-500 mt-2 flex items-center gap-1">
-                        <Wifi className="w-3 h-3" />
-                        Automatisch Failover auf Backup-Server bei Verbindungsproblemen.
-                    </p>
+                        <Wifi className="w-3 h-3" />{tr("Automatisch Failover auf Backup-Server bei Verbindungsproblemen.")}</p>
                 </div>
                 )}
 
                 {/* Model — nur bei Ollama */}
                 {provider === 'ollama' && (
                 <div>
-                    <label className="block text-sm font-medium text-surface-300 mb-2">
-                        OCR Modell
-                    </label>
+                    <label className="block text-sm font-medium text-surface-300 mb-2">{tr("OCR Modell")}</label>
                     <div className="flex gap-2">
                         {availableModels.length > 0 ? (
                             <select
@@ -334,7 +323,7 @@ export default function OcrSettings() {
                                 className="flex-1 input bg-surface-900/50 border-surface-700 focus:border-blue-500 font-mono text-sm"
                             >
                                 {!availableModels.includes(ocrModel) && ocrModel && (
-                                    <option value={ocrModel}>{ocrModel} (nicht installiert)</option>
+                                    <option value={ocrModel}>{ocrModel}{tr(" (nicht installiert)")}</option>
                                 )}
                                 {availableModels.map(m => (
                                     <option key={m} value={m}>{m}</option>
@@ -353,20 +342,20 @@ export default function OcrSettings() {
                             onClick={loadModels}
                             disabled={loadingModels}
                             className="btn bg-surface-700 hover:bg-surface-600 text-white border-surface-600 px-3"
-                            title="Modelle neu laden"
+                            title={tr("Modelle neu laden")}
                         >
                             <RefreshCw className={clsx("w-4 h-4", loadingModels && "animate-spin")} />
                         </button>
                     </div>
                     <p className="text-xs text-surface-500 mt-1">
                         {availableModels.length > 0 ? (
-                            <span><span className="text-surface-300 font-bold">{availableModels.length}</span> Modelle auf Ollama gefunden.</span>
+                            <span><span className="text-surface-300 font-bold">{availableModels.length}</span>{tr(" Modelle auf Ollama gefunden.")}</span>
                         ) : loadingModels ? (
-                            <span>Lade Modelle von Ollama...</span>
+                            <span>{tr("Lade Modelle von Ollama...")}</span>
                         ) : (
-                            <span>Keine Verbindung zu Ollama - Modellname manuell eingeben.</span>
+                            <span>{tr("Keine Verbindung zu Ollama - Modellname manuell eingeben.")}</span>
                         )}
-                        {' '}Empfohlen: <span className="text-surface-300 font-mono">qwen3-vl:4b-instruct</span>
+                        {' '}{tr("Empfohlen: ")}<span className="text-surface-300 font-mono">{tr("qwen3-vl:4b-instruct")}</span>
                     </p>
                 </div>
                 )}
@@ -374,10 +363,8 @@ export default function OcrSettings() {
                 {/* Hinweis bei Mistral-Modus */}
                 {provider === 'mistral-ocr' && (
                 <div className="p-4 bg-orange-500/5 border border-orange-500/20 rounded-xl">
-                    <p className="text-sm text-orange-300 font-medium mb-1">Mistral OCR aktiv</p>
-                    <p className="text-xs text-surface-400">
-                        Es wird das Modell <span className="font-mono text-surface-300">mistral-ocr-latest</span> verwendet (kein Modellauswahl nötig). Stelle sicher dass du einen API-Key unter Einstellungen → LLM → Mistral OCR hinterlegt hast.
-                    </p>
+                    <p className="text-sm text-orange-300 font-medium mb-1">{tr("Mistral OCR aktiv")}</p>
+                    <p className="text-xs text-surface-400">{tr("Es wird das Modell ")}<span className="font-mono text-surface-300">{tr("mistral-ocr-latest")}</span>{tr(" verwendet (kein Modellauswahl nötig). Stelle sicher dass du einen API-Key unter Einstellungen → LLM → Mistral OCR hinterlegt hast.")}</p>
                 </div>
                 )}
 
@@ -386,35 +373,29 @@ export default function OcrSettings() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Resolution */}
                     <div>
-                        <label className="block text-sm font-medium text-surface-300 mb-2">
-                            Auflösung & Performance
-                        </label>
+                        <label className="block text-sm font-medium text-surface-300 mb-2">{tr("Auflösung & Performance")}</label>
                         <select
                             value={maxImageSize}
                             onChange={(e) => setMaxImageSize(parseInt(e.target.value))}
                             className="w-full input bg-surface-900/50 border-surface-700 focus:border-blue-500 text-sm"
                         >
-                            <option value={896}>896px - Schnell (wenig VRAM)</option>
-                            <option value={1120}>1120px - Standard</option>
-                            <option value={1344}>1344px - Hoch (Empfohlen)</option>
-                            <option value={1680}>1680px - Sehr hoch</option>
-                            <option value={2016}>2016px - Maximum (beste Qualität)</option>
+                            <option value={896}>{tr("896px - Schnell (wenig VRAM)")}</option>
+                            <option value={1120}>{tr("1120px - Standard")}</option>
+                            <option value={1344}>{tr("1344px - Hoch (Empfohlen)")}</option>
+                            <option value={1680}>{tr("1680px - Sehr hoch")}</option>
+                            <option value={2016}>{tr("2016px - Maximum (beste Qualität)")}</option>
                         </select>
-                        <p className="text-xs text-surface-500 mt-1">
-                            Maximale Bildgröße die ans Modell gesendet wird. Quelle wird immer in 400 DPI gerendert.
-                        </p>
+                        <p className="text-xs text-surface-500 mt-1">{tr("Maximale Bildgröße die ans Modell gesendet wird. Quelle wird immer in 400 DPI gerendert.")}</p>
                     </div>
 
                     {/* Smart Skip */}
                     <div>
-                        <label className="block text-sm font-medium text-surface-300 mb-2">
-                            Intelligente Funktionen
-                        </label>
+                        <label className="block text-sm font-medium text-surface-300 mb-2">{tr("Intelligente Funktionen")}</label>
                         <div className="bg-surface-900/30 rounded-xl p-3 border border-surface-700/50">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <span className="text-sm font-medium text-surface-200 block">Smart-Skip (Metadaten)</span>
-                                    <p className="text-xs text-surface-500">Überspringt digitale PDFs, erzwingt bei Scans OCR</p>
+                                    <span className="text-sm font-medium text-surface-200 block">{tr("Smart-Skip (Metadaten)")}</span>
+                                    <p className="text-xs text-surface-500">{tr("Überspringt digitale PDFs, erzwingt bei Scans OCR")}</p>
                                 </div>
                                 <label className="relative inline-flex items-center cursor-pointer">
                                     <input
@@ -434,15 +415,13 @@ export default function OcrSettings() {
                 {/* Watchdog / Continuous Mode */}
                 <div className="pt-6 border-t border-surface-700/50">
                     <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                        <Clock className="w-5 h-5 text-purple-400" />
-                        Dauerhafter Hintergrund-Modus (Watchdog)
-                    </h3>
+                        <Clock className="w-5 h-5 text-purple-400" />{tr("Dauerhafter Hintergrund-Modus (Watchdog)")}</h3>
 
                     <div className="bg-surface-900/30 rounded-xl p-4 border border-surface-700/50 space-y-4">
                         <div className="flex items-center justify-between">
                             <div>
-                                <label className="text-sm font-medium text-surface-200 block">Automatische Überwachung</label>
-                                <p className="text-xs text-surface-500">Prüft regelmäßig auf neue Dokumente ohne OCR-Status</p>
+                                <label className="text-sm font-medium text-surface-200 block">{tr("Automatische Überwachung")}</label>
+                                <p className="text-xs text-surface-500">{tr("Prüft regelmäßig auf neue Dokumente ohne OCR-Status")}</p>
                             </div>
                             <label className="relative inline-flex items-center cursor-pointer">
                                 <input
@@ -457,9 +436,7 @@ export default function OcrSettings() {
 
                         {watchdogEnabled && (
                             <div className="animate-in slide-in-from-top-2">
-                                <label className="block text-sm font-medium text-surface-300 mb-2">
-                                    Prüf-Intervall (Minuten)
-                                </label>
+                                <label className="block text-sm font-medium text-surface-300 mb-2">{tr("Prüf-Intervall (Minuten)")}</label>
                                 <input
                                     type="number"
                                     min="1"
@@ -473,7 +450,7 @@ export default function OcrSettings() {
 
                         <div className="flex items-center gap-2 text-xs text-surface-400 bg-surface-800/50 p-2 rounded border border-surface-700/50">
                             <Zap className="w-3 h-3 text-amber-400" />
-                            <span>Startet automatisch beim Hochfahren des Containers, wenn aktiviert.</span>
+                            <span>{tr("Startet automatisch beim Hochfahren des Containers, wenn aktiviert.")}</span>
                         </div>
                     </div>
                 </div>
@@ -485,18 +462,14 @@ export default function OcrSettings() {
                         disabled={testing}
                         className="btn bg-surface-800 hover:bg-surface-700 text-surface-200 border-surface-700 flex items-center gap-2"
                     >
-                        {testing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Wifi className="w-4 h-4" />}
-                        Verbindung testen
-                    </button>
+                        {testing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Wifi className="w-4 h-4" />}{tr("Verbindung testen")}</button>
 
                     <button
                         onClick={saveSettings}
                         disabled={saving}
                         className="btn btn-primary flex items-center gap-2 shadow-lg shadow-blue-900/20"
                     >
-                        {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                        Speichern
-                    </button>
+                        {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}{tr("Speichern")}</button>
                 </div>
 
                 {/* Status Result */}
@@ -512,7 +485,7 @@ export default function OcrSettings() {
                                 ? <CheckCircle2 className="w-5 h-5 text-emerald-400" />
                                 : <XCircle className="w-5 h-5 text-red-400" />
                             }
-                            {connectionStatus.connected ? "Verbindung erfolgreich" : "Verbindung fehlgeschlagen"}
+                            {connectionStatus.connected ? tr("Verbindung erfolgreich") : tr("Verbindung fehlgeschlagen")}
                         </h4>
 
                         {!connectionStatus.connected && (
@@ -522,13 +495,13 @@ export default function OcrSettings() {
                         {connectionStatus.connected && (
                             <div className="ml-7 grid grid-cols-2 gap-x-8 gap-y-1 text-xs opacity-80">
                                 <div className="flex justify-between">
-                                    <span>Server erreichbar:</span>
-                                    <span className="font-bold">Ja</span>
+                                    <span>{tr("Server erreichbar:")}</span>
+                                    <span className="font-bold">{tr("Ja")}</span>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span>Modell verfügbar:</span>
+                                    <span>{tr("Modell verfügbar:")}</span>
                                     <span className={clsx("font-bold", connectionStatus.model_available ? "text-emerald-400" : "text-amber-400")}>
-                                        {connectionStatus.model_available ? "Ja" : "Nein (Download erforderlich)"}
+                                        {connectionStatus.model_available ? tr("Ja") : tr("Nein (Download erforderlich)")}
                                     </span>
                                 </div>
                             </div>

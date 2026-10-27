@@ -13,6 +13,7 @@ import {
 import clsx from 'clsx'
 import * as api from '../services/api'
 import DocumentPreview from './DocumentPreview'
+import { tr } from '../i18n'
 
 interface SingleOcrProps {
     initialDocId?: number | null
@@ -143,12 +144,9 @@ export default function SingleOcr({ initialDocId }: SingleOcrProps = {}) {
                 <h2 className="font-display text-3xl font-bold text-white flex items-center gap-3">
                     <div className="p-2 bg-gradient-to-br from-cyan-500 to-cyan-700 rounded-xl shadow-lg shadow-cyan-500/20">
                         <FileSearch className="w-8 h-8 text-white" />
-                    </div>
-                    Einzel-<span className="text-cyan-400">OCR</span>
+                    </div>{tr("Einzel-")}<span className="text-cyan-400">{tr("OCR")}</span>
                 </h2>
-                <p className="text-surface-400 mt-2 text-lg">
-                    Einzelnes Dokument verarbeiten, alten und neuen Text vergleichen
-                </p>
+                <p className="text-surface-400 mt-2 text-lg">{tr("Einzelnes Dokument verarbeiten, alten und neuen Text vergleichen")}</p>
             </div>
 
             {/* Input */}
@@ -159,8 +157,8 @@ export default function SingleOcr({ initialDocId }: SingleOcrProps = {}) {
                             <FileText className="w-5 h-5 text-cyan-400" />
                         </div>
                         <div>
-                            <h3 className="font-bold text-lg text-white">Dokument-ID</h3>
-                            <p className="text-sm text-surface-400">Gib die Paperless Dokument-ID ein</p>
+                            <h3 className="font-bold text-lg text-white">{tr("Dokument-ID")}</h3>
+                            <p className="text-sm text-surface-400">{tr("Gib die Paperless Dokument-ID ein")}</p>
                         </div>
                     </div>
                 </div>
@@ -183,9 +181,7 @@ export default function SingleOcr({ initialDocId }: SingleOcrProps = {}) {
                             disabled={loading || !docId}
                             className="btn bg-cyan-600 hover:bg-cyan-700 text-white flex items-center gap-2 px-8 shadow-lg shadow-cyan-900/20 disabled:opacity-50"
                         >
-                            {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Play className="w-5 h-5" />}
-                            Start
-                        </button>
+                            {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Play className="w-5 h-5" />}{tr("Start")}</button>
                     </div>
 
                     <div className="flex items-center gap-6 mt-4">
@@ -196,7 +192,7 @@ export default function SingleOcr({ initialDocId }: SingleOcrProps = {}) {
                                 onChange={(e) => setSetFinishTag(e.target.checked)}
                                 className="rounded bg-surface-700 border-surface-600 text-cyan-500 focus:ring-cyan-500/30"
                             />
-                            <span>ocrfinish-Tag setzen</span>
+                            <span>{tr("ocrfinish-Tag setzen")}</span>
                         </label>
 
                         <label className="flex items-center gap-2 cursor-pointer text-sm text-surface-400 hover:text-surface-200 transition-colors">
@@ -206,9 +202,7 @@ export default function SingleOcr({ initialDocId }: SingleOcrProps = {}) {
                                 onChange={(e) => setForceOcr(e.target.checked)}
                                 className="rounded bg-surface-700 border-surface-600 text-amber-500 focus:ring-amber-500/30"
                             />
-                            <span className={clsx(forceOcr && "text-amber-400 font-medium")}>
-                                Neuberechnung erzwingen (Force OCR)
-                            </span>
+                            <span className={clsx(forceOcr && "text-amber-400 font-medium")}>{tr("Neuberechnung erzwingen (Force OCR)")}</span>
                         </label>
                     </div>
                 </div>
@@ -228,9 +222,7 @@ export default function SingleOcr({ initialDocId }: SingleOcrProps = {}) {
                                 disabled={loading}
                                 className="btn text-xs bg-amber-600/80 hover:bg-amber-600 text-white flex items-center gap-1.5 px-3 py-1.5"
                             >
-                                <RefreshCw className="w-3.5 h-3.5" />
-                                Erneut versuchen (fertige Seiten werden wiederverwendet)
-                            </button>
+                                <RefreshCw className="w-3.5 h-3.5" />{tr("Erneut versuchen (fertige Seiten werden wiederverwendet)")}</button>
                         </div>
                     )}
                 </div>
@@ -244,18 +236,17 @@ export default function SingleOcr({ initialDocId }: SingleOcrProps = {}) {
                         <div>
                             <p className="text-white font-medium">
                                 {!progress || !progress.active
-                                    ? 'OCR wird vorbereitet...'
+                                    ? tr("OCR wird vorbereitet...")
                                     : progress.status === 'downloading'
-                                    ? 'Dokument wird heruntergeladen...'
+                                    ? tr("Dokument wird heruntergeladen...")
                                     : progress.status === 'converting'
-                                    ? 'PDF-Seiten werden konvertiert...'
-                                    : `Seite ${progress.current_page} von ${progress.total_pages} wird analysiert...`
+                                    ? tr("PDF-Seiten werden konvertiert...")
+                                    : tr("Seite {current_page} von {total_pages} wird analysiert...", { current_page: progress.current_page, total_pages: progress.total_pages })
                                 }
                             </p>
                             {progress?.active && progress.elapsed_seconds && (
                                 <p className="text-xs text-surface-500 mt-0.5">
-                                    {Math.floor(progress.elapsed_seconds)}s vergangen
-                                    {progress.done ? ` · ${progress.done}/${progress.total_pages} fertig` : ''}
+                                    {Math.floor(progress.elapsed_seconds)}{tr("s vergangen")}{progress.done ? tr(" · {done}/{total_pages} fertig", { done: progress.done, total_pages: progress.total_pages }) : ''}
                                 </p>
                             )}
                         </div>
@@ -284,10 +275,10 @@ export default function SingleOcr({ initialDocId }: SingleOcrProps = {}) {
                                             pg.status === 'pending' && 'bg-surface-700/30 border-surface-600/30 text-surface-500',
                                         )}
                                         title={
-                                            pg.status === 'done' ? `Seite ${pg.page}: ${pg.chars} Zeichen`
-                                            : pg.status === 'error' ? `Seite ${pg.page}: Fehler`
-                                            : pg.status === 'processing' ? `Seite ${pg.page}: läuft...`
-                                            : `Seite ${pg.page}: wartend`
+                                            pg.status === 'done' ? tr("Seite {page}: {chars} Zeichen", { page: pg.page, chars: pg.chars })
+                                            : pg.status === 'error' ? tr("Seite {page}: Fehler", { page: pg.page })
+                                            : pg.status === 'processing' ? tr("Seite {page}: läuft...", { page: pg.page })
+                                            : tr("Seite {page}: wartend", { page: pg.page })
                                         }
                                     >
                                         <span className="leading-none">{pg.page}</span>
@@ -300,9 +291,7 @@ export default function SingleOcr({ initialDocId }: SingleOcrProps = {}) {
                             {progress.errors ? (
                                 <p className="text-xs text-amber-400 flex items-center gap-1">
                                     <RefreshCw className="w-3 h-3" />
-                                    {progress.errors} Seite(n) fehlgeschlagen -- fertige Seiten sind gespeichert.
-                                    Erneuter Versuch überspringt bereits fertige Seiten.
-                                </p>
+                                    {progress.errors}{tr(" Seite(n) fehlgeschlagen -- fertige Seiten sind gespeichert. Erneuter Versuch überspringt bereits fertige Seiten.")}</p>
                             ) : null}
                         </div>
                     )}
@@ -318,7 +307,7 @@ export default function SingleOcr({ initialDocId }: SingleOcrProps = {}) {
                             <div className="flex items-center justify-between flex-wrap gap-4">
                                 <div>
                                     <h3 className="text-xl font-bold text-white">{result.title}</h3>
-                                    <p className="text-sm text-surface-400 font-mono mt-1">ID: {result.document_id}</p>
+                                    <p className="text-sm text-surface-400 font-mono mt-1">{tr("ID: ")}{result.document_id}</p>
                                 </div>
                                 <div className={clsx(
                                     'px-4 py-2 rounded-lg text-sm font-bold',
@@ -326,8 +315,7 @@ export default function SingleOcr({ initialDocId }: SingleOcrProps = {}) {
                                         ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
                                         : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
                                 )}>
-                                    {ratio}% Textumfang ({result.old_length.toLocaleString()} → {result.new_length.toLocaleString()} Zeichen)
-                                </div>
+                                    {ratio}{tr("% Textumfang (")}{result.old_length.toLocaleString()} → {result.new_length.toLocaleString()}{tr(" Zeichen)")}</div>
                             </div>
                         </div>
 
@@ -336,8 +324,8 @@ export default function SingleOcr({ initialDocId }: SingleOcrProps = {}) {
                             <div className="mx-6 mt-4 p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-start gap-3">
                                 <AlertTriangle className="w-5 h-5 text-amber-400 mt-0.5 shrink-0" />
                                 <div className="text-amber-200 text-sm">
-                                    <p className="font-medium">Qualitätswarnung!</p>
-                                    <p className="mt-1">Der neue Text ist deutlich kürzer als das Original. Bitte prüfe den Vergleich sorgfältig vor der Übernahme.</p>
+                                    <p className="font-medium">{tr("Qualitätswarnung!")}</p>
+                                    <p className="mt-1">{tr("Der neue Text ist deutlich kürzer als das Original. Bitte prüfe den Vergleich sorgfältig vor der Übernahme.")}</p>
                                 </div>
                             </div>
                         )}
@@ -352,26 +340,22 @@ export default function SingleOcr({ initialDocId }: SingleOcrProps = {}) {
                                 {/* Original OCR Text */}
                                 <div>
                                     <h4 className="text-sm font-semibold text-surface-300 mb-3 flex items-center gap-2">
-                                        <span className="w-2 h-2 rounded-full bg-surface-500"></span>
-                                        Original OCR
-                                        <span className="text-xs text-surface-500 font-mono ml-auto">{result.old_length.toLocaleString()} Zeichen</span>
+                                        <span className="w-2 h-2 rounded-full bg-surface-500"></span>{tr("Original OCR")}<span className="text-xs text-surface-500 font-mono ml-auto">{result.old_length.toLocaleString()}{tr(" Zeichen")}</span>
                                     </h4>
                                     <div className="bg-surface-900/60 rounded-xl p-4 border border-surface-700/50 max-h-[500px] overflow-y-auto custom-scrollbar">
                                         <pre className="text-sm text-surface-300 whitespace-pre-wrap font-mono leading-relaxed">
-                                            {result.old_content || '(leer)'}
+                                            {result.old_content || tr("(leer)")}
                                         </pre>
                                     </div>
                                 </div>
                                 {/* New Vision OCR Text */}
                                 <div>
                                     <h4 className="text-sm font-semibold text-cyan-300 mb-3 flex items-center gap-2">
-                                        <span className="w-2 h-2 rounded-full bg-cyan-500"></span>
-                                        Ollama Vision OCR
-                                        <span className="text-xs text-surface-500 font-mono ml-auto">{result.new_length.toLocaleString()} Zeichen</span>
+                                        <span className="w-2 h-2 rounded-full bg-cyan-500"></span>{tr("Ollama Vision OCR")}<span className="text-xs text-surface-500 font-mono ml-auto">{result.new_length.toLocaleString()}{tr(" Zeichen")}</span>
                                     </h4>
                                     <div className="bg-surface-900/60 rounded-xl p-4 border border-cyan-500/20 max-h-[500px] overflow-y-auto custom-scrollbar">
                                         <pre className="text-sm text-cyan-100 whitespace-pre-wrap font-mono leading-relaxed">
-                                            {result.new_content || '(leer)'}
+                                            {result.new_content || tr("(leer)")}
                                         </pre>
                                     </div>
                                 </div>
@@ -387,16 +371,16 @@ export default function SingleOcr({ initialDocId }: SingleOcrProps = {}) {
                             className="w-full btn bg-gradient-to-r from-cyan-600 to-primary-600 hover:from-cyan-700 hover:to-primary-700 text-white py-4 text-lg font-bold flex items-center justify-center gap-3 shadow-xl shadow-cyan-900/20 rounded-xl disabled:opacity-50"
                         >
                             {applying
-                                ? <><Loader2 className="w-5 h-5 animate-spin" /> Wird übertragen...</>
-                                : <><ArrowRightLeft className="w-5 h-5" /> Neuen Text übernehmen</>
+                                ? <><Loader2 className="w-5 h-5 animate-spin" />{tr(" Wird übertragen...")}</>
+                                : <><ArrowRightLeft className="w-5 h-5" />{tr(" Neuen Text übernehmen")}</>
                             }
                         </button>
                     ) : (
                         <div className="p-5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center gap-3">
                             <CheckCircle2 className="w-6 h-6 text-emerald-400" />
                             <div>
-                                <p className="font-bold text-emerald-200">Text wird gespeichert!</p>
-                                <p className="text-sm text-emerald-300/70 mt-0.5">Paperless-ngx aktualisiert den Suchindex im Hintergrund. Das kann einige Sekunden dauern.</p>
+                                <p className="font-bold text-emerald-200">{tr("Text wird gespeichert!")}</p>
+                                <p className="text-sm text-emerald-300/70 mt-0.5">{tr("Paperless-ngx aktualisiert den Suchindex im Hintergrund. Das kann einige Sekunden dauern.")}</p>
                             </div>
                         </div>
                     )}

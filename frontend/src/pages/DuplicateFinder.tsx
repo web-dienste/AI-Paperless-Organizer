@@ -5,6 +5,7 @@ import {
 } from 'lucide-react'
 import clsx from 'clsx'
 import * as api from '../services/api'
+import { tr } from '../i18n'
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -252,11 +253,8 @@ export default function DuplicateFinder() {
             <Copy className="w-7 h-7 text-white" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-surface-100">Duplikate finden</h1>
-            <p className="text-surface-400 text-sm mt-1">
-              Erkennt exakte Duplikate (Checksumme), inhaltlich ähnliche Dokumente (KI-Embeddings)
-              und doppelte Rechnungen in deinem Paperless-ngx Archiv.
-            </p>
+            <h1 className="text-xl font-bold text-surface-100">{tr("Duplikate finden")}</h1>
+            <p className="text-surface-400 text-sm mt-1">{tr("Erkennt exakte Duplikate (Checksumme), inhaltlich ähnliche Dokumente (KI-Embeddings) und doppelte Rechnungen in deinem Paperless-ngx Archiv.")}</p>
           </div>
         </div>
       </div>
@@ -267,18 +265,12 @@ export default function DuplicateFinder() {
           <div className="flex items-start gap-3">
             <AlertTriangle className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
             <div>
-              <p className="text-amber-200 font-medium text-sm">RAG-Index nicht vorhanden</p>
-              <p className="text-amber-300/80 text-sm mt-1 leading-relaxed">
-                Für die Ähnlichkeits-Erkennung muss der RAG-Chat aktiviert und ein Index aufgebaut sein.
-                Bitte zuerst unter{' '}
+              <p className="text-amber-200 font-medium text-sm">{tr("RAG-Index nicht vorhanden")}</p>
+              <p className="text-amber-300/80 text-sm mt-1 leading-relaxed">{tr("Für die Ähnlichkeits-Erkennung muss der RAG-Chat aktiviert und ein Index aufgebaut sein. Bitte zuerst unter")}{' '}
                 <a
                   href="/rag-chat"
                   className="text-primary-400 hover:text-primary-300 underline underline-offset-2"
-                >
-                  Dokumenten-Chat
-                </a>{' '}
-                die Indexierung starten. Exakte Duplikate können trotzdem gesucht werden.
-              </p>
+                >{tr("Dokumenten-Chat")}</a>{' '}{tr("die Indexierung starten. Exakte Duplikate können trotzdem gesucht werden.")}</p>
             </div>
           </div>
         </div>
@@ -287,9 +279,7 @@ export default function DuplicateFinder() {
       {/* Scan-Konfiguration */}
       <div className="card p-6 space-y-5">
         <h2 className="text-surface-100 font-semibold flex items-center gap-2">
-          <Search className="w-5 h-5 text-primary-400" />
-          Scan-Konfiguration
-        </h2>
+          <Search className="w-5 h-5 text-primary-400" />{tr("Scan-Konfiguration")}</h2>
 
         {/* Checkboxen */}
         <div className="grid sm:grid-cols-3 gap-4">
@@ -310,9 +300,9 @@ export default function DuplicateFinder() {
             <div>
               <div className="flex items-center gap-2">
                 <Hash className="w-4 h-4 text-blue-400" />
-                <span className="text-surface-100 text-sm font-medium">Exakte Duplikate</span>
+                <span className="text-surface-100 text-sm font-medium">{tr("Exakte Duplikate")}</span>
               </div>
-              <p className="text-surface-400 text-xs mt-1">Identische Dateien (Checksumme) · Sekunden</p>
+              <p className="text-surface-400 text-xs mt-1">{tr("Identische Dateien (Checksumme) · Sekunden")}</p>
             </div>
           </label>
 
@@ -336,11 +326,11 @@ export default function DuplicateFinder() {
             <div>
               <div className="flex items-center gap-2">
                 <FileText className="w-4 h-4 text-purple-400" />
-                <span className="text-surface-100 text-sm font-medium">Ähnliche Dokumente</span>
+                <span className="text-surface-100 text-sm font-medium">{tr("Ähnliche Dokumente")}</span>
               </div>
-              <p className="text-surface-400 text-xs mt-1">KI-Embeddings Vergleich · ~1-2 Min.</p>
+              <p className="text-surface-400 text-xs mt-1">{tr("KI-Embeddings Vergleich · ~1-2 Min.")}</p>
               {similarDisabled && (
-                <p className="text-amber-400/70 text-xs mt-1">RAG-Index benötigt</p>
+                <p className="text-amber-400/70 text-xs mt-1">{tr("RAG-Index benötigt")}</p>
               )}
             </div>
           </label>
@@ -362,9 +352,9 @@ export default function DuplicateFinder() {
             <div>
               <div className="flex items-center gap-2">
                 <Calculator className="w-4 h-4 text-emerald-400" />
-                <span className="text-surface-100 text-sm font-medium">Doppelte Rechnungen</span>
+                <span className="text-surface-100 text-sm font-medium">{tr("Doppelte Rechnungen")}</span>
               </div>
-              <p className="text-surface-400 text-xs mt-1">Gleiche Rechnungsnummer · <span className="text-amber-400">Sehr langsam (~3s/Dok, kann Stunden dauern)</span></p>
+              <p className="text-surface-400 text-xs mt-1">{tr("Gleiche Rechnungsnummer · ")}<span className="text-amber-400">{tr("Sehr langsam (~3s/Dok, kann Stunden dauern)")}</span></p>
             </div>
           </label>
         </div>
@@ -373,7 +363,7 @@ export default function DuplicateFinder() {
         {modeSimilar && !similarDisabled && (
           <div className="p-4 bg-surface-800/50 border border-surface-700/50 rounded-xl space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-surface-300 text-sm font-medium">Ähnlichkeits-Schwelle</span>
+              <span className="text-surface-300 text-sm font-medium">{tr("Ähnlichkeits-Schwelle")}</span>
               <span className="px-2.5 py-0.5 bg-primary-600/20 border border-primary-500/30 text-primary-400 font-mono font-medium text-sm rounded-lg">
                 {threshold}%
               </span>
@@ -387,8 +377,8 @@ export default function DuplicateFinder() {
               className="w-full accent-primary-500 h-2 bg-surface-700 rounded-full appearance-none cursor-pointer"
             />
             <div className="flex justify-between text-xs text-surface-500">
-              <span>80% – mehr Treffer</span>
-              <span>100% – fast identisch</span>
+              <span>{tr("80% – mehr Treffer")}</span>
+              <span>{tr("100% – fast identisch")}</span>
             </div>
           </div>
         )}
@@ -410,7 +400,7 @@ export default function DuplicateFinder() {
             ) : (
               <Search className="w-4 h-4" />
             )}
-            {running ? 'Scan läuft...' : 'Scan starten'}
+            {running ? tr("Scan läuft...") : tr("Scan starten")}
           </button>
 
           {running && (
@@ -422,9 +412,7 @@ export default function DuplicateFinder() {
               }}
               className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium bg-red-900/40 hover:bg-red-900/60 text-red-300 border border-red-800/40 transition-colors"
             >
-              <StopCircle className="w-4 h-4" />
-              Abbrechen
-            </button>
+              <StopCircle className="w-4 h-4" />{tr("Abbrechen")}</button>
           )}
 
           {results && !running && (
@@ -433,9 +421,7 @@ export default function DuplicateFinder() {
               className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium
                          bg-surface-700 hover:bg-surface-600 text-surface-300 transition-colors"
             >
-              <RefreshCw className="w-4 h-4" />
-              Ergebnisse neu laden
-            </button>
+              <RefreshCw className="w-4 h-4" />{tr("Ergebnisse neu laden")}</button>
           )}
         </div>
 
@@ -451,12 +437,12 @@ export default function DuplicateFinder() {
           <div className="space-y-2">
             <div className="flex items-center justify-between text-sm">
               <span className="text-surface-300">
-                {status.phase === 'exact' ? 'Prüfe Checksummen…'
-                  : status.phase === 'similar' ? 'Vergleiche Embeddings…'
-                  : status.phase === 'invoices' ? 'Extrahiere Rechnungsdaten…'
-                  : status.phase === 'done' ? 'Fertig'
-                  : status.phase === 'cancelled' ? 'Abgebrochen'
-                  : 'Wird vorbereitet…'}
+                {status.phase === 'exact' ? tr("Prüfe Checksummen…")
+                  : status.phase === 'similar' ? tr("Vergleiche Embeddings…")
+                  : status.phase === 'invoices' ? tr("Extrahiere Rechnungsdaten…")
+                  : status.phase === 'done' ? tr("Fertig")
+                  : status.phase === 'cancelled' ? tr("Abgebrochen")
+                  : tr("Wird vorbereitet…")}
               </span>
               <span className="text-surface-400 font-mono">
                 {status.total > 0 ? `${status.progress}/${status.total} (${progressPct}%)` : '…'}
@@ -513,11 +499,11 @@ export default function DuplicateFinder() {
             <div className="card p-8 text-center">
               <CheckCircle2 className="w-10 h-10 text-emerald-400 mx-auto mb-3" />
               <p className="text-surface-300 text-sm">
-                {activeTab === 'exact' && 'Keine exakten Duplikate gefunden.'}
-                {activeTab === 'similar' && 'Keine ähnlichen Dokumente gefunden.'}
-                {activeTab === 'invoices' && 'Keine doppelten Rechnungen gefunden.'}
+                {activeTab === 'exact' && tr("Keine exakten Duplikate gefunden.")}
+                {activeTab === 'similar' && tr("Keine ähnlichen Dokumente gefunden.")}
+                {activeTab === 'invoices' && tr("Keine doppelten Rechnungen gefunden.")}
               </p>
-              <p className="text-surface-500 text-xs mt-1">Alles sauber!</p>
+              <p className="text-surface-500 text-xs mt-1">{tr("Alles sauber!")}</p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -537,10 +523,7 @@ export default function DuplicateFinder() {
           {(tabCounts.exact > 0 || tabCounts.similar > 0 || tabCounts.invoices > 0) && (
             <div className="card p-4 flex items-center gap-3 text-sm">
               <Info className="w-4 h-4 text-surface-400 flex-shrink-0" />
-              <p className="text-surface-400">
-                Dokumente werden nicht automatisch gelöscht. Prüfe die Treffer in Paperless-ngx
-                und entscheide selbst, welche Duplikate entfernt werden sollen.
-              </p>
+              <p className="text-surface-400">{tr("Dokumente werden nicht automatisch gelöscht. Prüfe die Treffer in Paperless-ngx und entscheide selbst, welche Duplikate entfernt werden sollen.")}</p>
             </div>
           )}
         </div>
@@ -576,29 +559,23 @@ function GroupCard({ group, tab, paperlessUrl, onIgnore }: GroupCardProps) {
           {tab === 'exact' && (
             <>
               <Hash className="w-4 h-4 text-blue-400" />
-              <span className="text-surface-300">
-                Exakte Übereinstimmung — {group.documents.length} Dokumente
-              </span>
+              <span className="text-surface-300">{tr("Exakte Übereinstimmung — ")}{group.documents.length}{tr(" Dokumente")}</span>
             </>
           )}
           {tab === 'similar' && (
             <>
               <FileText className="w-4 h-4 text-purple-400" />
-              <span className="text-surface-300">
-                Ähnliche Dokumente — {group.documents.length} Treffer
-              </span>
+              <span className="text-surface-300">{tr("Ähnliche Dokumente — ")}{group.documents.length}{tr(" Treffer")}</span>
             </>
           )}
           {tab === 'invoices' && (
             <>
               <Calculator className="w-4 h-4 text-emerald-400" />
-              <span className="text-surface-300">
-                Rechnungsnr.{' '}
+              <span className="text-surface-300">{tr("Rechnungsnr.")}{' '}
                 <span className="text-surface-100 font-mono font-medium">
                   {group.documents[0]?.invoice_number || '–'}
                 </span>{' '}
-                — {group.documents.length} Dokumente
-              </span>
+                — {group.documents.length}{tr(" Dokumente")}</span>
             </>
           )}
         </div>
@@ -609,9 +586,7 @@ function GroupCard({ group, tab, paperlessUrl, onIgnore }: GroupCardProps) {
                      bg-surface-700 hover:bg-surface-600 text-surface-400 hover:text-surface-200
                      transition-colors"
         >
-          <EyeOff className="w-3.5 h-3.5" />
-          Kein Duplikat
-        </button>
+          <EyeOff className="w-3.5 h-3.5" />{tr("Kein Duplikat")}</button>
       </div>
 
       {/* Documents grid */}
@@ -647,20 +622,20 @@ function DocCard({ doc, tab, paperlessUrl }: DocCardProps) {
       {/* Title */}
       <div>
         <p className="text-surface-100 text-sm font-medium leading-snug line-clamp-2">
-          {doc.title || 'Ohne Titel'}
+          {doc.title || tr("Ohne Titel")}
         </p>
-        <p className="text-surface-500 text-xs mt-1 font-mono">ID {doc.id}</p>
+        <p className="text-surface-500 text-xs mt-1 font-mono">{tr("ID ")}{doc.id}</p>
       </div>
 
       {/* Meta */}
       <div className="space-y-1.5 text-xs">
         <div className="flex items-center justify-between">
-          <span className="text-surface-500">Datum</span>
+          <span className="text-surface-500">{tr("Datum")}</span>
           <span className="text-surface-300">{formatDate(doc.created)}</span>
         </div>
         {doc.correspondent && (
           <div className="flex items-center justify-between">
-            <span className="text-surface-500">Korrespondent</span>
+            <span className="text-surface-500">{tr("Korrespondent")}</span>
             <span className="text-surface-300 truncate ml-2 max-w-[60%] text-right">
               {doc.correspondent}
             </span>
@@ -668,7 +643,7 @@ function DocCard({ doc, tab, paperlessUrl }: DocCardProps) {
         )}
         {doc.document_type && (
           <div className="flex items-center justify-between">
-            <span className="text-surface-500">Typ</span>
+            <span className="text-surface-500">{tr("Typ")}</span>
             <span className="text-surface-300 truncate ml-2 max-w-[60%] text-right">
               {doc.document_type}
             </span>
@@ -676,7 +651,7 @@ function DocCard({ doc, tab, paperlessUrl }: DocCardProps) {
         )}
         {tab === 'similar' && doc.similarity != null && (
           <div className="flex items-center justify-between">
-            <span className="text-surface-500">Ähnlichkeit</span>
+            <span className="text-surface-500">{tr("Ähnlichkeit")}</span>
             <span
               className={clsx(
                 'font-mono font-medium',
@@ -695,13 +670,13 @@ function DocCard({ doc, tab, paperlessUrl }: DocCardProps) {
           <>
             {doc.invoice_number && (
               <div className="flex items-center justify-between">
-                <span className="text-surface-500">Rechnungsnr.</span>
+                <span className="text-surface-500">{tr("Rechnungsnr.")}</span>
                 <span className="text-surface-300 font-mono">{doc.invoice_number}</span>
               </div>
             )}
             {doc.amount != null && (
               <div className="flex items-center justify-between">
-                <span className="text-surface-500">Betrag</span>
+                <span className="text-surface-500">{tr("Betrag")}</span>
                 <span className="text-surface-300 font-mono">{formatAmount(doc.amount)}</span>
               </div>
             )}
@@ -719,9 +694,7 @@ function DocCard({ doc, tab, paperlessUrl }: DocCardProps) {
                      bg-surface-700/70 hover:bg-surface-600 text-surface-300 hover:text-surface-100
                      border border-surface-600/50 transition-colors"
         >
-          <ExternalLink className="w-3.5 h-3.5" />
-          In Paperless öffnen
-        </a>
+          <ExternalLink className="w-3.5 h-3.5" />{tr("In Paperless öffnen")}</a>
       )}
     </div>
   )

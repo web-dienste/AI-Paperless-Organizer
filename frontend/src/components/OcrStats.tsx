@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { BarChart3, Clock, FileText, Layers, RefreshCw, CheckCircle, Loader2, AlertCircle } from 'lucide-react'
 import * as api from '../services/api'
 import clsx from 'clsx'
+import { tr } from '../i18n'
 
 export default function OcrStats() {
     const [stats, setStats] = useState<api.OcrStats[]>([])
@@ -58,9 +59,7 @@ export default function OcrStats() {
                     disabled={loading}
                     className="flex items-center gap-2 text-sm text-surface-400 hover:text-white transition-colors"
                 >
-                    <RefreshCw className={clsx("w-4 h-4", loading && "animate-spin")} />
-                    Aktualisieren
-                </button>
+                    <RefreshCw className={clsx("w-4 h-4", loading && "animate-spin")} />{tr("Aktualisieren")}</button>
             </div>
 
             {/* OCR Status Card - NEW */}
@@ -68,9 +67,7 @@ export default function OcrStats() {
                 <div className="card p-6 border border-surface-700/50 shadow-xl shadow-black/20 bg-surface-800/40 backdrop-blur-sm">
                     <div className="flex items-center justify-between mb-4">
                         <h3 className="font-bold text-lg text-white flex items-center gap-2">
-                            <CheckCircle className="w-5 h-5 text-primary-400" />
-                            OCR Gesamtstatus
-                        </h3>
+                            <CheckCircle className="w-5 h-5 text-primary-400" />{tr("OCR Gesamtstatus")}</h3>
                         <div className={clsx(
                             "px-3 py-1 rounded-full text-sm font-bold",
                             progressColor === 'emerald' && "bg-emerald-500/20 text-emerald-300",
@@ -106,7 +103,7 @@ export default function OcrStats() {
                         <div className="p-4 rounded-xl bg-surface-900/50 border border-surface-700">
                             <div className="flex items-center gap-2 mb-2">
                                 <FileText className="w-4 h-4 text-surface-400" />
-                                <span className="text-sm text-surface-400">Gesamtdokumente</span>
+                                <span className="text-sm text-surface-400">{tr("Gesamtdokumente")}</span>
                             </div>
                             <div className="text-2xl font-bold text-white">{ocrStatus.total_documents}</div>
                         </div>
@@ -114,33 +111,27 @@ export default function OcrStats() {
                         <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30">
                             <div className="flex items-center gap-2 mb-2">
                                 <CheckCircle className="w-4 h-4 text-emerald-400" />
-                                <span className="text-sm text-emerald-300">OCR Fertig</span>
+                                <span className="text-sm text-emerald-300">{tr("OCR Fertig")}</span>
                             </div>
                             <div className="text-2xl font-bold text-emerald-300">{ocrStatus.finished_documents}</div>
                             <div className="text-xs text-emerald-400/70 mt-1">
-                                {((ocrStatus.finished_documents / ocrStatus.total_documents) * 100).toFixed(1)}% abgeschlossen
-                            </div>
+                                {((ocrStatus.finished_documents / ocrStatus.total_documents) * 100).toFixed(1)}{tr("% abgeschlossen")}</div>
                         </div>
 
                         <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30">
                             <div className="flex items-center gap-2 mb-2">
                                 <Loader2 className="w-4 h-4 text-amber-400" />
-                                <span className="text-sm text-amber-300">Offen / Pending</span>
+                                <span className="text-sm text-amber-300">{tr("Offen / Pending")}</span>
                             </div>
                             <div className="text-2xl font-bold text-amber-300">{ocrStatus.pending_documents}</div>
-                            <div className="text-xs text-amber-400/70 mt-1">
-                                Noch {ocrStatus.pending_documents} Dokumente zu verarbeiten
-                            </div>
+                            <div className="text-xs text-amber-400/70 mt-1">{tr("Noch ")}{ocrStatus.pending_documents}{tr(" Dokumente zu verarbeiten")}</div>
                         </div>
                     </div>
 
                     {ocrStatus.percentage < 100 && (
                         <div className="mt-4 p-3 bg-surface-700/30 rounded-lg flex items-center gap-3">
                             <AlertCircle className="w-5 h-5 text-amber-400 flex-shrink-0" />
-                            <p className="text-sm text-surface-300">
-                                Es fehlen noch <strong className="text-white">{ocrStatus.pending_documents} Dokumente</strong> bis alle aktuell sind. 
-                                Starte den Batch-OCR um diese zu verarbeiten.
-                            </p>
+                            <p className="text-sm text-surface-300">{tr("Es fehlen noch ")}<strong className="text-white">{ocrStatus.pending_documents}{tr(" Dokumente")}</strong>{tr(" bis alle aktuell sind. Starte den Batch-OCR um diese zu verarbeiten.")}</p>
                         </div>
                     )}
 
@@ -148,8 +139,7 @@ export default function OcrStats() {
                         <div className="mt-4 p-3 bg-emerald-500/10 rounded-lg flex items-center gap-3">
                             <CheckCircle className="w-5 h-5 text-emerald-400 flex-shrink-0" />
                             <p className="text-sm text-emerald-300">
-                                <strong>Super!</strong> Alle {ocrStatus.total_documents} Dokumente haben aktuelles OCR.
-                            </p>
+                                <strong>{tr("Super!")}</strong>{tr(" Alle ")}{ocrStatus.total_documents}{tr(" Dokumente haben aktuelles OCR.")}</p>
                         </div>
                     )}
                 </div>
@@ -159,25 +149,25 @@ export default function OcrStats() {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <MetricCard
                     icon={<FileText className="w-5 h-5 text-blue-400" />}
-                    label="Verarbeitete Dokumente"
+                    label={tr("Verarbeitete Dokumente")}
                     value={totalDocs}
                     color="blue"
                 />
                 <MetricCard
                     icon={<Layers className="w-5 h-5 text-emerald-400" />}
-                    label="Seiten"
+                    label={tr("Seiten")}
                     value={totalPages}
                     color="emerald"
                 />
                 <MetricCard
                     icon={<Clock className="w-5 h-5 text-purple-400" />}
-                    label="Ø Zeit / Dok"
+                    label={tr("Ø Zeit / Dok")}
                     value={`${avgTime.toFixed(1)}s`}
                     color="purple"
                 />
                 <MetricCard
                     icon={<Clock className="w-5 h-5 text-orange-400" />}
-                    label="Ø Zeit / Seite"
+                    label={tr("Ø Zeit / Seite")}
                     value={`${avgTimePerPage.toFixed(1)}s`}
                     color="orange"
                 />
@@ -187,27 +177,25 @@ export default function OcrStats() {
             <div className="card p-0 overflow-hidden border border-surface-700/50 shadow-xl shadow-black/20 bg-surface-800/40 backdrop-blur-sm">
                 <div className="p-6 border-b border-surface-700/50 bg-surface-800/50 flex justify-between items-center">
                     <h3 className="font-bold text-lg text-white flex items-center gap-2">
-                        <BarChart3 className="w-5 h-5 text-primary-400" />
-                        Letzte Aktivitäten
-                    </h3>
+                        <BarChart3 className="w-5 h-5 text-primary-400" />{tr("Letzte Aktivitäten")}</h3>
                 </div>
 
                 {stats.length === 0 ? (
                     <div className="p-12 text-center text-surface-500">
                         <BarChart3 className="w-12 h-12 mx-auto mb-3 opacity-20" />
-                        <p>Noch keine Statistiken verfügbar.</p>
+                        <p>{tr("Noch keine Statistiken verfügbar.")}</p>
                     </div>
                 ) : (
                     <div className="overflow-x-auto">
                         <table className="w-full text-sm text-left">
                             <thead className="text-xs text-surface-400 uppercase bg-surface-900/50 border-b border-surface-700/50">
                                 <tr>
-                                    <th className="px-6 py-4 font-medium">Zeitpunkt</th>
-                                    <th className="px-6 py-4 font-medium">Dokument</th>
-                                    <th className="px-6 py-4 font-medium text-center">Seiten</th>
-                                    <th className="px-6 py-4 font-medium text-center">Zeichen</th>
-                                    <th className="px-6 py-4 font-medium text-right">Dauer</th>
-                                    <th className="px-6 py-4 font-medium">Server</th>
+                                    <th className="px-6 py-4 font-medium">{tr("Zeitpunkt")}</th>
+                                    <th className="px-6 py-4 font-medium">{tr("Dokument")}</th>
+                                    <th className="px-6 py-4 font-medium text-center">{tr("Seiten")}</th>
+                                    <th className="px-6 py-4 font-medium text-center">{tr("Zeichen")}</th>
+                                    <th className="px-6 py-4 font-medium text-right">{tr("Dauer")}</th>
+                                    <th className="px-6 py-4 font-medium">{tr("Server")}</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-surface-700/30">
@@ -223,7 +211,7 @@ export default function OcrStats() {
                                             <span className="flex items-center gap-2">
                                                 #{stat.doc_id}
                                                 {stat.success === false && (
-                                                    <span className="text-xs text-red-400 bg-red-500/20 px-1.5 py-0.5 rounded">FEHLER</span>
+                                                    <span className="text-xs text-red-400 bg-red-500/20 px-1.5 py-0.5 rounded">{tr("FEHLER")}</span>
                                                 )}
                                             </span>
                                         </td>

@@ -19,6 +19,7 @@ import {
 } from 'lucide-react'
 import clsx from 'clsx'
 import * as api from '../services/api'
+import { tr } from '../i18n'
 
 export default function OcrCompare() {
     const [docId, setDocId] = useState('')
@@ -274,10 +275,8 @@ export default function OcrCompare() {
                             <FlaskConical className="w-5 h-5 text-violet-400" />
                         </div>
                         <div>
-                            <h3 className="font-bold text-lg text-white">OCR Modell-Vergleich</h3>
-                            <p className="text-sm text-surface-400">
-                                Teste verschiedene Ollama-Modelle auf demselben Dokument
-                            </p>
+                            <h3 className="font-bold text-lg text-white">{tr("OCR Modell-Vergleich")}</h3>
+                            <p className="text-sm text-surface-400">{tr("Teste verschiedene Ollama-Modelle auf demselben Dokument")}</p>
                         </div>
                     </div>
                 </div>
@@ -286,9 +285,7 @@ export default function OcrCompare() {
                     {/* Document ID + Page Input */}
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div className="sm:col-span-2">
-                            <label className="text-xs font-medium text-surface-400 ml-1 mb-1 block">
-                                Dokument-ID
-                            </label>
+                            <label className="text-xs font-medium text-surface-400 ml-1 mb-1 block">{tr("Dokument-ID")}</label>
                             <input
                                 type="number"
                                 value={docId}
@@ -300,9 +297,7 @@ export default function OcrCompare() {
                             />
                         </div>
                         <div>
-                            <label className="text-xs font-medium text-surface-400 ml-1 mb-1 block">
-                                Seite (0 = alle)
-                            </label>
+                            <label className="text-xs font-medium text-surface-400 ml-1 mb-1 block">{tr("Seite (0 = alle)")}</label>
                             <input
                                 type="number"
                                 value={page}
@@ -317,19 +312,13 @@ export default function OcrCompare() {
 
                     {/* Model Picker */}
                     <div>
-                        <label className="text-xs font-medium text-surface-400 ml-1 mb-2 block">
-                            Modelle auswählen (max. 5)
-                        </label>
+                        <label className="text-xs font-medium text-surface-400 ml-1 mb-2 block">{tr("Modelle auswählen (max. 5)")}</label>
 
                         {loadingModels ? (
                             <div className="flex items-center gap-2 text-surface-400 text-sm py-4">
-                                <Loader2 className="w-4 h-4 animate-spin" />
-                                Lade verfügbare Modelle...
-                            </div>
+                                <Loader2 className="w-4 h-4 animate-spin" />{tr("Lade verfügbare Modelle...")}</div>
                         ) : availableModels.length === 0 ? (
-                            <div className="text-amber-400 text-sm py-2">
-                                Keine Modelle gefunden. Ist Ollama erreichbar?
-                            </div>
+                            <div className="text-amber-400 text-sm py-2">{tr("Keine Modelle gefunden. Ist Ollama erreichbar?")}</div>
                         ) : (
                             <div>
                                 <button
@@ -339,8 +328,8 @@ export default function OcrCompare() {
                                 >
                                     <span className="text-sm text-surface-300">
                                         {selectedModels.length === 0
-                                            ? 'Modelle auswählen...'
-                                            : `${selectedModels.length} Modell${selectedModels.length > 1 ? 'e' : ''} ausgewählt`
+                                            ? tr("Modelle auswählen...")
+                                            : tr("{length} Modell{v1} ausgewählt", { length: selectedModels.length, v1: selectedModels.length > 1 ? 'e' : '' })
                                         }
                                     </span>
                                     {showModelPicker
@@ -377,14 +366,10 @@ export default function OcrCompare() {
                                                     </div>
                                                     <span className="font-mono text-sm truncate">{model}</span>
                                                     {model === 'mistral-ocr' && (
-                                                        <span className="ml-auto text-[10px] px-1.5 py-0.5 rounded-full bg-orange-500/20 text-orange-300 border border-orange-500/30 flex-shrink-0">
-                                                            Cloud
-                                                        </span>
+                                                        <span className="ml-auto text-[10px] px-1.5 py-0.5 rounded-full bg-orange-500/20 text-orange-300 border border-orange-500/30 flex-shrink-0">{tr("Cloud")}</span>
                                                     )}
                                                     {isCurrent && model !== 'mistral-ocr' && (
-                                                        <span className="ml-auto text-[10px] px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex-shrink-0">
-                                                            aktiv
-                                                        </span>
+                                                        <span className="ml-auto text-[10px] px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex-shrink-0">{tr("aktiv")}</span>
                                                     )}
                                                 </button>
                                             )
@@ -436,13 +421,10 @@ export default function OcrCompare() {
                     >
                         {running ? (
                             <>
-                                <Loader2 className="w-5 h-5 animate-spin" />
-                                Vergleich läuft...
-                            </>
+                                <Loader2 className="w-5 h-5 animate-spin" />{tr("Vergleich läuft...")}</>
                         ) : (
                             <>
-                                <Play className="w-5 h-5 fill-current" />
-                                Vergleich starten ({selectedModels.length} Modell{selectedModels.length !== 1 ? 'e' : ''})
+                                <Play className="w-5 h-5 fill-current" />{tr("Vergleich starten (")}{selectedModels.length}{tr(" Modell")}{selectedModels.length !== 1 ? 'e' : ''})
                             </>
                         )}
                     </button>
@@ -453,7 +435,7 @@ export default function OcrCompare() {
                             {/* Progress bar */}
                             <div>
                                 <div className="flex justify-between text-xs text-surface-400 mb-2 font-medium">
-                                    <span>Modell {status.current_model_index + 1} / {status.total_models}</span>
+                                    <span>{tr("Modell ")}{status.current_model_index + 1} / {status.total_models}</span>
                                     <span>{status.elapsed_seconds}s</span>
                                 </div>
                                 <div className="h-2.5 rounded-full bg-surface-900 overflow-hidden ring-1 ring-surface-700">
@@ -471,12 +453,12 @@ export default function OcrCompare() {
                                 <Loader2 className="w-4 h-4 animate-spin text-violet-400 flex-shrink-0" />
                                 <div className="flex-1 min-w-0">
                                     <p className="text-sm font-medium text-white truncate">
-                                        {status.current_model || 'Vorbereitung...'}
+                                        {status.current_model || tr("Vorbereitung...")}
                                     </p>
                                     <p className="text-xs text-surface-400">
                                         {getPhaseLabel(status.phase)}
                                         {status.phase === 'ocr_page' && status.total_pages > 0 && (
-                                            <> Seite {status.current_page}/{status.total_pages}</>
+                                            <>{tr(" Seite ")}{status.current_page}/{status.total_pages}</>
                                         )}
                                     </p>
                                 </div>
@@ -529,11 +511,11 @@ export default function OcrCompare() {
                             <div className="flex items-center gap-2 text-surface-300">
                                 <FileText className="w-4 h-4 text-surface-500" />
                                 <span className="font-medium text-white">{result.title}</span>
-                                <span className="text-surface-500">(ID: {result.document_id})</span>
+                                <span className="text-surface-500">{tr("(ID: ")}{result.document_id})</span>
                             </div>
                             <div className="text-surface-500">
-                                {result.total_pages} Seite{result.total_pages !== 1 ? 'n' : ''}
-                                {result.compared_page > 0 && ` (Seite ${result.compared_page} getestet)`}
+                                {result.total_pages}{tr(" Seite")}{result.total_pages !== 1 ? 'n' : ''}
+                                {result.compared_page > 0 && tr(" (Seite {compared_page} getestet)", { compared_page: result.compared_page })}
                             </div>
                         </div>
 
@@ -543,16 +525,14 @@ export default function OcrCompare() {
                                 {bestModel && (
                                     <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/30">
                                         <Trophy className="w-4 h-4 text-amber-400" />
-                                        <span className="text-xs text-amber-200">
-                                            Meiste Zeichen: <span className="font-mono font-bold">{bestModel.model}</span> ({bestModel.chars})
+                                        <span className="text-xs text-amber-200">{tr("Meiste Zeichen: ")}<span className="font-mono font-bold">{bestModel.model}</span> ({bestModel.chars})
                                         </span>
                                     </div>
                                 )}
                                 {fastestModel && (
                                     <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30">
                                         <Clock className="w-4 h-4 text-emerald-400" />
-                                        <span className="text-xs text-emerald-200">
-                                            Schnellstes: <span className="font-mono font-bold">{fastestModel.model}</span> ({fastestModel.duration_seconds}s)
+                                        <span className="text-xs text-emerald-200">{tr("Schnellstes: ")}<span className="font-mono font-bold">{fastestModel.model}</span> ({fastestModel.duration_seconds}s)
                                         </span>
                                     </div>
                                 )}
@@ -622,16 +602,14 @@ export default function OcrCompare() {
                                             )}>
                                                 <FileText className="w-3.5 h-3.5" />
                                                 <span className="font-mono font-bold text-sm">
-                                                    {r.chars.toLocaleString()} Zeichen
-                                                </span>
+                                                    {r.chars.toLocaleString()}{tr(" Zeichen")}</span>
                                             </div>
                                             <div className="text-surface-500">
-                                                {r.pages_processed} Seite{r.pages_processed !== 1 ? 'n' : ''}
+                                                {r.pages_processed}{tr(" Seite")}{r.pages_processed !== 1 ? 'n' : ''}
                                             </div>
                                             {!r.error && r.chars > 0 && (
                                                 <div className="text-surface-500">
-                                                    ~{Math.round(r.chars / r.duration_seconds)} Zeichen/s
-                                                </div>
+                                                    ~{Math.round(r.chars / r.duration_seconds)}{tr(" Zeichen/s")}</div>
                                             )}
                                         </div>
                                     </div>
@@ -640,21 +618,18 @@ export default function OcrCompare() {
                                     {isExpanded && (
                                         <div className="p-4 animate-in fade-in duration-200">
                                             {r.error ? (
-                                                <div className="p-3 rounded-lg bg-red-500/10 text-red-300 text-sm">
-                                                    Fehler: {r.error}
+                                                <div className="p-3 rounded-lg bg-red-500/10 text-red-300 text-sm">{tr("Fehler: ")}{r.error}
                                                 </div>
                                             ) : (
                                                 <div className="relative">
                                                     <pre className="whitespace-pre-wrap font-mono text-xs text-surface-300 max-h-96 overflow-y-auto custom-scrollbar p-3 rounded-lg bg-black/30 border border-surface-700/50 leading-relaxed">
-                                                        {r.text || '(Kein Text erkannt)'}
+                                                        {r.text || tr("(Kein Text erkannt)")}
                                                     </pre>
                                                     <button
                                                         onClick={() => navigator.clipboard.writeText(r.text)}
                                                         className="absolute top-2 right-2 px-2 py-1 rounded-md bg-surface-700/80 text-surface-400 hover:text-white text-xs transition-colors"
-                                                        title="Text kopieren"
-                                                    >
-                                                        Kopieren
-                                                    </button>
+                                                        title={tr("Text kopieren")}
+                                                    >{tr("Kopieren")}</button>
                                                 </div>
                                             )}
                                         </div>
@@ -675,14 +650,12 @@ export default function OcrCompare() {
                                 className="w-full p-4 flex items-center justify-between text-left hover:bg-surface-800/50 transition-colors"
                             >
                                 <div className="flex items-center gap-2 text-sm text-surface-400">
-                                    <FileText className="w-4 h-4" />
-                                    Originaler Paperless-Text ({result.old_content.length.toLocaleString()} Zeichen)
-                                </div>
+                                    <FileText className="w-4 h-4" />{tr("Originaler Paperless-Text (")}{result.old_content.length.toLocaleString()}{tr(" Zeichen)")}</div>
                                 <ChevronDown className="w-4 h-4 text-surface-500" />
                             </button>
                             <div id="original-content" className="hidden p-4 border-t border-surface-700/50">
                                 <pre className="whitespace-pre-wrap font-mono text-xs text-surface-400 max-h-64 overflow-y-auto custom-scrollbar p-3 rounded-lg bg-black/30 border border-surface-700/50 leading-relaxed">
-                                    {result.old_content || '(Kein Text vorhanden)'}
+                                    {result.old_content || tr("(Kein Text vorhanden)")}
                                 </pre>
                             </div>
                         </div>
@@ -701,10 +674,8 @@ export default function OcrCompare() {
                                         <Sparkles className="w-5 h-5 text-orange-400" />
                                     </div>
                                     <div>
-                                        <p className="font-bold text-white text-sm">KI-Qualitätsbewertung (Cloud API)</p>
-                                        <p className="text-xs text-surface-400">
-                                            OCR-Ergebnisse von einem großen Sprachmodell auswerten lassen
-                                        </p>
+                                        <p className="font-bold text-white text-sm">{tr("KI-Qualitätsbewertung (Cloud API)")}</p>
+                                        <p className="text-xs text-surface-400">{tr("OCR-Ergebnisse von einem großen Sprachmodell auswerten lassen")}</p>
                                     </div>
                                 </button>
                             ) : (
@@ -712,20 +683,14 @@ export default function OcrCompare() {
                                     <div className="flex items-start gap-3 p-4 rounded-xl bg-orange-500/10 border border-orange-500/30">
                                         <ShieldAlert className="w-6 h-6 text-orange-400 flex-shrink-0 mt-0.5" />
                                         <div className="space-y-2">
-                                            <p className="font-bold text-orange-200 text-sm">Datenschutz-Hinweis</p>
-                                            <p className="text-xs text-orange-200/80 leading-relaxed">
-                                                Die OCR-Texte werden an den konfigurierten externen LLM-Provider
-                                                (z.B. OpenAI, Anthropic) gesendet. Der Dokumenteninhalt verlässt
-                                                damit dein lokales Netzwerk.
-                                            </p>
+                                            <p className="font-bold text-orange-200 text-sm">{tr("Datenschutz-Hinweis")}</p>
+                                            <p className="text-xs text-orange-200/80 leading-relaxed">{tr("Die OCR-Texte werden an den konfigurierten externen LLM-Provider (z.B. OpenAI, Anthropic) gesendet. Der Dokumenteninhalt verlässt damit dein lokales Netzwerk.")}</p>
                                         </div>
                                     </div>
 
                                     {/* Model Override Selector */}
                                     <div>
-                                        <label className="text-xs font-medium text-surface-400 ml-1 mb-1 block">
-                                            Auswertungsmodell (stärkeres Modell = bessere Analyse)
-                                        </label>
+                                        <label className="text-xs font-medium text-surface-400 ml-1 mb-1 block">{tr("Auswertungsmodell (stärkeres Modell = bessere Analyse)")}</label>
                                         <select
                                             value={evalModel}
                                             onChange={(e) => setEvalModel(e.target.value)}
@@ -742,15 +707,11 @@ export default function OcrCompare() {
                                             onClick={startEvaluation}
                                             className="flex-1 btn py-3 flex justify-center items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white border-0 font-medium"
                                         >
-                                            <Sparkles className="w-4 h-4" />
-                                            Auswertung starten
-                                        </button>
+                                            <Sparkles className="w-4 h-4" />{tr("Auswertung starten")}</button>
                                         <button
                                             onClick={() => setShowEvalWarning(false)}
                                             className="btn py-3 px-6 bg-surface-700 hover:bg-surface-600 text-surface-300 border-0"
-                                        >
-                                            Abbrechen
-                                        </button>
+                                        >{tr("Abbrechen")}</button>
                                     </div>
                                 </div>
                             )}
@@ -763,10 +724,8 @@ export default function OcrCompare() {
                             <div className="flex items-center gap-3">
                                 <Loader2 className="w-5 h-5 animate-spin text-orange-400" />
                                 <div>
-                                    <p className="font-bold text-white text-sm">KI analysiert OCR-Ergebnisse...</p>
-                                    <p className="text-xs text-surface-400">
-                                        Die Texte werden an den Cloud-Provider gesendet. Das kann einige Sekunden dauern.
-                                    </p>
+                                    <p className="font-bold text-white text-sm">{tr("KI analysiert OCR-Ergebnisse...")}</p>
+                                    <p className="text-xs text-surface-400">{tr("Die Texte werden an den Cloud-Provider gesendet. Das kann einige Sekunden dauern.")}</p>
                                 </div>
                             </div>
                         </div>
@@ -789,7 +748,7 @@ export default function OcrCompare() {
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-2">
                                             <Sparkles className="w-5 h-5 text-orange-400" />
-                                            <span className="font-bold text-white text-sm">KI-Qualitätsbewertung</span>
+                                            <span className="font-bold text-white text-sm">{tr("KI-Qualitätsbewertung")}</span>
                                         </div>
                                         <span className="text-[10px] px-2 py-1 rounded-full bg-surface-700/50 text-surface-400 font-mono">
                                             {evaluation.provider} / {evaluation.model}
@@ -817,24 +776,21 @@ export default function OcrCompare() {
                                         {(evaluation.evaluation.best_quality || evaluation.evaluation.best_model) && (
                                             <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/30">
                                                 <Trophy className="w-4 h-4 text-amber-400" />
-                                                <span className="text-xs text-amber-200">
-                                                    Beste Qualität: <strong className="font-mono">{evaluation.evaluation.best_quality || evaluation.evaluation.best_model}</strong>
+                                                <span className="text-xs text-amber-200">{tr("Beste Qualität: ")}<strong className="font-mono">{evaluation.evaluation.best_quality || evaluation.evaluation.best_model}</strong>
                                                 </span>
                                             </div>
                                         )}
                                         {evaluation.evaluation.best_speed && (
                                             <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30">
                                                 <Clock className="w-4 h-4 text-emerald-400" />
-                                                <span className="text-xs text-emerald-200">
-                                                    Schnellstes: <strong className="font-mono">{evaluation.evaluation.best_speed}</strong>
+                                                <span className="text-xs text-emerald-200">{tr("Schnellstes: ")}<strong className="font-mono">{evaluation.evaluation.best_speed}</strong>
                                                 </span>
                                             </div>
                                         )}
                                         {evaluation.evaluation.best_value && (
                                             <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-violet-500/10 border border-violet-500/30">
                                                 <Zap className="w-4 h-4 text-violet-400" />
-                                                <span className="text-xs text-violet-200">
-                                                    Bestes P/L: <strong className="font-mono">{evaluation.evaluation.best_value}</strong>
+                                                <span className="text-xs text-violet-200">{tr("Bestes P/L: ")}<strong className="font-mono">{evaluation.evaluation.best_value}</strong>
                                                 </span>
                                             </div>
                                         )}
@@ -846,7 +802,7 @@ export default function OcrCompare() {
                                     <div className="p-4 border-b border-surface-700/50 grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         {evaluation.evaluation.cross_comparison.agreement && evaluation.evaluation.cross_comparison.agreement.length > 0 && (
                                             <div>
-                                                <p className="text-[10px] font-medium text-emerald-400 uppercase tracking-wider mb-2">Alle Versionen stimmen überein:</p>
+                                                <p className="text-[10px] font-medium text-emerald-400 uppercase tracking-wider mb-2">{tr("Alle Versionen stimmen überein:")}</p>
                                                 <div className="space-y-1">
                                                     {evaluation.evaluation.cross_comparison.agreement.map((item, i) => (
                                                         <div key={i} className="text-xs text-emerald-300 flex items-start gap-1.5">
@@ -859,7 +815,7 @@ export default function OcrCompare() {
                                         )}
                                         {evaluation.evaluation.cross_comparison.disagreement && evaluation.evaluation.cross_comparison.disagreement.length > 0 && (
                                             <div>
-                                                <p className="text-[10px] font-medium text-red-400 uppercase tracking-wider mb-2">Widersprüche (mind. ein Fehler):</p>
+                                                <p className="text-[10px] font-medium text-red-400 uppercase tracking-wider mb-2">{tr("Widersprüche (mind. ein Fehler):")}</p>
                                                 <div className="space-y-1">
                                                     {evaluation.evaluation.cross_comparison.disagreement.map((item, i) => (
                                                         <div key={i} className="text-xs text-red-300 flex items-start gap-1.5">
@@ -915,7 +871,7 @@ export default function OcrCompare() {
                                             {/* Category Score Bars */}
                                             {entry.category_scores && (
                                                 <div className="space-y-1.5">
-                                                    <p className="text-[10px] font-medium text-surface-500 uppercase tracking-wider mb-2">Detailbewertung (0-10)</p>
+                                                    <p className="text-[10px] font-medium text-surface-500 uppercase tracking-wider mb-2">{tr("Detailbewertung (0-10)")}</p>
                                                     {Object.entries(entry.category_scores).map(([key, score]) => (
                                                         <div key={key} className="flex items-center gap-2">
                                                             <span className="text-[11px] text-surface-400 w-32 truncate">{getCategoryLabel(key)}</span>
@@ -937,7 +893,7 @@ export default function OcrCompare() {
                                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                                 {entry.strengths && entry.strengths.length > 0 && (
                                                     <div className="space-y-1.5">
-                                                        <p className="text-[10px] font-medium text-emerald-400 uppercase tracking-wider">Stärken</p>
+                                                        <p className="text-[10px] font-medium text-emerald-400 uppercase tracking-wider">{tr("Stärken")}</p>
                                                         {entry.strengths.map((s, si) => (
                                                             <div key={si} className="flex items-start gap-1.5 text-xs text-emerald-300">
                                                                 <ThumbsUp className="w-3 h-3 mt-0.5 flex-shrink-0" />
@@ -948,7 +904,7 @@ export default function OcrCompare() {
                                                 )}
                                                 {entry.weaknesses && entry.weaknesses.length > 0 && (
                                                     <div className="space-y-1.5">
-                                                        <p className="text-[10px] font-medium text-red-400 uppercase tracking-wider">Schwächen</p>
+                                                        <p className="text-[10px] font-medium text-red-400 uppercase tracking-wider">{tr("Schwächen")}</p>
                                                         {entry.weaknesses.map((w, wi) => (
                                                             <div key={wi} className="flex items-start gap-1.5 text-xs text-red-300">
                                                                 <ThumbsDown className="w-3 h-3 mt-0.5 flex-shrink-0" />
@@ -962,7 +918,7 @@ export default function OcrCompare() {
                                             {/* Specific Errors with severity */}
                                             {entry.specific_errors && entry.specific_errors.length > 0 && (
                                                 <div>
-                                                    <p className="text-[10px] font-medium text-red-400 uppercase tracking-wider mb-2">Erkannte Fehler</p>
+                                                    <p className="text-[10px] font-medium text-red-400 uppercase tracking-wider mb-2">{tr("Erkannte Fehler")}</p>
                                                     <div className="space-y-1.5">
                                                         {entry.specific_errors.map((err, ei) => (
                                                             <div key={ei} className={clsx('flex items-start gap-2 px-3 py-2 rounded-lg border text-xs', getSeverityColor(err.severity))}>
@@ -971,9 +927,9 @@ export default function OcrCompare() {
                                                                 </span>
                                                                 <div className="flex-1 min-w-0">
                                                                     <span className="font-medium">{err.field}:</span>{' '}
-                                                                    <span className="text-surface-400">erwartet</span>{' '}
+                                                                    <span className="text-surface-400">{tr("erwartet")}</span>{' '}
                                                                     <span className="font-mono">"{err.expected}"</span>{' '}
-                                                                    <span className="text-surface-400">bekam</span>{' '}
+                                                                    <span className="text-surface-400">{tr("bekam")}</span>{' '}
                                                                     <span className="font-mono">"{err.got}"</span>
                                                                 </div>
                                                             </div>
@@ -990,9 +946,7 @@ export default function OcrCompare() {
                                 onClick={() => { setEvaluation(null); setShowEvalWarning(false) }}
                                 className="w-full btn py-3 flex justify-center items-center gap-2 bg-surface-700 hover:bg-surface-600 text-surface-300 border-0 text-sm"
                             >
-                                <Sparkles className="w-4 h-4" />
-                                Neue Auswertung starten
-                            </button>
+                                <Sparkles className="w-4 h-4" />{tr("Neue Auswertung starten")}</button>
                         </div>
                     )}
                 </div>

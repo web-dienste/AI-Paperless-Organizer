@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { ZoomIn, ZoomOut, RotateCcw, Eye, ExternalLink } from 'lucide-react'
+import { tr } from '../i18n'
 
 interface DocumentPreviewProps {
     documentId: number
@@ -24,21 +25,19 @@ export default function DocumentPreview({ documentId, height = '500px', previewU
     return (
         <div>
             <h4 className="text-sm font-semibold text-violet-300 mb-3 flex items-center gap-2">
-                <Eye className="w-4 h-4 text-violet-400" />
-                PDF Vorschau
-                <div className="ml-auto flex items-center gap-1">
+                <Eye className="w-4 h-4 text-violet-400" />{tr("PDF Vorschau")}<div className="ml-auto flex items-center gap-1">
                     <button
                         onClick={zoomOut}
                         disabled={zoomIndex === 0}
                         className="p-1 rounded hover:bg-surface-700 text-surface-400 hover:text-white disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-surface-400 transition-colors"
-                        title="Verkleinern"
+                        title={tr("Verkleinern")}
                     >
                         <ZoomOut className="w-4 h-4" />
                     </button>
                     <button
                         onClick={zoomReset}
                         className="px-1.5 py-0.5 rounded hover:bg-surface-700 text-xs font-mono text-surface-400 hover:text-white transition-colors min-w-[3rem] text-center"
-                        title="Zoom zurücksetzen"
+                        title={tr("Zoom zurücksetzen")}
                     >
                         {zoom}%
                     </button>
@@ -46,7 +45,7 @@ export default function DocumentPreview({ documentId, height = '500px', previewU
                         onClick={zoomIn}
                         disabled={zoomIndex === ZOOM_STEPS.length - 1}
                         className="p-1 rounded hover:bg-surface-700 text-surface-400 hover:text-white disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-surface-400 transition-colors"
-                        title="Vergrößern"
+                        title={tr("Vergrößern")}
                     >
                         <ZoomIn className="w-4 h-4" />
                     </button>
@@ -54,7 +53,7 @@ export default function DocumentPreview({ documentId, height = '500px', previewU
                         <button
                             onClick={zoomReset}
                             className="p-1 rounded hover:bg-surface-700 text-surface-500 hover:text-white transition-colors ml-1"
-                            title="Zurücksetzen"
+                            title={tr("Zurücksetzen")}
                         >
                             <RotateCcw className="w-3.5 h-3.5" />
                         </button>
@@ -64,7 +63,7 @@ export default function DocumentPreview({ documentId, height = '500px', previewU
                         target="_blank"
                         rel="noopener noreferrer"
                         className="p-1 rounded hover:bg-surface-700 text-surface-500 hover:text-white transition-colors ml-1"
-                        title="In neuem Tab öffnen"
+                        title={tr("In neuem Tab öffnen")}
                     >
                         <ExternalLink className="w-3.5 h-3.5" />
                     </a>
@@ -84,7 +83,7 @@ export default function DocumentPreview({ documentId, height = '500px', previewU
                     <embed
                         src={`${src}#toolbar=0&navpanes=0&view=FitH`}
                         type="application/pdf"
-                        title="PDF Vorschau"
+                        title={tr("PDF Vorschau")}
                         className="border-0 bg-white"
                         style={{
                             width: `${100 / scale}%`,

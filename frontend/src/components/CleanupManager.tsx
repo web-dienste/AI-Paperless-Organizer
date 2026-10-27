@@ -16,6 +16,7 @@ import {
 } from 'lucide-react'
 import clsx from 'clsx'
 import * as api from '../services/api'
+import { tr } from '../i18n'
 
 const DEFAULT_TERMS = [
     "Allgemeine Geschäftsbedingungen",
@@ -165,12 +166,9 @@ export default function CleanupManager() {
                 <h2 className="font-display text-3xl font-bold text-white flex items-center gap-3">
                     <div className="p-2 bg-gradient-to-br from-red-500 to-red-700 rounded-xl shadow-lg shadow-red-500/20">
                         <Trash2 className="w-8 h-8 text-white" />
-                    </div>
-                    Dokumente <span className="text-red-400">Aufräumen</span>
+                    </div>{tr("Dokumente ")}<span className="text-red-400">{tr("Aufräumen")}</span>
                 </h2>
-                <p className="text-surface-400 mt-2 text-lg">
-                    Bestimme selbst wonach gesucht wird und finde unerwünschte Dokumente
-                </p>
+                <p className="text-surface-400 mt-2 text-lg">{tr("Bestimme selbst wonach gesucht wird und finde unerwünschte Dokumente")}</p>
             </div>
 
             {/* Search Configuration */}
@@ -181,8 +179,8 @@ export default function CleanupManager() {
                             <Search className="w-5 h-5 text-amber-400" />
                         </div>
                         <div>
-                            <h3 className="font-bold text-lg text-white">Suchbegriffe</h3>
-                            <p className="text-sm text-surface-400">Definiere wonach gesucht werden soll</p>
+                            <h3 className="font-bold text-lg text-white">{tr("Suchbegriffe")}</h3>
+                            <p className="text-sm text-surface-400">{tr("Definiere wonach gesucht werden soll")}</p>
                         </div>
                     </div>
                 </div>
@@ -192,11 +190,11 @@ export default function CleanupManager() {
                     <div>
                         <div className="flex items-center gap-2 mb-2">
                             <ShieldAlert className="w-4 h-4 text-red-400" />
-                            <label className="text-sm font-medium text-red-300">Hohe Sicherheit (99% sicher zum Löschen)</label>
+                            <label className="text-sm font-medium text-red-300">{tr("Hohe Sicherheit (99% sicher zum Löschen)")}</label>
                         </div>
                         <div className="flex flex-wrap gap-2 mb-2">
                             {safeTerms.length === 0 ? (
-                                <p className="text-sm text-surface-500 italic">Keine Begriffe definiert</p>
+                                <p className="text-sm text-surface-500 italic">{tr("Keine Begriffe definiert")}</p>
                             ) : (
                                 safeTerms.map((term, idx) => (
                                     <div key={idx} className="flex items-center gap-1 bg-red-500/20 text-red-300 px-3 py-1.5 rounded-lg text-sm border border-red-500/30">
@@ -214,7 +212,7 @@ export default function CleanupManager() {
                                 value={newSafeTerm}
                                 onChange={(e) => setNewSafeTerm(e.target.value)}
                                 onKeyDown={(e) => e.key === 'Enter' && addSafeTerm()}
-                                placeholder="Neuer Hohe-Sicherheit Begriff..."
+                                placeholder={tr("Neuer Hohe-Sicherheit Begriff...")}
                                 className="flex-1 input bg-surface-900/50 border-red-500/30 focus:border-red-500 focus:ring-red-500/20 text-sm"
                             />
                             <button onClick={addSafeTerm} disabled={!newSafeTerm.trim()} className="btn bg-red-600 hover:bg-red-700 text-white px-4 flex items-center gap-2 disabled:opacity-50">
@@ -225,10 +223,10 @@ export default function CleanupManager() {
 
                     {/* Normal Terms */}
                     <div>
-                        <label className="text-sm text-surface-400 mb-2 block">Normale Suchbegriffe:</label>
+                        <label className="text-sm text-surface-400 mb-2 block">{tr("Normale Suchbegriffe:")}</label>
                         <div className="flex flex-wrap gap-2 mb-3">
                             {terms.length === 0 ? (
-                                <p className="text-sm text-surface-500 italic">Keine Begriffe definiert</p>
+                                <p className="text-sm text-surface-500 italic">{tr("Keine Begriffe definiert")}</p>
                             ) : (
                                 terms.map((term, idx) => (
                                     <div key={idx} className="flex items-center gap-1 bg-amber-500/20 text-amber-300 px-3 py-1.5 rounded-lg text-sm border border-amber-500/30">
@@ -246,7 +244,7 @@ export default function CleanupManager() {
                                 value={newTerm}
                                 onChange={(e) => setNewTerm(e.target.value)}
                                 onKeyDown={(e) => e.key === 'Enter' && addTerm()}
-                                placeholder="Neuen Begriff hinzufügen..."
+                                placeholder={tr("Neuen Begriff hinzufügen...")}
                                 className="flex-1 input bg-surface-900/50 border-surface-700 focus:border-amber-500 focus:ring-amber-500/20 text-sm"
                             />
                             <button onClick={addTerm} disabled={!newTerm.trim()} className="btn bg-surface-700 hover:bg-surface-600 text-surface-200 border-surface-600 flex items-center gap-2 px-4 disabled:opacity-50">
@@ -264,9 +262,7 @@ export default function CleanupManager() {
                                     checked={searchContent}
                                     onChange={(e) => setSearchContent(e.target.checked)}
                                     className="w-4 h-4 rounded border-surface-600 bg-surface-800 text-amber-500 focus:ring-amber-500/20"
-                                />
-                                Im Inhalt suchen
-                            </label>
+                                />{tr("Im Inhalt suchen")}</label>
                             <label className="flex items-center gap-2 text-sm text-red-400 cursor-pointer hover:text-red-300">
                                 <input
                                     type="checkbox"
@@ -274,9 +270,7 @@ export default function CleanupManager() {
                                     onChange={(e) => setHighSecurity(e.target.checked)}
                                     className="w-4 h-4 rounded border-red-500/50 bg-surface-800 text-red-500 focus:ring-red-500/20"
                                 />
-                                <Shield className="w-4 h-4" />
-                                Hohe Sicherheit
-                            </label>
+                                <Shield className="w-4 h-4" />{tr("Hohe Sicherheit")}</label>
                         </div>
 
                         <button
@@ -284,16 +278,12 @@ export default function CleanupManager() {
                             disabled={loading || (terms.length === 0 && safeTerms.length === 0)}
                             className="btn btn-primary flex items-center gap-2 shadow-lg shadow-primary-900/20 px-6 disabled:opacity-50"
                         >
-                            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
-                            Scannen
-                        </button>
+                            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}{tr("Scannen")}</button>
                     </div>
 
                     {(terms.length === 0 && safeTerms.length === 0) && (
                         <p className="text-xs text-amber-400 flex items-center gap-1.5">
-                            <AlertTriangle className="w-3 h-3" />
-                            Bitte mindestens einen Suchbegriff hinzufügen
-                        </p>
+                            <AlertTriangle className="w-3 h-3" />{tr("Bitte mindestens einen Suchbegriff hinzufügen")}</p>
                     )}
                 </div>
             </div>
@@ -311,9 +301,9 @@ export default function CleanupManager() {
                 <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-start gap-3 animate-in zoom-in-95">
                     <CheckCircle2 className="w-5 h-5 text-emerald-400 mt-0.5 shrink-0" />
                     <div className="text-emerald-200 text-sm">
-                        <p className="font-medium">{deleteResult.count} Dokument(e) gelöscht.</p>
+                        <p className="font-medium">{deleteResult.count}{tr(" Dokument(e) gelöscht.")}</p>
                         {deleteResult.errors > 0 && (
-                            <p className="text-amber-300 mt-1">{deleteResult.errors} Fehler aufgetreten.</p>
+                            <p className="text-amber-300 mt-1">{deleteResult.errors}{tr(" Fehler aufgetreten.")}</p>
                         )}
                     </div>
                 </div>
@@ -330,10 +320,9 @@ export default function CleanupManager() {
                                 </div>
                                 <div>
                                     <h3 className="font-bold text-lg text-white">
-                                        {documents.length} Treffer
-                                    </h3>
+                                        {documents.length}{tr(" Treffer")}</h3>
                                     <p className="text-sm text-surface-400">
-                                        {selectedIds.size > 0 ? `${selectedIds.size} ausgewählt` : 'Klicke auf Karten zum Auswählen'}
+                                        {selectedIds.size > 0 ? tr("{size} ausgewählt", { size: selectedIds.size }) : tr("Klicke auf Karten zum Auswählen")}
                                     </p>
                                 </div>
                             </div>
@@ -345,8 +334,8 @@ export default function CleanupManager() {
                                         className="btn bg-surface-700 hover:bg-surface-600 text-surface-200 border-surface-600 flex items-center gap-2 text-sm"
                                     >
                                         {selectedIds.size === documents.length
-                                            ? <><CheckSquare className="w-4 h-4 text-primary-400" /> Alle abwählen</>
-                                            : <><Square className="w-4 h-4" /> Alle auswählen</>
+                                            ? <><CheckSquare className="w-4 h-4 text-primary-400" />{tr(" Alle abwählen")}</>
+                                            : <><Square className="w-4 h-4" />{tr(" Alle auswählen")}</>
                                         }
                                     </button>
                                 )}
@@ -356,8 +345,7 @@ export default function CleanupManager() {
                                     disabled={deleting || selectedIds.size === 0}
                                     className="btn bg-red-600 hover:bg-red-700 text-white flex items-center gap-2 shadow-lg shadow-red-900/20 disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
-                                    {deleting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
-                                    Löschen ({selectedIds.size})
+                                    {deleting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}{tr("Löschen (")}{selectedIds.size})
                                 </button>
                             </div>
                         </div>
@@ -368,8 +356,8 @@ export default function CleanupManager() {
                         {documents.length === 0 ? (
                             <div className="py-12 text-center text-surface-500">
                                 <CheckCircle2 className="w-12 h-12 mx-auto mb-3 text-emerald-500 opacity-40" />
-                                <p className="text-lg font-medium">Keine Dokumente gefunden</p>
-                                <p className="text-sm mt-1">Versuche andere Suchbegriffe</p>
+                                <p className="text-lg font-medium">{tr("Keine Dokumente gefunden")}</p>
+                                <p className="text-sm mt-1">{tr("Versuche andere Suchbegriffe")}</p>
                             </div>
                         ) : (
                             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
@@ -453,26 +441,20 @@ export default function CleanupManager() {
                             <div className="p-2 bg-red-500/20 rounded-xl">
                                 <AlertTriangle className="w-6 h-6 text-red-400" />
                             </div>
-                            <h3 className="text-xl font-bold text-white">Endgültig löschen?</h3>
+                            <h3 className="text-xl font-bold text-white">{tr("Endgültig löschen?")}</h3>
                         </div>
                         <p className="text-surface-300 mb-6">
-                            <span className="font-bold text-red-400">{selectedIds.size}</span> Dokument(e) werden
-                            <span className="font-bold text-red-400"> unwiderruflich</span> aus Paperless-ngx gelöscht.
-                        </p>
+                            <span className="font-bold text-red-400">{selectedIds.size}</span>{tr(" Dokument(e) werden")}<span className="font-bold text-red-400">{tr(" unwiderruflich")}</span>{tr(" aus Paperless-ngx gelöscht.")}</p>
                         <div className="flex gap-3 justify-end">
                             <button
                                 onClick={() => setShowConfirm(false)}
                                 className="btn bg-surface-700 hover:bg-surface-600 text-surface-200 border-surface-600 px-6"
-                            >
-                                Abbrechen
-                            </button>
+                            >{tr("Abbrechen")}</button>
                             <button
                                 onClick={deleteSelected}
                                 className="btn bg-red-600 hover:bg-red-700 text-white px-6 flex items-center gap-2 shadow-lg shadow-red-900/30"
                             >
-                                <Trash2 className="w-4 h-4" />
-                                Ja, löschen
-                            </button>
+                                <Trash2 className="w-4 h-4" />{tr("Ja, löschen")}</button>
                         </div>
                     </div>
                 </div>

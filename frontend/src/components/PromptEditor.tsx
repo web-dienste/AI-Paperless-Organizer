@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Save, RotateCcw, Loader2, MessageSquare, Check } from 'lucide-react'
 import clsx from 'clsx'
 import * as api from '../services/api'
+import { tr } from '../i18n'
 
 interface CustomPrompt {
   id: number
@@ -125,12 +126,8 @@ export default function PromptEditor() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h2 className="font-display text-2xl font-bold text-surface-100">
-          Prompt Editor
-        </h2>
-        <p className="text-surface-400 mt-1">
-          Passe die KI-Prompts für die Ähnlichkeitsanalyse an
-        </p>
+        <h2 className="font-display text-2xl font-bold text-surface-100">{tr("Prompt Editor")}</h2>
+        <p className="text-surface-400 mt-1">{tr("Passe die KI-Prompts für die Ähnlichkeitsanalyse an")}</p>
       </div>
 
       {/* Info Box */}
@@ -139,14 +136,9 @@ export default function PromptEditor() {
           <MessageSquare className="w-5 h-5 text-primary-400 flex-shrink-0 mt-0.5" />
           <div className="text-sm text-surface-300">
             <p className="mb-2">
-              <strong className="text-surface-100">Hinweis:</strong> Die Prompts verwenden 
-              den Platzhalter <code className="px-1.5 py-0.5 rounded bg-surface-700 text-primary-400">{'{items}'}</code>, 
-              der automatisch durch die Liste der zu analysierenden Einträge ersetzt wird.
-            </p>
-            <p>
-              Die KI sollte JSON im Format <code className="px-1.5 py-0.5 rounded bg-surface-700 text-primary-400">
-              {`{"groups": [...]}`}</code> zurückgeben.
-            </p>
+              <strong className="text-surface-100">{tr("Hinweis:")}</strong>{tr(" Die Prompts verwenden den Platzhalter ")}<code className="px-1.5 py-0.5 rounded bg-surface-700 text-primary-400">{tr("{items}")}</code>{tr(", der automatisch durch die Liste der zu analysierenden Einträge ersetzt wird.")}</p>
+            <p>{tr("Die KI sollte JSON im Format ")}<code className="px-1.5 py-0.5 rounded bg-surface-700 text-primary-400">
+              {tr("{\"groups\": [...]}")}</code>{tr(" zurückgeben.")}</p>
           </div>
         </div>
       </div>
@@ -185,17 +177,16 @@ export default function PromptEditor() {
       <div className="card p-6 space-y-4">
         <div>
           <label className="block text-sm font-medium text-surface-300 mb-1">
-            {currentPrompt?.display_name || activeTab} - Prompt
-          </label>
+            {currentPrompt?.display_name || activeTab}{tr(" - Prompt")}</label>
           <p className="text-sm text-surface-500 mb-4">
-            {ENTITY_DESCRIPTIONS[activeTab] || 'Prompt zur KI-Analyse'}
+            {ENTITY_DESCRIPTIONS[activeTab] || tr("Prompt zur KI-Analyse")}
           </p>
           <textarea
             value={editedPrompt}
             onChange={(e) => setEditedPrompt(e.target.value)}
             rows={20}
             className="input font-mono text-sm leading-relaxed resize-y min-h-[300px]"
-            placeholder="Prompt eingeben..."
+            placeholder={tr("Prompt eingeben...")}
           />
         </div>
 
@@ -210,16 +201,12 @@ export default function PromptEditor() {
               <Loader2 className="w-4 h-4 animate-spin" />
             ) : (
               <RotateCcw className="w-4 h-4" />
-            )}
-            Auf Standard zurücksetzen
-          </button>
+            )}{tr("Auf Standard zurücksetzen")}</button>
 
           <div className="flex items-center gap-3">
             {saveSuccess && (
               <span className="flex items-center gap-2 text-emerald-400 text-sm">
-                <Check className="w-4 h-4" />
-                Gespeichert
-              </span>
+                <Check className="w-4 h-4" />{tr("Gespeichert")}</span>
             )}
             <button
               onClick={savePrompt}
@@ -233,29 +220,16 @@ export default function PromptEditor() {
                 <Loader2 className="w-4 h-4 animate-spin" />
               ) : (
                 <Save className="w-4 h-4" />
-              )}
-              Speichern
-            </button>
+              )}{tr("Speichern")}</button>
           </div>
         </div>
       </div>
 
       {/* Preview Section */}
       <div className="card p-6">
-        <h3 className="font-display font-semibold text-lg text-surface-100 mb-4">
-          Erwartetes Antwortformat
-        </h3>
+        <h3 className="font-display font-semibold text-lg text-surface-100 mb-4">{tr("Erwartetes Antwortformat")}</h3>
         <pre className="p-4 rounded-lg bg-surface-900 border border-surface-700 overflow-x-auto text-sm">
-          <code className="text-surface-300">{`{
-  "groups": [
-    {
-      "suggested_name": "Vollständiger Name",
-      "confidence": 0.95,
-      "members": ["name1", "name2", "name3"],
-      "reasoning": "Begründung warum diese zusammengehören"
-    }
-  ]
-}`}</code>
+          <code className="text-surface-300">{tr("{\n  \"groups\": [\n    {\n      \"suggested_name\": \"Vollständiger Name\",\n      \"confidence\": 0.95,\n      \"members\": [\"name1\", \"name2\", \"name3\"],\n      \"reasoning\": \"Begründung warum diese zusammengehören\"\n    }\n  ]\n}")}</code>
         </pre>
       </div>
     </div>

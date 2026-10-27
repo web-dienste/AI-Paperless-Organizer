@@ -7,6 +7,7 @@ import {
 } from 'lucide-react'
 import clsx from 'clsx'
 import * as api from '../services/api'
+import { tr } from '../i18n'
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -100,11 +101,11 @@ function sourceTypeLabel(type: string) {
 
 function StatusBadge({ status }: { status: string }) {
   if (status === 'syncing')
-    return <span className="flex items-center gap-1 text-amber-400 text-xs"><Loader2 className="w-3 h-3 animate-spin" />Synchronisiert…</span>
+    return <span className="flex items-center gap-1 text-amber-400 text-xs"><Loader2 className="w-3 h-3 animate-spin" />{tr("Synchronisiert…")}</span>
   if (status === 'error')
-    return <span className="flex items-center gap-1 text-red-400 text-xs"><XCircle className="w-3 h-3" />Fehler</span>
+    return <span className="flex items-center gap-1 text-red-400 text-xs"><XCircle className="w-3 h-3" />{tr("Fehler")}</span>
   if (status === 'idle')
-    return <span className="flex items-center gap-1 text-green-400 text-xs"><CheckCircle2 className="w-3 h-3" />Bereit</span>
+    return <span className="flex items-center gap-1 text-green-400 text-xs"><CheckCircle2 className="w-3 h-3" />{tr("Bereit")}</span>
   return <span className="text-surface-500 text-xs">—</span>
 }
 
@@ -249,7 +250,7 @@ export default function CloudImport() {
   }
 
   const deleteSource = async (id: number) => {
-    if (!confirm('Quelle wirklich löschen? Der Import-Verlauf bleibt erhalten.')) return
+    if (!confirm(tr("Quelle wirklich löschen? Der Import-Verlauf bleibt erhalten."))) return
     setDeletingId(id)
     try {
       await api.fetchJson(`/cloud-import/sources/${id}`, { method: 'DELETE' })
@@ -265,7 +266,7 @@ export default function CloudImport() {
     setSyncingId(id)
     try {
       const res = await api.fetchJson<any>(`/cloud-import/sources/${id}/sync`, { method: 'POST' })
-      alert(`Synchronisation abgeschlossen:\n${res.imported} importiert, ${res.skipped} übersprungen, ${res.errors} Fehler`)
+      alert(tr("Synchronisation abgeschlossen:\n{imported} importiert, {skipped} übersprungen, {errors} Fehler", { imported: res.imported, skipped: res.skipped, errors: res.errors }))
       await loadAll()
       const log = await api.fetchJson<ImportLog[]>('/cloud-import/log?limit=50')
       setImportLog(log)
@@ -308,9 +309,7 @@ export default function CloudImport() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64 text-surface-400">
-        <Loader2 className="w-6 h-6 animate-spin mr-2" />
-        Lade Cloud-Import…
-      </div>
+        <Loader2 className="w-6 h-6 animate-spin mr-2" />{tr("Lade Cloud-Import…")}</div>
     )
   }
 
@@ -321,14 +320,12 @@ export default function CloudImport() {
         <div className="flex items-center gap-3">
           <Cloud className="w-7 h-7 text-primary-400" />
           <div>
-            <h1 className="text-xl font-semibold text-white">Cloud Sync / Import</h1>
-            <p className="text-sm text-surface-400">Dokumente aus WebDAV, Google Drive, OneDrive oder lokalen Ordnern importieren</p>
+            <h1 className="text-xl font-semibold text-white">{tr("Cloud Sync / Import")}</h1>
+            <p className="text-sm text-surface-400">{tr("Dokumente aus WebDAV, Google Drive, OneDrive oder lokalen Ordnern importieren")}</p>
           </div>
         </div>
         <button onClick={openAdd} className="flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-500 text-white rounded-lg text-sm font-medium transition-colors">
-          <Plus className="w-4 h-4" />
-          Quelle hinzufügen
-        </button>
+          <Plus className="w-4 h-4" />{tr("Quelle hinzufügen")}</button>
       </div>
 
       {/* Sync Daemon Status */}
@@ -347,15 +344,14 @@ export default function CloudImport() {
           <div>
             <p className="text-sm font-medium text-white">
               {syncStatus?.running
-                ? `Synchronisiert: ${syncStatus.current_source_name || '…'} – ${syncStatus.current_file || '…'}`
+                ? tr("Synchronisiert: {v0} – {v1}", { v0: syncStatus.current_source_name || '…', v1: syncStatus.current_file || '…' })
                 : syncStatus?.enabled
-                  ? 'Sync-Daemon aktiv – prüft Quellen automatisch'
-                  : 'Sync-Daemon gestoppt'}
+                  ? tr("Sync-Daemon aktiv – prüft Quellen automatisch")
+                  : tr("Sync-Daemon gestoppt")}
             </p>
             {syncStatus?.last_run && (
-              <p className="text-xs text-surface-500">
-                Letzter Lauf: {new Date(syncStatus.last_run).toLocaleString('de-DE')}
-                {syncStatus.files_imported_session > 0 && ` · ${syncStatus.files_imported_session} Dateien importiert`}
+              <p className="text-xs text-surface-500">{tr("Letzter Lauf: ")}{new Date(syncStatus.last_run).toLocaleString('de-DE')}
+                {syncStatus.files_imported_session > 0 && tr(" · {files_imported_session} Dateien importiert", { files_imported_session: syncStatus.files_imported_session })}
               </p>
             )}
           </div>
@@ -370,7 +366,7 @@ export default function CloudImport() {
           )}
         >
           {syncStatus?.enabled ? <ToggleRight className="w-4 h-4" /> : <ToggleLeft className="w-4 h-4" />}
-          {syncStatus?.enabled ? 'Stoppen' : 'Starten'}
+          {syncStatus?.enabled ? tr("Stoppen") : tr("Starten")}
         </button>
       </div>
 
@@ -378,8 +374,8 @@ export default function CloudImport() {
       {sources.length === 0 ? (
         <div className="text-center py-16 text-surface-400 border border-dashed border-surface-700 rounded-xl">
           <Cloud className="w-12 h-12 mx-auto mb-3 opacity-30" />
-          <p className="font-medium">Noch keine Quellen konfiguriert</p>
-          <p className="text-sm mt-1">Klicke auf „Quelle hinzufügen" um loszulegen.</p>
+          <p className="font-medium">{tr("Noch keine Quellen konfiguriert")}</p>
+          <p className="text-sm mt-1">{tr("Klicke auf „Quelle hinzufügen\" um loszulegen.")}</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -405,9 +401,7 @@ export default function CloudImport() {
           className="w-full flex items-center justify-between px-4 py-3 bg-surface-800 hover:bg-surface-750 text-sm font-medium text-white"
         >
           <span className="flex items-center gap-2">
-            <FileText className="w-4 h-4 text-surface-400" />
-            Import-Verlauf
-            {importLog.length > 0 && (
+            <FileText className="w-4 h-4 text-surface-400" />{tr("Import-Verlauf")}{importLog.length > 0 && (
               <span className="ml-1 px-1.5 py-0.5 bg-surface-700 text-surface-300 rounded text-xs">{importLog.length}</span>
             )}
           </span>
@@ -417,7 +411,7 @@ export default function CloudImport() {
         {showLog && (
           <div className="divide-y divide-surface-700/50 max-h-80 overflow-y-auto">
             {importLog.length === 0 ? (
-              <p className="text-center py-8 text-surface-500 text-sm">Noch keine Importe.</p>
+              <p className="text-center py-8 text-surface-500 text-sm">{tr("Noch keine Importe.")}</p>
             ) : (
               importLog.map(entry => (
                 <div key={entry.id} className="flex items-center gap-3 px-4 py-2.5 hover:bg-surface-800/50">
@@ -524,9 +518,7 @@ function SourceCard({
             disabled={syncing}
             className="flex items-center gap-1.5 px-3 py-1.5 bg-surface-700 hover:bg-surface-600 text-white rounded-lg text-xs transition-colors disabled:opacity-50"
           >
-            {syncing ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
-            Jetzt sync
-          </button>
+            {syncing ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}{tr("Jetzt sync")}</button>
           <button onClick={onEdit} className="p-1.5 text-surface-400 hover:text-white hover:bg-surface-700 rounded-lg transition-colors">
             <Edit2 className="w-4 h-4" />
           </button>
@@ -543,17 +535,14 @@ function SourceCard({
       {/* Meta info row */}
       <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-surface-500">
         <span className="flex items-center gap-1">
-          <Clock className="w-3 h-3" />
-          alle {source.poll_interval_minutes} Min.
-        </span>
+          <Clock className="w-3 h-3" />{tr("alle ")}{source.poll_interval_minutes}{tr(" Min.")}</span>
         {source.files_imported > 0 && (
           <span className="flex items-center gap-1">
             <CheckCircle2 className="w-3 h-3 text-green-500" />
-            {source.files_imported} importiert
-          </span>
+            {source.files_imported}{tr(" importiert")}</span>
         )}
         {source.filename_prefix && (
-          <span className="text-surface-400">Präfix: <span className="text-white">{source.filename_prefix}</span></span>
+          <span className="text-surface-400">{tr("Präfix: ")}<span className="text-white">{source.filename_prefix}</span></span>
         )}
         {tagNames && (
           <span className="flex items-center gap-1">
@@ -574,10 +563,10 @@ function SourceCard({
           </span>
         )}
         {source.after_import_action === 'delete' && (
-          <span className="text-orange-400">Quelldatei löschen</span>
+          <span className="text-orange-400">{tr("Quelldatei löschen")}</span>
         )}
         {source.last_checked_at && (
-          <span>Zuletzt: {new Date(source.last_checked_at).toLocaleString('de-DE')}</span>
+          <span>{tr("Zuletzt: ")}{new Date(source.last_checked_at).toLocaleString('de-DE')}</span>
         )}
       </div>
 
@@ -626,7 +615,7 @@ function SourceModal({
         {/* Header */}
         <div className="px-6 py-4 border-b border-surface-700 flex items-center justify-between">
           <h2 className="text-lg font-semibold text-white">
-            {isEditing ? 'Quelle bearbeiten' : 'Quelle hinzufügen'}
+            {isEditing ? tr("Quelle bearbeiten") : tr("Quelle hinzufügen")}
           </h2>
           <button onClick={onClose} className="text-surface-400 hover:text-white p-1">✕</button>
         </div>
@@ -655,7 +644,7 @@ function SourceModal({
           {/* Step 1: Type */}
           {step === 1 && (
             <div className="space-y-3">
-              <p className="text-sm text-surface-400">Wähle den Typ der Cloud-Quelle:</p>
+              <p className="text-sm text-surface-400">{tr("Wähle den Typ der Cloud-Quelle:")}</p>
               {[
                 { type: 'webdav', icon: <Globe className="w-5 h-5 text-blue-400" />, label: 'WebDAV / Nextcloud', desc: 'Nextcloud, ownCloud, Box, HiDrive, GMX Cloud – kein API-Key nötig' },
                 { type: 'rclone', icon: <Cloud className="w-5 h-5 text-purple-400" />, label: 'Google Drive / OneDrive / Dropbox', desc: 'Einfach anmelden – wird automatisch eingerichtet' },
@@ -680,12 +669,12 @@ function SourceModal({
               ))}
 
               <div>
-                <label className="block text-xs text-surface-400 mb-1">Name der Quelle</label>
+                <label className="block text-xs text-surface-400 mb-1">{tr("Name der Quelle")}</label>
                 <input
                   type="text"
                   value={source.name || ''}
                   onChange={e => onChange('name', e.target.value)}
-                  placeholder="z.B. Nextcloud Scans"
+                  placeholder={tr("z.B. Nextcloud Scans")}
                   className="w-full px-3 py-2 bg-surface-800 border border-surface-600 rounded-lg text-white text-sm focus:border-primary-500 focus:outline-none"
                 />
               </div>
@@ -698,7 +687,7 @@ function SourceModal({
               {/* WebDAV */}
               {source.source_type === 'webdav' && (
                 <>
-                  <Field label="WebDAV-URL" required>
+                  <Field label={tr("WebDAV-URL")} required>
                     <input
                       type="url"
                       value={source.webdav_url || ''}
@@ -706,28 +695,28 @@ function SourceModal({
                       placeholder="https://nextcloud.example.com/remote.php/dav/files/username"
                       className={inputCls}
                     />
-                    <p className="text-xs text-surface-500 mt-1">Nextcloud: <code className="text-primary-400">https://DEINE-URL/remote.php/dav/files/BENUTZERNAME</code></p>
+                    <p className="text-xs text-surface-500 mt-1">{tr("Nextcloud: ")}<code className="text-primary-400">{tr("https://DEINE-URL/remote.php/dav/files/BENUTZERNAME")}</code></p>
                   </Field>
-                  <Field label="Ordner / Pfad">
+                  <Field label={tr("Ordner / Pfad")}>
                     <input
                       type="text"
                       value={source.webdav_path || '/'}
                       onChange={e => onChange('webdav_path', e.target.value)}
-                      placeholder="/Scans"
+                      placeholder={tr("/Scans")}
                       className={inputCls}
                     />
                   </Field>
                   <div className="grid grid-cols-2 gap-3">
-                    <Field label="Benutzername">
+                    <Field label={tr("Benutzername")}>
                       <input type="text" value={source.webdav_username || ''} onChange={e => onChange('webdav_username', e.target.value)} className={inputCls} />
                     </Field>
-                    <Field label="Passwort">
+                    <Field label={tr("Passwort")}>
                       <div className="relative">
                         <input
                           type={showPassword ? 'text' : 'password'}
                           value={source.webdav_password || ''}
                           onChange={e => onChange('webdav_password', e.target.value)}
-                          placeholder={isEditing ? '(unverändert)' : ''}
+                          placeholder={isEditing ? tr("(unverändert)") : ''}
                           className={clsx(inputCls, 'pr-8')}
                         />
                         <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-2 top-1/2 -translate-y-1/2 text-surface-400">
@@ -751,7 +740,7 @@ function SourceModal({
 
               {/* Local */}
               {source.source_type === 'local' && (
-                <Field label="Lokaler Pfad" required>
+                <Field label={tr("Lokaler Pfad")} required>
                   <input
                     type="text"
                     value={source.local_path || ''}
@@ -759,7 +748,7 @@ function SourceModal({
                     placeholder="/app/data/scan-input"
                     className={inputCls}
                   />
-                  <p className="text-xs text-surface-500 mt-1">Docker-Volume-Pfad im Container, z.B. <code className="text-primary-400">/app/data/scan-input</code></p>
+                  <p className="text-xs text-surface-500 mt-1">{tr("Docker-Volume-Pfad im Container, z.B. ")}<code className="text-primary-400">{tr("/app/data/scan-input")}</code></p>
                 </Field>
               )}
 
@@ -771,9 +760,7 @@ function SourceModal({
                     disabled={testLoading}
                     className="flex items-center gap-2 px-3 py-2 bg-surface-700 hover:bg-surface-600 text-sm text-white rounded-lg transition-colors"
                   >
-                    {testLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Link2 className="w-4 h-4" />}
-                    Verbindung testen
-                  </button>
+                    {testLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Link2 className="w-4 h-4" />}{tr("Verbindung testen")}</button>
                   {testResult && (
                     <div className={clsx(
                       'mt-2 px-3 py-2 rounded-lg text-xs flex items-center gap-2',
@@ -791,18 +778,18 @@ function SourceModal({
           {/* Step 3: Import settings */}
           {step === 3 && (
             <div className="space-y-4">
-              <Field label="Dateiname-Präfix" hint="Wird dem Dateinamen vorangestellt, z.B. 'SCAN-' → 'SCAN-rechnung.pdf'">
+              <Field label={tr("Dateiname-Präfix")} hint={tr("Wird dem Dateinamen vorangestellt, z.B. 'SCAN-' → 'SCAN-rechnung.pdf'")}>
                 <input
                   type="text"
                   value={source.filename_prefix || ''}
                   onChange={e => onChange('filename_prefix', e.target.value)}
-                  placeholder="z.B. SCAN- oder NC-"
+                  placeholder={tr("z.B. SCAN- oder NC-")}
                   className={inputCls}
                 />
               </Field>
 
               <div className="grid grid-cols-2 gap-3">
-                <Field label="Abruf-Intervall">
+                <Field label={tr("Abruf-Intervall")}>
                   <div className="flex items-center gap-2">
                     <input
                       type="number"
@@ -812,25 +799,25 @@ function SourceModal({
                       onChange={e => onChange('poll_interval_minutes', parseInt(e.target.value) || 5)}
                       className={clsx(inputCls, 'w-20')}
                     />
-                    <span className="text-sm text-surface-400">Minuten</span>
+                    <span className="text-sm text-surface-400">{tr("Minuten")}</span>
                   </div>
                 </Field>
 
-                <Field label="Nach Import">
+                <Field label={tr("Nach Import")}>
                   <select
                     value={source.after_import_action || 'keep'}
                     onChange={e => onChange('after_import_action', e.target.value)}
                     className={inputCls}
                   >
-                    <option value="keep">Quelldatei behalten</option>
-                    <option value="delete">Quelldatei löschen</option>
+                    <option value="keep">{tr("Quelldatei behalten")}</option>
+                    <option value="delete">{tr("Quelldatei löschen")}</option>
                   </select>
                 </Field>
               </div>
 
-              <Field label="Tags zuweisen" hint="Werden allen importierten Dokumenten in Paperless hinzugefügt">
+              <Field label={tr("Tags zuweisen")} hint={tr("Werden allen importierten Dokumenten in Paperless hinzugefügt")}>
                 {meta.tags.length === 0 ? (
-                  <p className="text-xs text-surface-500">Keine Tags in Paperless gefunden.</p>
+                  <p className="text-xs text-surface-500">{tr("Keine Tags in Paperless gefunden.")}</p>
                 ) : (
                   <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
                     {meta.tags.map(tag => (
@@ -852,26 +839,26 @@ function SourceModal({
               </Field>
 
               <div className="grid grid-cols-2 gap-3">
-                <Field label="Korrespondent">
+                <Field label={tr("Korrespondent")}>
                   <select
                     value={source.paperless_correspondent_id ?? ''}
                     onChange={e => onChange('paperless_correspondent_id', e.target.value ? parseInt(e.target.value) : null)}
                     className={inputCls}
                   >
-                    <option value="">— kein Korrespondent —</option>
+                    <option value="">{tr("— kein Korrespondent —")}</option>
                     {meta.correspondents.map(c => (
                       <option key={c.id} value={c.id}>{c.name}</option>
                     ))}
                   </select>
                 </Field>
 
-                <Field label="Dokumententyp">
+                <Field label={tr("Dokumententyp")}>
                   <select
                     value={source.paperless_document_type_id ?? ''}
                     onChange={e => onChange('paperless_document_type_id', e.target.value ? parseInt(e.target.value) : null)}
                     className={inputCls}
                   >
-                    <option value="">— kein Typ —</option>
+                    <option value="">{tr("— kein Typ —")}</option>
                     {meta.documentTypes.map(t => (
                       <option key={t.id} value={t.id}>{t.name}</option>
                     ))}
@@ -879,7 +866,7 @@ function SourceModal({
                 </Field>
               </div>
 
-              <Field label="Quelle aktiviert">
+              <Field label={tr("Quelle aktiviert")}>
                 <button
                   onClick={() => onChange('enabled', !source.enabled)}
                   className={clsx(
@@ -890,7 +877,7 @@ function SourceModal({
                   )}
                 >
                   {source.enabled ? <ToggleRight className="w-4 h-4" /> : <ToggleLeft className="w-4 h-4" />}
-                  {source.enabled ? 'Aktiv' : 'Deaktiviert'}
+                  {source.enabled ? tr("Aktiv") : tr("Deaktiviert")}
                 </button>
               </Field>
             </div>
@@ -908,23 +895,17 @@ function SourceModal({
         <div className="px-6 py-4 border-t border-surface-700 flex justify-between">
           <div className="flex gap-2">
             {step > 1 && (
-              <button onClick={() => setStep(step - 1)} className="px-4 py-2 bg-surface-700 hover:bg-surface-600 text-white rounded-lg text-sm transition-colors">
-                Zurück
-              </button>
+              <button onClick={() => setStep(step - 1)} className="px-4 py-2 bg-surface-700 hover:bg-surface-600 text-white rounded-lg text-sm transition-colors">{tr("Zurück")}</button>
             )}
           </div>
           <div className="flex gap-2">
-            <button onClick={onClose} className="px-4 py-2 bg-surface-800 hover:bg-surface-700 text-surface-300 rounded-lg text-sm transition-colors">
-              Abbrechen
-            </button>
+            <button onClick={onClose} className="px-4 py-2 bg-surface-800 hover:bg-surface-700 text-surface-300 rounded-lg text-sm transition-colors">{tr("Abbrechen")}</button>
             {step < 3 ? (
               <button
                 onClick={() => setStep(step + 1)}
                 disabled={step === 1 && !source.name?.trim()}
                 className="px-4 py-2 bg-primary-600 hover:bg-primary-500 text-white rounded-lg text-sm font-medium transition-colors disabled:opacity-50"
-              >
-                Weiter
-              </button>
+              >{tr("Weiter")}</button>
             ) : (
               <button
                 onClick={onSave}
@@ -932,7 +913,7 @@ function SourceModal({
                 className="flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-500 text-white rounded-lg text-sm font-medium transition-colors disabled:opacity-50"
               >
                 {saving && <Loader2 className="w-4 h-4 animate-spin" />}
-                {isEditing ? 'Speichern' : 'Quelle anlegen'}
+                {isEditing ? tr("Speichern") : tr("Quelle anlegen")}
               </button>
             )}
           </div>
@@ -1054,21 +1035,21 @@ function RcloneConnectFlow({
       <div className="space-y-4">
         <div className="flex items-center gap-2 p-3 bg-green-950/30 border border-green-800/40 rounded-xl">
           <CheckCircle2 className="w-4 h-4 text-green-400" />
-          <p className="text-sm text-green-300">Cloud-Konto verbunden</p>
+          <p className="text-sm text-green-300">{tr("Cloud-Konto verbunden")}</p>
         </div>
-        <Field label="Ordner wählen">
+        <Field label={tr("Ordner wählen")}>
           {source.id ? (
             <FolderPicker sourceId={source.id} currentPath={source.rclone_path || '/'} onSelect={p => onChange('rclone_path', p)} />
           ) : (
-            <input type="text" value={source.rclone_path || '/'} onChange={e => onChange('rclone_path', e.target.value)} placeholder="/Scans" className={inputCls} />
+            <input type="text" value={source.rclone_path || '/'} onChange={e => onChange('rclone_path', e.target.value)} placeholder={tr("/Scans")} className={inputCls} />
           )}
         </Field>
         <button onClick={() => setShowRcloneConfig(!showRcloneConfig)} className="text-xs text-surface-500 hover:text-surface-300">
-          {showRcloneConfig ? 'Erweitert' : 'Erweitert'}
+          {showRcloneConfig ? tr("Erweitert") : tr("Erweitert")}
         </button>
         {showRcloneConfig && (
           <div className="space-y-2">
-            <Field label="Remote-Name">
+            <Field label={tr("Remote-Name")}>
               <input type="text" value={source.rclone_remote || ''} onChange={e => onChange('rclone_remote', e.target.value)} className={inputCls} />
             </Field>
             <textarea value={source.rclone_config || ''} onChange={e => onChange('rclone_config', e.target.value)} rows={3} className={clsx(inputCls, 'font-mono text-xs')} />
@@ -1081,7 +1062,7 @@ function RcloneConnectFlow({
   return (
     <div className="space-y-4">
       {/* Provider selection */}
-      <Field label="Cloud-Dienst wählen">
+      <Field label={tr("Cloud-Dienst wählen")}>
         <div className="flex gap-2">
           {RCLONE_PROVIDERS.map(p => (
             <button
@@ -1107,27 +1088,22 @@ function RcloneConnectFlow({
           className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary-600 hover:bg-primary-500 text-white rounded-xl text-sm font-medium transition-colors"
         >
           <Cloud className="w-5 h-5" />
-          {RCLONE_PROVIDERS.find(p => p.id === selectedProvider)?.label} verbinden
-        </button>
+          {RCLONE_PROVIDERS.find(p => p.id === selectedProvider)?.label}{tr(" verbinden")}</button>
       )}
 
       {authStatus === 'starting' && (
         <div className="flex items-center justify-center gap-2 p-4 text-surface-400">
-          <Loader2 className="w-5 h-5 animate-spin" />
-          Autorisierung wird gestartet…
-        </div>
+          <Loader2 className="w-5 h-5 animate-spin" />{tr("Autorisierung wird gestartet…")}</div>
       )}
 
       {(authStatus === 'waiting') && (
         <div className="space-y-3">
           <div className="p-4 bg-blue-950/30 border border-blue-800/40 rounded-xl space-y-2">
             <p className="text-sm text-blue-300 font-medium flex items-center gap-2">
-              <Loader2 className="w-4 h-4 animate-spin" />
-              Warte auf Autorisierung…
-            </p>
+              <Loader2 className="w-4 h-4 animate-spin" />{tr("Warte auf Autorisierung…")}</p>
             {authUrl ? (
               <>
-                <p className="text-xs text-surface-400">Bitte öffne diesen Link und melde dich an:</p>
+                <p className="text-xs text-surface-400">{tr("Bitte öffne diesen Link und melde dich an:")}</p>
                 <a
                   href={authUrl}
                   target="_blank"
@@ -1136,12 +1112,10 @@ function RcloneConnectFlow({
                 >
                   {authUrl.length > 100 ? authUrl.substring(0, 100) + '…' : authUrl}
                 </a>
-                <p className="text-xs text-surface-500">
-                  Nach der Anmeldung wird der Zugang automatisch übernommen.
-                </p>
+                <p className="text-xs text-surface-500">{tr("Nach der Anmeldung wird der Zugang automatisch übernommen.")}</p>
               </>
             ) : (
-              <p className="text-xs text-surface-400">Link wird geladen…</p>
+              <p className="text-xs text-surface-400">{tr("Link wird geladen…")}</p>
             )}
           </div>
         </div>
@@ -1151,17 +1125,17 @@ function RcloneConnectFlow({
         <div className="space-y-3">
           <div className="flex items-center gap-2 p-3 bg-green-950/30 border border-green-800/40 rounded-xl">
             <CheckCircle2 className="w-5 h-5 text-green-400" />
-            <p className="text-sm text-green-300 font-medium">Erfolgreich verbunden!</p>
+            <p className="text-sm text-green-300 font-medium">{tr("Erfolgreich verbunden!")}</p>
           </div>
-          <Field label="Ordner wählen" hint="Wähle den Ordner aus dem importiert werden soll">
+          <Field label={tr("Ordner wählen")} hint={tr("Wähle den Ordner aus dem importiert werden soll")}>
             <input
               type="text"
               value={source.rclone_path || '/'}
               onChange={e => onChange('rclone_path', e.target.value)}
-              placeholder="/Scans"
+              placeholder={tr("/Scans")}
               className={inputCls}
             />
-            <p className="text-xs text-surface-500 mt-1">Speichere die Quelle zuerst, dann kannst du Ordner durchsuchen.</p>
+            <p className="text-xs text-surface-500 mt-1">{tr("Speichere die Quelle zuerst, dann kannst du Ordner durchsuchen.")}</p>
           </Field>
         </div>
       )}
@@ -1175,9 +1149,7 @@ function RcloneConnectFlow({
           <button
             onClick={() => { setAuthStatus('idle'); setAuthError('') }}
             className="px-3 py-1.5 bg-surface-700 hover:bg-surface-600 text-white rounded-lg text-xs"
-          >
-            Erneut versuchen
-          </button>
+          >{tr("Erneut versuchen")}</button>
         </div>
       )}
     </div>
@@ -1230,26 +1202,24 @@ function FolderPicker({ sourceId, currentPath, onSelect }: { sourceId: number; c
       <div className="flex gap-2">
         <input type="text" value={currentPath} onChange={e => onSelect(e.target.value)} className={clsx(inputCls, 'flex-1')} placeholder="/" />
         <button onClick={openBrowser} className="px-3 py-2 bg-surface-700 hover:bg-surface-600 text-white rounded-lg text-sm whitespace-nowrap transition-colors flex items-center gap-1.5">
-          <Cloud className="w-4 h-4" />
-          Durchsuchen
-        </button>
+          <Cloud className="w-4 h-4" />{tr("Durchsuchen")}</button>
       </div>
       {open && (
         <div className="mt-2 border border-surface-600 rounded-xl bg-surface-800 overflow-hidden">
           <div className="flex items-center gap-2 px-3 py-2 bg-surface-750 border-b border-surface-700 text-xs">
-            <span className="text-surface-400">Pfad:</span>
+            <span className="text-surface-400">{tr("Pfad:")}</span>
             <span className="text-white font-mono">{browsePath}</span>
             {browsePath !== '/' && (
-              <button onClick={goUp} className="ml-auto text-primary-400 hover:text-primary-300 text-xs">Hoch</button>
+              <button onClick={goUp} className="ml-auto text-primary-400 hover:text-primary-300 text-xs">{tr("Hoch")}</button>
             )}
           </div>
           <div className="max-h-48 overflow-y-auto">
             {loading ? (
-              <div className="flex items-center justify-center py-6 text-surface-400"><Loader2 className="w-4 h-4 animate-spin mr-2" />Ordner laden…</div>
+              <div className="flex items-center justify-center py-6 text-surface-400"><Loader2 className="w-4 h-4 animate-spin mr-2" />{tr("Ordner laden…")}</div>
             ) : error ? (
               <p className="text-red-400 text-xs px-3 py-4">{error}</p>
             ) : folders.length === 0 ? (
-              <p className="text-surface-500 text-xs px-3 py-4 text-center">Keine Unterordner</p>
+              <p className="text-surface-500 text-xs px-3 py-4 text-center">{tr("Keine Unterordner")}</p>
             ) : (
               folders.map(f => (
                 <div key={f.path} className="flex items-center justify-between px-3 py-2 hover:bg-surface-700/50 border-b border-surface-700/30 last:border-0">
@@ -1257,18 +1227,14 @@ function FolderPicker({ sourceId, currentPath, onSelect }: { sourceId: number; c
                     <Globe className="w-4 h-4 text-yellow-400 flex-shrink-0" />
                     <span className="truncate">{f.name}</span>
                   </button>
-                  <button onClick={() => selectFolder(f.path)} className="ml-2 px-2 py-1 text-xs bg-primary-600/80 hover:bg-primary-500 text-white rounded transition-colors flex-shrink-0">
-                    Wählen
-                  </button>
+                  <button onClick={() => selectFolder(f.path)} className="ml-2 px-2 py-1 text-xs bg-primary-600/80 hover:bg-primary-500 text-white rounded transition-colors flex-shrink-0">{tr("Wählen")}</button>
                 </div>
               ))
             )}
           </div>
           <div className="flex items-center justify-between px-3 py-2 bg-surface-750 border-t border-surface-700">
-            <button onClick={() => selectFolder(browsePath)} className="text-xs text-primary-400 hover:text-primary-300">
-              Diesen Ordner verwenden
-            </button>
-            <button onClick={() => setOpen(false)} className="text-xs text-surface-400 hover:text-white">Schliessen</button>
+            <button onClick={() => selectFolder(browsePath)} className="text-xs text-primary-400 hover:text-primary-300">{tr("Diesen Ordner verwenden")}</button>
+            <button onClick={() => setOpen(false)} className="text-xs text-surface-400 hover:text-white">{tr("Schliessen")}</button>
           </div>
         </div>
       )}

@@ -26,6 +26,7 @@ import OcrStats from './OcrStats'
 import SingleOcr from './SingleOcr'
 import OcrReview from './OcrReview'
 import OcrCompare from './OcrCompare'
+import { tr } from '../i18n'
 
 type BatchMode = 'all' | 'tagged' | 'manual'
 type Tab = 'processing' | 'single' | 'review' | 'compare' | 'stats' | 'settings' | 'ignore' | 'errors'
@@ -229,12 +230,9 @@ export default function OcrManager() {
                         <h2 className="font-display text-3xl font-bold text-white flex items-center gap-3">
                             <div className="p-2 bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl shadow-lg shadow-primary-500/20">
                                 <ScanLine className="w-8 h-8 text-white" />
-                            </div>
-                            OCR Texterkennung <span className="text-primary-400">Pro</span>
+                            </div>{tr("OCR Texterkennung ")}<span className="text-primary-400">{tr("Pro")}</span>
                         </h2>
-                        <p className="text-surface-400 mt-2 text-lg">
-                            KI-gestützte Dokumentenanalyse mit Ollama Vision &amp; Multi-Server Failover
-                        </p>
+                        <p className="text-surface-400 mt-2 text-lg">{tr("KI-gestützte Dokumentenanalyse mit Ollama Vision & Multi-Server Failover")}</p>
                     </div>
 
                     {watchdogStatus?.enabled && (
@@ -243,7 +241,7 @@ export default function OcrManager() {
                                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
                                 <span className="relative inline-flex rounded-full h-2 w-2 bg-purple-500"></span>
                             </div>
-                            <span>Autopilot Aktiv ({watchdogStatus.interval_minutes}m)</span>
+                            <span>{tr("Autopilot Aktiv (")}{watchdogStatus.interval_minutes}m)</span>
                         </div>
                     )}
                 </div>
@@ -296,8 +294,8 @@ export default function OcrManager() {
                                     <LayersIcon className="w-5 h-5 text-purple-400" />
                                 </div>
                                 <div>
-                                    <h3 className="font-bold text-lg text-white">Batch Processing</h3>
-                                    <p className="text-sm text-surface-400">Massenverarbeitung im Hintergrund</p>
+                                    <h3 className="font-bold text-lg text-white">{tr("Batch Processing")}</h3>
+                                    <p className="text-sm text-surface-400">{tr("Massenverarbeitung im Hintergrund")}</p>
                                 </div>
                             </div>
                         </div>
@@ -331,7 +329,7 @@ export default function OcrManager() {
                             {/* Manual Input */}
                             {batchMode === 'manual' && (
                                 <div className="space-y-1 animate-in slide-in-from-top-2 duration-200">
-                                    <label className="text-xs font-medium text-surface-400 ml-1">Dokument-IDs (kommagetrennt)</label>
+                                    <label className="text-xs font-medium text-surface-400 ml-1">{tr("Dokument-IDs (kommagetrennt)")}</label>
                                     <input
                                         type="text"
                                         value={manualIds}
@@ -356,7 +354,7 @@ export default function OcrManager() {
                                         />
                                         <div className="w-9 h-5 bg-surface-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary-600"></div>
                                     </div>
-                                    <span className="group-hover:text-white transition-colors">Tag "ocrfinish" setzen</span>
+                                    <span className="group-hover:text-white transition-colors">{tr("Tag \"ocrfinish\" setzen")}</span>
                                 </label>
                             </div>
 
@@ -368,9 +366,7 @@ export default function OcrManager() {
                                         disabled={startingBatch || (batchMode === 'manual' && !manualIds.trim())}
                                         className="w-full btn btn-primary py-4 flex justify-center items-center gap-2 shadow-lg shadow-primary-900/20 text-lg font-medium"
                                     >
-                                        {startingBatch ? <Loader2 className="w-5 h-5 animate-spin" /> : <Play className="w-5 h-5 fill-current" />}
-                                        Batch Starten
-                                    </button>
+                                        {startingBatch ? <Loader2 className="w-5 h-5 animate-spin" /> : <Play className="w-5 h-5 fill-current" />}{tr("Batch Starten")}</button>
                                 ) : (
                                     <>
                                         <button
@@ -382,23 +378,17 @@ export default function OcrManager() {
                                         >
                                             {batchPaused ? (
                                                 <>
-                                                    <Play className="w-5 h-5 fill-current" />
-                                                    Fortsetzen
-                                                </>
+                                                    <Play className="w-5 h-5 fill-current" />{tr("Fortsetzen")}</>
                                             ) : (
                                                 <>
-                                                    <Pause className="w-5 h-5 fill-current" />
-                                                    Pausieren
-                                                </>
+                                                    <Pause className="w-5 h-5 fill-current" />{tr("Pausieren")}</>
                                             )}
                                         </button>
                                         <button
                                             onClick={stopBatch}
                                             className="flex-1 btn py-4 flex justify-center items-center gap-2 shadow-lg bg-red-600 hover:bg-red-700 text-white border-0 text-lg font-medium"
                                         >
-                                            <Square className="w-5 h-5 fill-current" />
-                                            Stoppen
-                                        </button>
+                                            <Square className="w-5 h-5 fill-current" />{tr("Stoppen")}</button>
                                     </>
                                 )}
                             </div>
@@ -408,7 +398,7 @@ export default function OcrManager() {
                                 <div className="mt-6 pt-6 border-t border-surface-700/50 space-y-4 animate-in fade-in duration-500">
                                     <div>
                                         <div className="flex justify-between text-xs text-surface-400 mb-2 font-medium uppercase tracking-wider">
-                                            <span>Fortschritt {batchPaused && <span className="text-amber-400 ml-2">(Pausiert)</span>}</span>
+                                            <span>{tr("Fortschritt ")}{batchPaused && <span className="text-amber-400 ml-2">{tr("(Pausiert)")}</span>}</span>
                                             <span>{batchStatus.processed} / {batchStatus.total}</span>
                                         </div>
                                         <div className="h-2.5 rounded-full bg-surface-900 overflow-hidden ring-1 ring-surface-700">
@@ -431,13 +421,11 @@ export default function OcrManager() {
                                                 <div className="flex items-center justify-between">
                                                     <div className="flex items-center gap-2">
                                                         <Loader2 className="w-3.5 h-3.5 text-cyan-400 animate-spin" />
-                                                        <span className="text-xs text-cyan-300 font-medium">
-                                                            Seite {batchStatus.current_page_progress.current_page}/{batchStatus.current_page_progress.total_pages}
+                                                        <span className="text-xs text-cyan-300 font-medium">{tr("Seite ")}{batchStatus.current_page_progress.current_page}/{batchStatus.current_page_progress.total_pages}
                                                         </span>
                                                     </div>
                                                     <span className="text-xs text-surface-500">
-                                                        {batchStatus.current_page_progress.done}/{batchStatus.current_page_progress.total_pages} fertig
-                                                        {batchStatus.current_page_progress.errors ? ` · ${batchStatus.current_page_progress.errors} Fehler` : ''}
+                                                        {batchStatus.current_page_progress.done}/{batchStatus.current_page_progress.total_pages}{tr(" fertig")}{batchStatus.current_page_progress.errors ? tr(" · {errors} Fehler", { errors: batchStatus.current_page_progress.errors }) : ''}
                                                     </span>
                                                 </div>
                                                 {/* Page progress bar */}
@@ -618,7 +606,7 @@ function OcrErrorTab({ onCountChange }: { onCountChange: (n: number) => void }) 
     }
 
     const ignoreAll = async () => {
-        if (!confirm(`Alle ${items.length} Dokumente ignorieren? Sie werden zur Ignore-Liste verschoben und nicht mehr verarbeitet.`)) return
+        if (!confirm(tr("Alle {length} Dokumente ignorieren? Sie werden zur Ignore-Liste verschoben und nicht mehr verarbeitet.", { length: items.length }))) return
         setBulkLoading(true)
         try {
             await Promise.all(items.map(it =>
@@ -640,7 +628,7 @@ function OcrErrorTab({ onCountChange }: { onCountChange: (n: number) => void }) 
     }
 
     const clearAll = async () => {
-        if (!confirm(`Alle ${items.length} Einträge von der Fehlerliste entfernen (ohne zu ignorieren)?`)) return
+        if (!confirm(tr("Alle {length} Einträge von der Fehlerliste entfernen (ohne zu ignorieren)?", { length: items.length }))) return
         try {
             await api.clearOcrErrorList()
             setItems([])
@@ -660,34 +648,28 @@ function OcrErrorTab({ onCountChange }: { onCountChange: (n: number) => void }) 
                     <h2 className="font-display text-3xl font-bold text-white flex items-center gap-3">
                         <div className="p-2 bg-gradient-to-br from-red-500 to-red-700 rounded-xl shadow-lg shadow-red-500/20">
                             <AlertTriangle className="w-8 h-8 text-white" />
-                        </div>
-                        OCR <span className="text-red-400">Fehlerliste</span>
+                        </div>{tr("OCR ")}<span className="text-red-400">{tr("Fehlerliste")}</span>
                         {items.length > 0 && (
                             <span className="ml-2 px-3 py-1 text-sm bg-red-500/20 text-red-300 rounded-full border border-red-500/30">
                                 {items.length}
                             </span>
                         )}
                     </h2>
-                    <p className="text-surface-400 mt-2">
-                        Dokumente die nach 3 Fehlversuchen dauerhaft markiert wurden (Tag: <code className="text-red-300 text-sm">ocrfehler</code>)
+                    <p className="text-surface-400 mt-2">{tr("Dokumente die nach 3 Fehlversuchen dauerhaft markiert wurden (Tag: ")}<code className="text-red-300 text-sm">{tr("ocrfehler")}</code>)
                     </p>
                 </div>
                 <div className="flex gap-2 flex-wrap">
                     <button onClick={load} className="btn bg-surface-700 hover:bg-surface-600 text-surface-200 flex items-center gap-2">
-                        <RotateCcw className="w-4 h-4" /> Aktualisieren
-                    </button>
+                        <RotateCcw className="w-4 h-4" />{tr(" Aktualisieren")}</button>
                     {items.length > 0 && (<>
                         <button
                             onClick={ignoreAll}
                             disabled={bulkLoading}
                             className="btn bg-amber-600/20 hover:bg-amber-600/40 text-amber-300 border border-amber-500/30 flex items-center gap-2 disabled:opacity-50"
                         >
-                            {bulkLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Ban className="w-4 h-4" />}
-                            Alle ignorieren
-                        </button>
+                            {bulkLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Ban className="w-4 h-4" />}{tr("Alle ignorieren")}</button>
                         <button onClick={clearAll} className="btn bg-red-600/20 hover:bg-red-600/40 text-red-300 border border-red-500/30 flex items-center gap-2">
-                            <XCircle className="w-4 h-4" /> Alle löschen
-                        </button>
+                            <XCircle className="w-4 h-4" />{tr(" Alle löschen")}</button>
                     </>)}
                 </div>
             </div>
@@ -702,20 +684,19 @@ function OcrErrorTab({ onCountChange }: { onCountChange: (n: number) => void }) 
             {loading ? (
                 <div className="card p-12 text-center border border-surface-700/50 bg-surface-800/40">
                     <Loader2 className="w-10 h-10 animate-spin text-red-400 mx-auto mb-3" />
-                    <p className="text-surface-400">Lade Fehlerliste...</p>
+                    <p className="text-surface-400">{tr("Lade Fehlerliste...")}</p>
                 </div>
             ) : items.length === 0 ? (
                 <div className="card p-12 text-center border border-surface-700/50 bg-surface-800/40">
                     <CheckCircle2 className="w-14 h-14 text-emerald-500 mx-auto mb-4" />
-                    <p className="text-xl font-bold text-white">Keine Fehler 🎉</p>
-                    <p className="text-surface-400 mt-2">Alle Dokumente konnten verarbeitet werden.</p>
+                    <p className="text-xl font-bold text-white">{tr("Keine Fehler 🎉")}</p>
+                    <p className="text-surface-400 mt-2">{tr("Alle Dokumente konnten verarbeitet werden.")}</p>
                 </div>
             ) : (
                 <div className="space-y-2">
                     <p className="text-sm text-surface-500 mb-3">
-                        <span className="text-amber-400 font-medium">Ignorieren</span> → dauerhaft überspringen (zur Ignore-Liste) ·{' '}
-                        <span className="text-primary-400 font-medium">Retry</span> → Fehlerzähler zurücksetzen, nächster Batch versucht es erneut
-                    </p>
+                        <span className="text-amber-400 font-medium">{tr("Ignorieren")}</span>{tr(" → dauerhaft überspringen (zur Ignore-Liste) ·")}{' '}
+                        <span className="text-primary-400 font-medium">{tr("Retry")}</span>{tr(" → Fehlerzähler zurücksetzen, nächster Batch versucht es erneut")}</p>
                     {items.map(entry => (
                         <div key={entry.document_id} className="flex items-center justify-between p-4 rounded-xl bg-surface-800/40 border border-red-500/20 gap-4">
                             <div className="flex items-center gap-3 flex-1 min-w-0">
@@ -726,7 +707,7 @@ function OcrErrorTab({ onCountChange }: { onCountChange: (n: number) => void }) 
                                     <p className="text-sm font-medium text-surface-100 truncate">{entry.title}</p>
                                     <div className="flex items-center gap-3 text-xs text-surface-500 mt-0.5">
                                         <span className="font-mono">#{entry.document_id}</span>
-                                        <span className="text-red-400 font-semibold">{entry.fail_count}× fehlgeschlagen</span>
+                                        <span className="text-red-400 font-semibold">{entry.fail_count}{tr("× fehlgeschlagen")}</span>
                                         <span>{new Date(entry.timestamp).toLocaleString('de-DE')}</span>
                                     </div>
                                     <p className="text-xs text-red-300/70 mt-1 truncate" title={entry.error}>{entry.error}</p>
@@ -736,27 +717,23 @@ function OcrErrorTab({ onCountChange }: { onCountChange: (n: number) => void }) 
                                 <button
                                     onClick={() => ignoreOne(entry.document_id, entry.title)}
                                     disabled={actionLoading === entry.document_id}
-                                    title="Dauerhaft ignorieren – nie wieder versuchen"
+                                    title={tr("Dauerhaft ignorieren – nie wieder versuchen")}
                                     className="btn bg-amber-600/20 hover:bg-amber-600/50 text-amber-300 hover:text-amber-100 text-xs px-3 py-2 flex items-center gap-1.5 disabled:opacity-50"
                                 >
                                     {actionLoading === entry.document_id
                                         ? <Loader2 className="w-3.5 h-3.5 animate-spin" />
                                         : <Ban className="w-3.5 h-3.5" />
-                                    }
-                                    Ignorieren
-                                </button>
+                                    }{tr("Ignorieren")}</button>
                                 <button
                                     onClick={() => retry(entry.document_id, entry.title)}
                                     disabled={actionLoading === entry.document_id}
-                                    title="Fehlerzähler zurücksetzen – nächster Batch versucht es erneut"
+                                    title={tr("Fehlerzähler zurücksetzen – nächster Batch versucht es erneut")}
                                     className="btn bg-surface-700 hover:bg-primary-600 text-surface-400 hover:text-white text-xs px-3 py-2 flex items-center gap-1.5 disabled:opacity-50"
                                 >
                                     {actionLoading === entry.document_id
                                         ? <Loader2 className="w-3.5 h-3.5 animate-spin" />
                                         : <RotateCcw className="w-3.5 h-3.5" />
-                                    }
-                                    Retry
-                                </button>
+                                    }{tr("Retry")}</button>
                             </div>
                         </div>
                     ))}
@@ -812,21 +789,17 @@ function OcrIgnoreTab({ onCountChange }: { onCountChange: (n: number) => void })
                     <h2 className="font-display text-3xl font-bold text-white flex items-center gap-3">
                         <div className="p-2 bg-gradient-to-br from-orange-500 to-orange-700 rounded-xl shadow-lg shadow-orange-500/20">
                             <ShieldOff className="w-8 h-8 text-white" />
-                        </div>
-                        OCR <span className="text-orange-400">Ignoriert</span>
+                        </div>{tr("OCR ")}<span className="text-orange-400">{tr("Ignoriert")}</span>
                         {items.length > 0 && (
                             <span className="ml-2 px-3 py-1 text-sm bg-orange-500/20 text-orange-300 rounded-full border border-orange-500/30">
                                 {items.length}
                             </span>
                         )}
                     </h2>
-                    <p className="text-surface-400 mt-2">
-                        Dokumente die dauerhaft vom OCR-Batch ausgeschlossen sind (passwortgeschützt, 404, oder manuell ignoriert)
-                    </p>
+                    <p className="text-surface-400 mt-2">{tr("Dokumente die dauerhaft vom OCR-Batch ausgeschlossen sind (passwortgeschützt, 404, oder manuell ignoriert)")}</p>
                 </div>
                 <button onClick={load} className="btn bg-surface-700 hover:bg-surface-600 text-surface-200 flex items-center gap-2">
-                    <RotateCcw className="w-4 h-4" /> Aktualisieren
-                </button>
+                    <RotateCcw className="w-4 h-4" />{tr(" Aktualisieren")}</button>
             </div>
 
             {success && (
@@ -839,19 +812,17 @@ function OcrIgnoreTab({ onCountChange }: { onCountChange: (n: number) => void })
             {loading ? (
                 <div className="card p-12 text-center border border-surface-700/50 bg-surface-800/40">
                     <Loader2 className="w-10 h-10 animate-spin text-orange-400 mx-auto mb-3" />
-                    <p className="text-surface-400">Lade Ignore-Liste...</p>
+                    <p className="text-surface-400">{tr("Lade Ignore-Liste...")}</p>
                 </div>
             ) : items.length === 0 ? (
                 <div className="card p-12 text-center border border-surface-700/50 bg-surface-800/40">
                     <ShieldOff className="w-14 h-14 text-surface-600 mx-auto mb-4" />
-                    <p className="text-xl font-bold text-white">Keine ignorierten Dokumente</p>
-                    <p className="text-surface-400 mt-2">Alle Dokumente werden normal verarbeitet.</p>
+                    <p className="text-xl font-bold text-white">{tr("Keine ignorierten Dokumente")}</p>
+                    <p className="text-surface-400 mt-2">{tr("Alle Dokumente werden normal verarbeitet.")}</p>
                 </div>
             ) : (
                 <div className="space-y-2">
-                    <p className="text-sm text-surface-500 mb-3">
-                        "Entfernen" nimmt das Dokument von der Ignore-Liste — beim nächsten Batch wird es wieder versucht.
-                    </p>
+                    <p className="text-sm text-surface-500 mb-3">{tr("\"Entfernen\" nimmt das Dokument von der Ignore-Liste — beim nächsten Batch wird es wieder versucht.")}</p>
                     {items.map(entry => (
                         <div key={entry.document_id} className="flex items-center justify-between p-4 rounded-xl bg-surface-800/40 border border-orange-500/20 gap-4">
                             <div className="flex items-center gap-3 flex-1 min-w-0">
@@ -875,9 +846,7 @@ function OcrIgnoreTab({ onCountChange }: { onCountChange: (n: number) => void })
                                 {actionLoading === entry.document_id
                                     ? <Loader2 className="w-3.5 h-3.5 animate-spin" />
                                     : <XCircle className="w-3.5 h-3.5" />
-                                }
-                                Entfernen
-                            </button>
+                                }{tr("Entfernen")}</button>
                         </div>
                     ))}
                 </div>
