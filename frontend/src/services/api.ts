@@ -1,5 +1,7 @@
 // API Service for backend communication
 
+import { lang } from '../i18n'
+
 const API_BASE = '/api'
 
 export async function fetchJson<T>(url: string, options?: RequestInit & { timeoutMs?: number }): Promise<T> {
@@ -18,6 +20,7 @@ export async function fetchJson<T>(url: string, options?: RequestInit & { timeou
       signal: fetchOptions?.signal ?? controller.signal,
       headers: {
         'Content-Type': 'application/json',
+        ...(lang === 'en' ? { 'X-UI-Lang': 'en' } : {}),
         ...fetchOptions?.headers,
       },
     })

@@ -12,6 +12,7 @@ from app.models import CustomPrompt, IgnoredTag
 from app.services.paperless_client import PaperlessClient, get_paperless_client
 from app.services.llm_provider import LLMProviderService, get_llm_service
 from app.prompts.default_prompts import DEFAULT_PROMPTS
+from app.services.ui_lang import EN_REASONING_HINT, is_en, ui_text
 
 
 class SimilarityService:
@@ -37,10 +38,10 @@ class SimilarityService:
         )
         prompt = result.scalar_one_or_none()
         
-        if prompt:
-            return prompt.prompt_template
-        
-        return DEFAULT_PROMPTS.get(entity_type, "")
+        template = prompt.prompt_template if prompt else DEFAULT_PROMPTS.get(entity_type, "")
+        if template and is_en():
+            template += EN_REASONING_HINT
+        return template
     
     async def _get_ignored_patterns(self) -> List[Dict]:
         """Get all ignored tag patterns."""
@@ -272,6 +273,8 @@ Antworte NUR mit validem JSON:
 Beispiel: Wenn "1&1" in einer Gruppe ist und "1und1 Internet" ungruppiert, sollte "1und1 Internet" zu der "1&1" Gruppe hinzugefügt werden.
 
 Wenn nichts zusammengehört: {{"group_merges": [], "add_to_groups": []}}"""
+        if is_en():
+            cross_batch_prompt += EN_REASONING_HINT
 
         try:
             response = await self.llm.complete(cross_batch_prompt)
@@ -443,7 +446,7 @@ Wenn nichts zusammengehört: {{"group_merges": [], "add_to_groups": []}}"""
         }
         
         if estimated_input_tokens > safe_limit:
-            stats["warning"] = f"Prompt sehr groß ({estimated_input_tokens} Tokens)! Könnte Token-Limit ({token_limit}) überschreiten."
+            stats["warning"] = ui_text(f"Prompt sehr groß ({estimated_input_tokens} Tokens)! Könnte Token-Limit ({token_limit}) überschreiten.", f"Prompt very large ({estimated_input_tokens} tokens)! May exceed the token limit ({token_limit}).")
         
         try:
             response = await self.llm.complete(prompt)
@@ -468,7 +471,7 @@ Wenn nichts zusammengehört: {{"group_merges": [], "add_to_groups": []}}"""
                 except:
                     return {
                         "nonsense_tags": [], 
-                        "error": f"JSON-Parse-Fehler: {str(je)}", 
+                        "error": ui_text(f"JSON-Parse-Fehler: {str(je)}", f"JSON parse error: {str(je)}"), 
                         "stats": stats,
                         "raw_response": response[:1000]
                     }
@@ -532,7 +535,7 @@ Wenn nichts zusammengehört: {{"group_merges": [], "add_to_groups": []}}"""
         }
         
         if estimated_input_tokens > safe_limit:
-            stats["warning"] = f"Prompt sehr groß ({estimated_input_tokens} Tokens)! Könnte Token-Limit ({token_limit}) überschreiten."
+            stats["warning"] = ui_text(f"Prompt sehr groß ({estimated_input_tokens} Tokens)! Könnte Token-Limit ({token_limit}) überschreiten.", f"Prompt very large ({estimated_input_tokens} tokens)! May exceed the token limit ({token_limit}).")
         
         try:
             response = await self.llm.complete(prompt)
@@ -557,7 +560,7 @@ Wenn nichts zusammengehört: {{"group_merges": [], "add_to_groups": []}}"""
                 except:
                     return {
                         "correspondent_tags": [], 
-                        "error": f"JSON-Parse-Fehler: {str(je)}", 
+                        "error": ui_text(f"JSON-Parse-Fehler: {str(je)}", f"JSON parse error: {str(je)}"), 
                         "stats": stats,
                         "raw_response": response[:1000]
                     }
@@ -625,7 +628,7 @@ Wenn nichts zusammengehört: {{"group_merges": [], "add_to_groups": []}}"""
         }
         
         if estimated_input_tokens > safe_limit:
-            stats["warning"] = f"Prompt sehr groß ({estimated_input_tokens} Tokens)! Könnte Token-Limit ({token_limit}) überschreiten."
+            stats["warning"] = ui_text(f"Prompt sehr groß ({estimated_input_tokens} Tokens)! Könnte Token-Limit ({token_limit}) überschreiten.", f"Prompt very large ({estimated_input_tokens} tokens)! May exceed the token limit ({token_limit}).")
         
         try:
             response = await self.llm.complete(prompt)
@@ -650,7 +653,7 @@ Wenn nichts zusammengehört: {{"group_merges": [], "add_to_groups": []}}"""
                 except:
                     return {
                         "doctype_tags": [], 
-                        "error": f"JSON-Parse-Fehler: {str(je)}", 
+                        "error": ui_text(f"JSON-Parse-Fehler: {str(je)}", f"JSON parse error: {str(je)}"), 
                         "stats": stats,
                         "raw_response": response[:1000]
                     }

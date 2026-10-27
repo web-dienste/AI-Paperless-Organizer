@@ -11,6 +11,7 @@ from app.services.similarity import SimilarityService, get_similarity_service
 from app.services.merge import MergeService, get_merge_service
 from app.services.statistics import StatisticsService, get_statistics_service
 from app.services.llm_provider import LLMProviderService, get_llm_service
+from app.services.ui_lang import ui_text
 
 router = APIRouter()
 ENTITY_TYPE = "tags"
@@ -64,18 +65,18 @@ async def estimate_tags(
         avg_corr_length = sum(len(c.get("name", "")) for c in correspondents) / max(corr_count, 1)
         # Tags + Correspondents
         estimated_chars = base_prompt + tags_count * (avg_tag_length + 10) + corr_count * (avg_corr_length + 5)
-        items_info = f"{tags_count} Tags + {corr_count} Korrespondenten"
+        items_info = ui_text(f"{tags_count} Tags + {corr_count} Korrespondenten", f"{tags_count} tags + {corr_count} correspondents")
     elif analysis_type == "doctype":
         doc_types = await client.get_document_types()
         dt_count = len(doc_types)
         avg_dt_length = sum(len(d.get("name", "")) for d in doc_types) / max(dt_count, 1)
         # Tags + Document Types
         estimated_chars = base_prompt + tags_count * (avg_tag_length + 10) + dt_count * (avg_dt_length + 5)
-        items_info = f"{tags_count} Tags + {dt_count} Dokumenttypen"
+        items_info = ui_text(f"{tags_count} Tags + {dt_count} Dokumenttypen", f"{tags_count} tags + {dt_count} document types")
     else:
         # nonsense or similar - just tags
         estimated_chars = base_prompt + tags_count * (avg_tag_length + 10)
-        items_info = f"{tags_count} Tags"
+        items_info = ui_text(f"{tags_count} Tags", f"{tags_count} tags")
     
     # Rough token estimate (1 token ≈ 4 chars)
     estimated_tokens = estimated_chars // 4

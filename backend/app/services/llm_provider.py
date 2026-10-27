@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from app.database import get_db
 from app.models import LLMProvider
+from app.services.ui_lang import ui_text
 
 
 class LLMProviderService:
@@ -458,7 +459,7 @@ class LLMProviderService:
         token_warning = None
         max_recommended = 8000  # Safe limit for most models
         if estimated_input_tokens > max_recommended:
-            token_warning = f"Viele Items ({len(items)})! Geschätzte Tokens: ~{estimated_input_tokens}. Könnte das Limit überschreiten."
+            token_warning = ui_text(f"Viele Items ({len(items)})! Geschätzte Tokens: ~{estimated_input_tokens}. Könnte das Limit überschreiten.", f"Many items ({len(items)})! Estimated tokens: ~{estimated_input_tokens}. May exceed the limit.")
         
         # Get LLM response
         logger.info(f"[LLM] Sending request to LLM provider...")
@@ -629,7 +630,7 @@ class LLMProviderService:
             error_context = response[max(0, e.pos-100):e.pos+100] if hasattr(e, 'pos') else response[:200]
             return {
                 "groups": [], 
-                "error": f"JSON-Fehler: {str(e)}. Kontext: ...{error_context}...", 
+                "error": ui_text(f"JSON-Fehler: {str(e)}. Kontext: ...{error_context}...", f"JSON error: {str(e)}. Context: ...{error_context}..."), 
                 "stats": stats
             }
 

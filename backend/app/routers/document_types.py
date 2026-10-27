@@ -11,6 +11,7 @@ from app.services.similarity import SimilarityService, get_similarity_service
 from app.services.merge import MergeService, get_merge_service
 from app.services.statistics import StatisticsService, get_statistics_service
 from app.services.llm_provider import LLMProviderService, get_llm_service
+from app.services.ui_lang import ui_text
 
 router = APIRouter()
 ENTITY_TYPE = "document_types"
@@ -55,7 +56,7 @@ async def estimate_document_types(
     recommended_batches = max(1, (estimated_tokens + safe_limit - 1) // safe_limit) if needs_batching else 1
     
     return {
-        "items_info": f"{items_count} Dokumententypen",
+        "items_info": ui_text(f"{items_count} Dokumententypen", f"{items_count} document types"),
         "estimated_tokens": estimated_tokens,
         "token_limit": token_limit,
         "model": model_name,

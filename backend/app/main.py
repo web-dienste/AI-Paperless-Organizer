@@ -16,6 +16,7 @@ from app.routers import paperless, correspondents, tags, document_types, setting
 from app.routers.ocr import ocr_settings, get_ocr_service
 from app.services.ocr_service import watchdog_state
 from app.services.paperless_client import PaperlessClient
+from app.services.ui_lang import ui_lang
 
 
 @asynccontextmanager
@@ -177,6 +178,16 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.middleware("http")
+async def ui_lang_middleware(request, call_next):
+    """Sprache der Oberfläche je Anfrage merken (Standard: Deutsch)."""
+    token = ui_lang.set("en" if request.headers.get("x-ui-lang") == "en" else "de")
+    try:
+        return await call_next(request)
+    finally:
+        ui_lang.reset(token)
 
 # Include routers
 app.include_router(paperless.router, prefix="/api/paperless", tags=["Paperless"])
