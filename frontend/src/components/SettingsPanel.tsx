@@ -564,7 +564,7 @@ export default function SettingsPanel() {
                         {/* Bereinigung Model */}
                         <div className="p-3 bg-surface-700/30 rounded-lg space-y-2">
                           <label className="block text-sm font-medium text-surface-200">{tr("Bereinigung-Modell")}</label>
-                          <p className="text-xs text-surface-500">{tr("Fuer Metadaten-Bereinigung (Tags, Korrespondenten, Dokumententypen zusammenfuehren)")}</p>
+                          <p className="text-xs text-surface-500">{tr("Für Metadaten-Bereinigung (Tags, Korrespondenten, Dokumententypen zusammenführen)")}</p>
                           {ollamaInstalledModels.length > 0 ? (
                             <select
                               value={editState.model}
@@ -592,7 +592,7 @@ export default function SettingsPanel() {
                         {/* Klassifizierer Model */}
                         <div className="p-3 bg-surface-700/30 rounded-lg space-y-2">
                           <label className="block text-sm font-medium text-surface-200">{tr("Klassifizierer-Modell")}</label>
-                          <p className="text-xs text-surface-500">{tr("Fuer Dokument-Klassifizierung (Tags, Typ, Korrespondent zuordnen)")}</p>
+                          <p className="text-xs text-surface-500">{tr("Für Dokument-Klassifizierung (Tags, Typ, Korrespondent zuordnen)")}</p>
                           {ollamaInstalledModels.length > 0 ? (
                             <select
                               value={editState.classifier_model || ''}
@@ -618,7 +618,7 @@ export default function SettingsPanel() {
                         {/* Vision Model */}
                         <div className="p-3 bg-surface-700/30 rounded-lg space-y-2">
                           <label className="block text-sm font-medium text-surface-200">{tr("OCR Vision-Modell")}</label>
-                          <p className="text-xs text-surface-500">{tr("Fuer Texterkennung mit Ollama Vision (wird in OCR-Einstellungen verwaltet)")}</p>
+                          <p className="text-xs text-surface-500">{tr("Für Texterkennung mit Ollama Vision (wird in OCR-Einstellungen verwaltet)")}</p>
                           {ollamaInstalledModels.length > 0 ? (
                             <select
                               value={editState.vision_model || ''}
@@ -656,7 +656,7 @@ export default function SettingsPanel() {
                       <>
                         <div className="p-3 bg-surface-700/30 rounded-lg space-y-2">
                           <label className="block text-sm font-medium text-surface-200">{tr("Bereinigung-Modell")}</label>
-                          <p className="text-xs text-surface-500">{tr("Fuer Metadaten-Bereinigung (Tags, Korrespondenten, Dokumententypen zusammenfuehren)")}</p>
+                          <p className="text-xs text-surface-500">{tr("Für Metadaten-Bereinigung (Tags, Korrespondenten, Dokumententypen zusammenführen)")}</p>
                           <input
                             type="text"
                             value={editState.model}
@@ -674,7 +674,7 @@ export default function SettingsPanel() {
 
                         <div className="p-3 bg-surface-700/30 rounded-lg space-y-2">
                           <label className="block text-sm font-medium text-surface-200">{tr("Klassifizierer-Modell ")}<span className="text-surface-500 font-normal">{tr("(optional)")}</span></label>
-                          <p className="text-xs text-surface-500">{tr("Eigenes Modell fuer Dokument-Klassifizierung (leer = Bereinigung-Modell wird verwendet)")}</p>
+                          <p className="text-xs text-surface-500">{tr("Eigenes Modell für Dokument-Klassifizierung (leer = Bereinigung-Modell wird verwendet)")}</p>
                           <input
                             type="text"
                             value={editState.classifier_model || ''}
@@ -711,13 +711,13 @@ export default function SettingsPanel() {
       <div className="card p-6">
         <h2 className="text-lg font-semibold text-surface-100 mb-4 flex items-center gap-2">
           <Cpu className="w-5 h-5 text-primary-400" />{tr("Job-Zuweisung")}</h2>
-        <p className="text-sm text-surface-400 mb-4">{tr("Welcher Provider wird fuer welchen Job verwendet?")}</p>
+        <p className="text-sm text-surface-400 mb-4">{tr("Welcher Provider wird für welchen Job verwendet?")}</p>
         <div className="space-y-4">
           {/* Bereinigung */}
           <div className="flex items-center justify-between p-3 bg-surface-700/50 rounded-lg">
             <div>
               <p className="text-sm font-medium text-surface-200">{tr("Metadaten-Bereinigung")}</p>
-              <p className="text-xs text-surface-500">{tr("Tags, Korrespondenten, Dokumententypen aufraeumen")}</p>
+              <p className="text-xs text-surface-500">{tr("Tags, Korrespondenten, Dokumententypen aufräumen")}</p>
             </div>
             <select
               value={providers.find(p => p.is_active)?.name || ''}
@@ -950,7 +950,7 @@ export default function SettingsPanel() {
               value={newKeyName}
               onChange={(e) => setNewKeyName(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleGenerateKey()}
-              placeholder={tr("Name fuer den Key (z.B. 'Mein ERP-System')")}
+              placeholder={tr("Name für den Key (z.B. 'Mein ERP-System')")}
               className="flex-1 px-3 py-2 bg-surface-700 border border-surface-600 rounded-lg text-sm text-surface-100 placeholder-surface-500"
             />
             <button
@@ -1006,7 +1006,7 @@ export default function SettingsPanel() {
                       onClick={() => handleDeleteKey(k.id)}
                       disabled={deletingKeyId === k.id}
                       className="p-1.5 text-red-400 hover:text-red-300 hover:bg-surface-600 rounded"
-                      title={tr("Loeschen")}
+                      title={tr("Löschen")}
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -1028,69 +1028,17 @@ export default function SettingsPanel() {
               rel="noopener"
               className="btn btn-primary flex items-center gap-2 text-sm"
             >
-              <TestTube className="w-4 h-4" />{tr("Swagger UI oeffnen")}</a>
+              <TestTube className="w-4 h-4" />{tr("Swagger UI öffnen")}</a>
           </div>
 
-          <div className="space-y-4 text-sm">
-            <div>
-              <h4 className="font-medium text-surface-100 mb-1">{tr("Was kann die API?")}</h4>
-              <ul className="list-disc list-inside text-surface-400 space-y-1">
-                <li><strong className="text-surface-200">{tr("Chat")}</strong>{tr(" - Stelle Fragen zu deinen Dokumenten, die KI antwortet mit Quellenangaben")}</li>
-                <li><strong className="text-surface-200">{tr("Suche")}</strong>{tr(" - Semantische Dokumentensuche (findet Bedeutung, nicht nur Stichworte)")}</li>
-                <li><strong className="text-surface-200">{tr("Sessions")}</strong>{tr(" - Chat-Verlaeufe werden gespeichert und koennen abgerufen werden")}</li>
-                <li><strong className="text-surface-200">{tr("Transaktions-Match")}</strong>{tr(" - Bank-/PayPal-Buchung an Paperless-Beleg matchen (für EÜR/Buchhaltung)")}</li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="font-medium text-surface-100 mb-1">{tr("Authentifizierung")}</h4>
-              <p className="text-surface-400 mb-2">{tr("Sende den API-Key als Bearer-Token im Authorization-Header:")}</p>
-              <pre className="bg-surface-900 text-green-400 rounded-lg p-3 overflow-x-auto text-xs">
-{tr("Authorization: Bearer po_dein_api_key_hier")}</pre>
-            </div>
-
-            <div>
-              <h4 className="font-medium text-surface-100 mb-1">{tr("Chat-Endpunkt (SSE Streaming)")}</h4>
-              <pre className="bg-surface-900 text-green-400 rounded-lg p-3 overflow-x-auto text-xs">
-{tr("POST /api/rag/chat\nContent-Type: application/json\nAuthorization: Bearer po_dein_api_key\n\n{\n  \"question\": \"Welche Rechnungen habe ich von Vodafone?\",\n  \"session_id\": null,\n  \"filters\": {\n    \"correspondent_id\": null,\n    \"document_type_id\": null,\n    \"tags\": null\n  }\n}")}</pre>
-              <p className="text-surface-500 mt-1">{tr("Antwort: Server-Sent Events (SSE) mit Token-Stream und Quellenangaben.")}</p>
-            </div>
-
-            <div>
-              <h4 className="font-medium text-surface-100 mb-1">{tr("Such-Endpunkt")}</h4>
-              <pre className="bg-surface-900 text-green-400 rounded-lg p-3 overflow-x-auto text-xs">
-{tr("POST /api/rag/search\nContent-Type: application/json\nAuthorization: Bearer po_dein_api_key\n\n{\n  \"query\": \"Mietvertrag\",\n  \"limit\": 5\n}")}</pre>
-              <p className="text-surface-500 mt-1">{tr("Antwort: JSON mit relevanten Dokumenten, Scores und Snippets.")}</p>
-            </div>
-
-            <div>
-              <h4 className="font-medium text-surface-100 mb-1">{tr("Transaktions-Match (für EÜR/Buchhaltung)")}</h4>
-              <p className="text-surface-400 mb-2 text-xs">{tr("Matcht eine Bank-/PayPal-Buchung gegen deine Paperless-Dokumente per Score-System (Rechnungsnummer, Betrag, IBAN, Datum, Kundenname, Volltext). Gibt Top 3 Treffer mit Score 0-100% zurück.")}</p>
-              <pre className="bg-surface-900 text-green-400 rounded-lg p-3 overflow-x-auto text-xs">
-{tr("POST /api/match/transaction\nContent-Type: application/json\nAuthorization: Bearer po_dein_api_key\n\n{\n  \"transaction\": {\n    \"amount\": 41.22,\n    \"date\": \"2025-11-10\",\n    \"description\": \"Domain renewal\",\n    \"customer\": \"TLD Registrar Ltd\",\n    \"iban\": \"DE...\",\n    \"bookingNumber\": \"WEB-2025-0058\",\n    \"paypalTransactionId\": \"1048329975057\"\n  },\n  \"options\": {\n    \"dateWindowDays\": 7,\n    \"amountToleranceEur\": 0.5,\n    \"amountTolerancePercent\": 0,\n    \"fuzzyThreshold\": 75,\n    \"limit\": 3\n  }\n}")}</pre>
-              <p className="text-surface-500 mt-1 text-xs">{tr("Antwort: ")}<code className="text-surface-300">{tr("matches[]")}</code>{tr(" mit")}{' '}<code className="text-surface-300">{tr("documentId")}</code>, <code className="text-surface-300">{tr("score")}</code>,
-                {' '}<code className="text-surface-300">{tr("confidence")}</code>{tr(" (high/medium/low),")}{' '}<code className="text-surface-300">{tr("matchedOn[]")}</code>{tr(" (welches Feld welches Gewicht beisteuerte).")}</p>
-            </div>
-
-            <div>
-              <h4 className="font-medium text-surface-100 mb-1">{tr("Weitere Endpunkte")}</h4>
-              <div className="bg-surface-700/50 rounded-lg p-3 space-y-1 text-xs font-mono text-surface-200">
-                <div><span className="text-blue-400">{tr("GET")}</span>{tr(" /api/rag/sessions - Alle Chat-Sessions auflisten")}</div>
-                <div><span className="text-blue-400">{tr("GET")}</span>{tr(" /api/rag/sessions/:id - Einzelne Session mit Nachrichten")}</div>
-                <div><span className="text-red-400">{tr("DELETE")}</span>{tr(" /api/rag/sessions/:id - Session loeschen")}</div>
-                <div><span className="text-green-400">{tr("POST")}</span>{tr(" /api/rag/index/start - Indexierung starten")}</div>
-                <div><span className="text-blue-400">{tr("GET")}</span>{tr(" /api/rag/index/status - Indexierungsstatus")}</div>
-                <div><span className="text-blue-400">{tr("GET")}</span>{tr(" /api/rag/config - RAG-Konfiguration")}</div>
-                <div><span className="text-blue-400">{tr("GET")}</span>{tr(" /api/match/health - Health-Check Match-API")}</div>
-                <div><span className="text-blue-400">{tr("GET")}</span>{tr(" /api/match/log - Letzte 30 Match-Anfragen")}</div>
-              </div>
-            </div>
-
-            <div className="bg-primary-900/30 border border-primary-700 rounded-lg p-3">
-              <p className="text-primary-300 text-xs">
-                <strong>{tr("Tipp:")}</strong>{tr(" In der Swagger UI kannst du alle Endpunkte direkt im Browser testen. Klicke auf einen Endpunkt, dann auf \"Try it out\", fuege deinen API-Key ein und sende die Anfrage.")}</p>
-            </div>
-          </div>
+          <p className="text-sm text-surface-400">{tr("Chat, semantische Suche und Abgleich von Bank-Buchungen mit Belegen per REST-API. Alle Endpunkte lassen sich in der Swagger UI direkt im Browser testen.")}{' '}
+            <a
+              href="https://github.com/web-dienste/AI-Paperless-Organizer/wiki/API"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary-400 hover:underline"
+            >{tr("Beispiele und alle Endpunkte im Wiki")}</a>
+          </p>
         </div>
       </div>
     </div>

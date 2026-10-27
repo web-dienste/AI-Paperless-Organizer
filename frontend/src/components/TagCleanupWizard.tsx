@@ -7,6 +7,7 @@ import {
 import clsx from 'clsx'
 import * as api from '../services/api'
 import { tr, locale } from '../i18n'
+import { Link } from 'react-router-dom'
 
 // Confirmation modal for AI analysis
 interface AnalysisConfirmInfo {
@@ -1403,7 +1404,8 @@ export default function TagCleanupWizard() {
               <div className="p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-lg">
                 <p className="text-emerald-400 mb-2">
                   {similarGroups.length}{tr(" Gruppen gefunden!")}</p>
-                <p className="text-surface-400 text-sm">{tr("Gehe zu ")}<strong>{tr("Tags")}</strong>{tr(" im Menü, um die Vorschläge anzusehen und zusammenzuführen.")}</p>
+                <p className="text-surface-400 text-sm mb-3">{tr("Die Vorschläge kannst du auf der Tag-Seite ansehen und einzeln zusammenführen.")}</p>
+                <Link to="/tags?vorschlaege=1" className="btn btn-primary inline-flex items-center gap-2 text-sm">{tr("Vorschläge ansehen")}</Link>
               </div>
             ) : (
               <p className="text-center text-surface-400 py-8">{tr("Keine ähnlichen Tags gefunden! ✓")}</p>

@@ -36,6 +36,7 @@ import {
 import clsx from 'clsx'
 import * as api from '../services/api'
 import { tr, locale } from '../i18n'
+import { version as appVersion } from '../../package.json'
 
 interface LayoutProps {
   children: ReactNode
@@ -55,6 +56,12 @@ interface NavItem {
   requiresDebug?: boolean
   isGroup?: boolean
   children?: NavChild[]
+}
+
+// Seiten, die nicht im Menü stehen, aber eine eigene Überschrift brauchen
+const EXTRA_PAGE_TITLES: Record<string, string> = {
+  '/tags/wizard': 'Tag Cleanup Wizard',
+  '/ki-loesungen': 'Individuelle KI-Lösungen',
 }
 
 const baseNavigation: NavItem[] = [
@@ -265,7 +272,7 @@ export default function Layout({ children }: LayoutProps) {
             className="btn btn-primary w-full flex items-center justify-center gap-2"
           >
             <Lock className="w-4 h-4" />{tr("Entsperren")}</button>
-          <p className="text-surface-500 text-xs mt-6">{tr("Passwort vergessen? Lösche die Datei ")}<code className="text-surface-400">{tr("data/app.db")}</code>{tr(" im Backend.")}</p>
+          <p className="text-surface-500 text-xs mt-6">{tr("Passwort vergessen? Nichts löschen, sondern zurücksetzen mit:")}<br /><code className="text-surface-400">curl -X DELETE http://&lt;server&gt;:&lt;port&gt;/api/settings/app/password</code></p>
         </div>
       </div>
     )
@@ -638,7 +645,7 @@ export default function Layout({ children }: LayoutProps) {
             </a>
           </div>
 
-          <div className="text-xs text-surface-600 text-center">{tr("AI Paperless Organizer v1.1")}</div>
+          <div className="text-xs text-surface-600 text-center">AI Paperless Organizer v{appVersion}</div>
 
           {localStorage.getItem('app_authenticated') === 'true' && (
             <button
@@ -665,6 +672,7 @@ export default function Layout({ children }: LayoutProps) {
           <h1 className="font-display font-semibold text-lg text-surface-100">
             {tr(navigation.find(n => n.href === location.pathname)?.name
               || navigation.flatMap(n => n.children ?? []).find(c => c.href === location.pathname)?.name
+              || EXTRA_PAGE_TITLES[location.pathname]
               || "Dashboard")}
           </h1>
         </header>

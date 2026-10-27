@@ -102,6 +102,8 @@ export default function TagManager() {
 
   useEffect(() => {
     loadTags()
+    // Vom Tag-Wizard (Schritt 6) kommend: gespeicherte Vorschläge direkt öffnen
+    if (new URLSearchParams(window.location.search).get('vorschlaege') === '1') loadSavedAnalysis()
   }, [])
 
   const loadTags = async (forceRefresh: boolean = false) => {
