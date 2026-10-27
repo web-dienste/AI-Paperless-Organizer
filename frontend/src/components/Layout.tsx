@@ -35,6 +35,7 @@ import {
 } from 'lucide-react'
 import clsx from 'clsx'
 import * as api from '../services/api'
+import { tr } from '../i18n'
 
 interface LayoutProps {
   children: ReactNode
@@ -245,34 +246,26 @@ export default function Layout({ children }: LayoutProps) {
                         flex items-center justify-center shadow-xl shadow-primary-600/40 mx-auto mb-6">
             <Lock className="w-10 h-10 text-white" />
           </div>
-          <h1 className="font-display text-2xl font-bold text-surface-100 mb-2">
-            AI Paperless Organizer
-          </h1>
-          <p className="text-surface-400 mb-6">
-            Diese Anwendung ist passwortgeschützt
-          </p>
+          <h1 className="font-display text-2xl font-bold text-surface-100 mb-2">{tr("AI Paperless Organizer")}</h1>
+          <p className="text-surface-400 mb-6">{tr("Diese Anwendung ist passwortgeschützt")}</p>
           <input
             type="password"
             value={passwordInput}
             onChange={(e) => setPasswordInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handlePasswordSubmit()}
-            placeholder="Passwort eingeben..."
+            placeholder={tr("Passwort eingeben...")}
             className={clsx("input mb-4 text-center", passwordError && "border-red-500 animate-shake")}
             autoFocus
           />
           {passwordError && (
-            <p className="text-red-400 text-sm mb-4">❌ Falsches Passwort</p>
+            <p className="text-red-400 text-sm mb-4">{tr("❌ Falsches Passwort")}</p>
           )}
           <button
             onClick={handlePasswordSubmit}
             className="btn btn-primary w-full flex items-center justify-center gap-2"
           >
-            <Lock className="w-4 h-4" />
-            Entsperren
-          </button>
-          <p className="text-surface-500 text-xs mt-6">
-            Passwort vergessen? Lösche die Datei <code className="text-surface-400">data/app.db</code> im Backend.
-          </p>
+            <Lock className="w-4 h-4" />{tr("Entsperren")}</button>
+          <p className="text-surface-500 text-xs mt-6">{tr("Passwort vergessen? Lösche die Datei ")}<code className="text-surface-400">{tr("data/app.db")}</code>{tr(" im Backend.")}</p>
         </div>
       </div>
     )
@@ -302,9 +295,7 @@ export default function Layout({ children }: LayoutProps) {
                           group-hover:shadow-primary-500/50 transition-shadow">
               <FileText className="w-5 h-5 text-white" />
             </div>
-            <span className="font-display font-semibold text-lg text-surface-100">
-              Organizer
-            </span>
+            <span className="font-display font-semibold text-lg text-surface-100">{tr("Organizer")}</span>
           </Link>
           <button
             className="lg:hidden p-2 hover:bg-surface-800 rounded-lg"
@@ -326,8 +317,7 @@ export default function Layout({ children }: LayoutProps) {
             )}
             <span className={clsx(
               paperlessConnected ? 'text-emerald-400' : 'text-surface-400'
-            )}>
-              Paperless {paperlessConnected ? 'verbunden' : 'nicht verbunden'}
+            )}>{tr("Paperless ")}{paperlessConnected ? 'verbunden' : tr("nicht verbunden")}
             </span>
           </div>
           <div className="flex items-center gap-2 text-sm">
@@ -340,8 +330,7 @@ export default function Layout({ children }: LayoutProps) {
             )}
             <span className={clsx(
               llmConfigured ? 'text-emerald-400' : 'text-surface-400'
-            )}>
-              LLM {llmConfigured ? 'konfiguriert' : 'nicht konfiguriert'}
+            )}>{tr("LLM ")}{llmConfigured ? 'konfiguriert' : tr("nicht konfiguriert")}
             </span>
           </div>
           <div className="flex items-center gap-2 text-sm">
@@ -357,8 +346,7 @@ export default function Layout({ children }: LayoutProps) {
             <span className={clsx(
               (ollamaConnected && ollamaModelAvailable) ? 'text-emerald-400' :
                 ollamaConnected ? 'text-amber-400' : 'text-surface-400'
-            )} title={ollamaModel ? `Modell: ${ollamaModel}` : undefined}>
-              Ollama {ollamaConnected ? (ollamaModelAvailable ? 'Online' : 'Modell fehlt') : 'Offline'}
+            )} title={ollamaModel ? tr("Modell: {ollamaModel}", { ollamaModel: ollamaModel }) : undefined}>{tr("Ollama ")}{ollamaConnected ? (ollamaModelAvailable ? tr("Online") : tr("Modell fehlt")) : tr("Offline")}
             </span>
           </div>
           {reviewCount > 0 && (
@@ -369,8 +357,7 @@ export default function Layout({ children }: LayoutProps) {
             >
               <AlertCircle className="w-4 h-4 text-amber-400 animate-pulse flex-shrink-0" />
               <span className="text-amber-400 font-medium">
-                {reviewCount} OCR-Prüfung{reviewCount !== 1 ? 'en' : ''} offen
-              </span>
+                {reviewCount}{tr(" OCR-Prüfung")}{reviewCount !== 1 ? 'en' : ''}{tr(" offen")}</span>
             </Link>
           )}
           {errorCount > 0 && (
@@ -381,8 +368,7 @@ export default function Layout({ children }: LayoutProps) {
             >
               <XCircle className="w-4 h-4 text-red-400 flex-shrink-0" />
               <span className="text-red-400 font-medium">
-                {errorCount} OCR-Fehler
-              </span>
+                {errorCount}{tr(" OCR-Fehler")}</span>
             </Link>
           )}
         </div>
@@ -392,7 +378,7 @@ export default function Layout({ children }: LayoutProps) {
           <div className="px-4 py-3 border-b border-surface-700/50 space-y-2">
             <div className="flex items-center gap-1.5 mb-1">
               <Activity className="w-3.5 h-3.5 text-surface-400" />
-              <span className="text-xs font-semibold text-surface-400 uppercase tracking-wider">Aktive Jobs</span>
+              <span className="text-xs font-semibold text-surface-400 uppercase tracking-wider">{tr("Aktive Jobs")}</span>
             </div>
 
             {/* Batch OCR running */}
@@ -401,13 +387,13 @@ export default function Layout({ children }: LayoutProps) {
                 <div className="flex items-center gap-2 text-sm">
                   <Loader2 className="w-4 h-4 text-primary-400 animate-spin flex-shrink-0" />
                   <span className="text-primary-300 font-medium truncate">
-                    {batchOcrStatus.paused ? 'Batch OCR pausiert' : 'Batch OCR läuft'}
+                    {batchOcrStatus.paused ? tr("Batch OCR pausiert") : tr("Batch OCR läuft")}
                   </span>
                 </div>
                 {batchOcrStatus.total > 0 && (
                   <div className="mt-1.5 ml-6">
                     <div className="flex justify-between text-xs text-surface-500 mb-1">
-                      <span>{batchOcrStatus.processed}/{batchOcrStatus.total} Dokumente</span>
+                      <span>{batchOcrStatus.processed}/{batchOcrStatus.total}{tr(" Dokumente")}</span>
                       <span>{Math.round((batchOcrStatus.processed / batchOcrStatus.total) * 100)}%</span>
                     </div>
                     <div className="h-1 bg-surface-700 rounded-full overflow-hidden">
@@ -431,12 +417,12 @@ export default function Layout({ children }: LayoutProps) {
               <Link to="/rag-chat" className="block group">
                 <div className="flex items-center gap-2 text-sm">
                   <Loader2 className="w-4 h-4 text-violet-400 animate-spin flex-shrink-0" />
-                  <span className="text-violet-300 font-medium truncate">Chat-Index wird aufgebaut</span>
+                  <span className="text-violet-300 font-medium truncate">{tr("Chat-Index wird aufgebaut")}</span>
                 </div>
                 {ragIndexStatus.total_documents > 0 && (
                   <div className="mt-1.5 ml-6">
                     <div className="flex justify-between text-xs text-surface-500 mb-1">
-                      <span>{ragIndexStatus.indexed_documents}/{ragIndexStatus.total_documents} Dok.</span>
+                      <span>{ragIndexStatus.indexed_documents}/{ragIndexStatus.total_documents}{tr(" Dok.")}</span>
                       <span>{Math.round((ragIndexStatus.indexed_documents / ragIndexStatus.total_documents) * 100)}%</span>
                     </div>
                     <div className="h-1 bg-surface-700 rounded-full overflow-hidden">
@@ -468,16 +454,15 @@ export default function Layout({ children }: LayoutProps) {
                       : 'text-surface-400'
                   )}>
                     {autoClassifyStatus.waiting_for
-                      ? `Wartet auf ${autoClassifyStatus.waiting_for === 'ocr-batch' ? 'OCR' : autoClassifyStatus.waiting_for}`
+                      ? tr("Wartet auf {v0}", { v0: autoClassifyStatus.waiting_for === 'ocr-batch' ? 'OCR' : autoClassifyStatus.waiting_for })
                       : autoClassifyStatus.running
-                        ? `Klassifiziert #${autoClassifyStatus.current_doc || '...'}`
-                        : 'Klassifizierer aktiv'}
+                        ? tr("Klassifiziert #{v0}", { v0: autoClassifyStatus.current_doc || '...' })
+                        : tr("Klassifizierer aktiv")}
                   </span>
                 </div>
                 {(autoClassifyStatus.processed > 0 || autoClassifyStatus.reviewed > 0) && (
                   <p className="text-xs text-surface-500 ml-6 mt-0.5">
-                    {autoClassifyStatus.processed} angewendet, {autoClassifyStatus.reviewed} zur Prüfung
-                  </p>
+                    {autoClassifyStatus.processed}{tr(" angewendet, ")}{autoClassifyStatus.reviewed}{tr(" zur Prüfung")}</p>
                 )}
               </Link>
             )}
@@ -495,12 +480,11 @@ export default function Layout({ children }: LayoutProps) {
                     'font-medium truncate',
                     watchdogStatus.running ? 'text-cyan-300' : 'text-surface-400'
                   )}>
-                    {watchdogStatus.running ? 'Watchdog prüft...' : 'Watchdog aktiv'}
+                    {watchdogStatus.running ? tr("Watchdog prüft...") : tr("Watchdog aktiv")}
                   </span>
                 </div>
                 {watchdogStatus.last_run && !watchdogStatus.running && (
-                  <p className="text-xs text-surface-500 ml-6 mt-0.5">
-                    Zuletzt: {new Date(watchdogStatus.last_run).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })}
+                  <p className="text-xs text-surface-500 ml-6 mt-0.5">{tr("Zuletzt: ")}{new Date(watchdogStatus.last_run).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })}
                   </p>
                 )}
               </Link>
@@ -532,7 +516,7 @@ export default function Layout({ children }: LayoutProps) {
                     )}
                   >
                     <Icon className={clsx('w-5 h-5 flex-shrink-0', anyChildActive && 'text-primary-400')} />
-                    <span className="font-medium flex-1 text-left">{item.name}</span>
+                    <span className="font-medium flex-1 text-left">{tr(item.name)}</span>
                     {expanded
                       ? <ChevronDown className="w-4 h-4 text-surface-500" />
                       : <ChevronRight className="w-4 h-4 text-surface-500" />
@@ -561,7 +545,7 @@ export default function Layout({ children }: LayoutProps) {
                             )}
                           >
                             <ChildIcon className={clsx('w-4 h-4 flex-shrink-0', isActive && 'text-primary-400')} />
-                            <span className="font-medium text-sm">{child.name}</span>
+                            <span className="font-medium text-sm">{tr(child.name)}</span>
                           </Link>
                         )
                       })}
@@ -586,7 +570,7 @@ export default function Layout({ children }: LayoutProps) {
                 )}
               >
                 <Icon className={clsx('w-5 h-5', isActive && 'text-primary-400')} />
-                <span className="font-medium">{item.name}</span>
+                <span className="font-medium">{tr(item.name)}</span>
               </Link>
             )
           })}
@@ -606,7 +590,7 @@ export default function Layout({ children }: LayoutProps) {
               )}
             >
               <Briefcase className="w-4 h-4 flex-shrink-0 group-hover:text-primary-400 transition-colors" />
-              <span className="text-sm font-medium flex-1">Individuelle KI-Lösungen</span>
+              <span className="text-sm font-medium flex-1">{tr("Individuelle KI-Lösungen")}</span>
               <ExternalLink className="w-3 h-3 opacity-40 group-hover:opacity-80 transition-opacity" />
             </Link>
           </div>
@@ -623,10 +607,10 @@ export default function Layout({ children }: LayoutProps) {
               className="flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-lg
                          text-xs text-surface-400 hover:text-surface-100 hover:bg-surface-800/60
                          border border-surface-700/40 hover:border-surface-600/60 transition-all duration-200"
-              title="GitHub Repository"
+              title={tr("GitHub Repository")}
             >
               <Github className="w-3.5 h-3.5" />
-              <span>GitHub</span>
+              <span>{tr("GitHub")}</span>
             </a>
             <a
               href="https://ko-fi.com/chriswilms"
@@ -635,10 +619,10 @@ export default function Layout({ children }: LayoutProps) {
               className="flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-lg
                          text-xs text-surface-400 hover:text-amber-300 hover:bg-amber-500/10
                          border border-surface-700/40 hover:border-amber-500/40 transition-all duration-200"
-              title="Ko-fi – Unterstützen"
+              title={tr("Ko-fi – Unterstützen")}
             >
               <Coffee className="w-3.5 h-3.5" />
-              <span>Ko-fi</span>
+              <span>{tr("Ko-fi")}</span>
             </a>
             <a
               href="https://www.paypal.com/paypalme/withmoney"
@@ -647,16 +631,14 @@ export default function Layout({ children }: LayoutProps) {
               className="flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-lg
                          text-xs text-surface-400 hover:text-blue-300 hover:bg-blue-500/10
                          border border-surface-700/40 hover:border-blue-500/40 transition-all duration-200"
-              title="PayPal – Spenden"
+              title={tr("PayPal – Spenden")}
             >
               <Heart className="w-3.5 h-3.5" />
-              <span>Spende</span>
+              <span>{tr("Spende")}</span>
             </a>
           </div>
 
-          <div className="text-xs text-surface-600 text-center">
-            AI Paperless Organizer v1.1
-          </div>
+          <div className="text-xs text-surface-600 text-center">{tr("AI Paperless Organizer v1.1")}</div>
 
           {localStorage.getItem('app_authenticated') === 'true' && (
             <button
@@ -665,9 +647,7 @@ export default function Layout({ children }: LayoutProps) {
                 window.location.reload()
               }}
               className="w-full text-xs text-surface-500 hover:text-red-400 transition-colors"
-            >
-              🔓 Abmelden
-            </button>
+            >{tr("🔓 Abmelden")}</button>
           )}
         </div>
       </aside>
@@ -683,9 +663,9 @@ export default function Layout({ children }: LayoutProps) {
             <Menu className="w-5 h-5" />
           </button>
           <h1 className="font-display font-semibold text-lg text-surface-100">
-            {navigation.find(n => n.href === location.pathname)?.name
+            {tr(navigation.find(n => n.href === location.pathname)?.name
               || navigation.flatMap(n => n.children ?? []).find(c => c.href === location.pathname)?.name
-              || 'Dashboard'}
+              || "Dashboard")}
           </h1>
         </header>
 

@@ -3,6 +3,7 @@ import React from 'react'
 import { Check, X, ChevronDown, ChevronUp, FileText, Loader2, Eye, ExternalLink, Ban } from 'lucide-react'
 import clsx from 'clsx'
 import * as api from '../services/api'
+import { tr } from '../i18n'
 
 interface Member {
   id: number
@@ -239,8 +240,8 @@ export default function MergePreview({ groups, entityType, analysisType: _analys
     return (
       <div className="text-center py-12 text-surface-400">
         {ignoredCount > 0 
-          ? `Alle ${ignoredCount} Vorschläge wurden ignoriert.`
-          : 'Keine ähnlichen Einträge gefunden.'
+          ? tr("Alle {ignoredCount} Vorschläge wurden ignoriert.", { ignoredCount: ignoredCount })
+          : tr("Keine ähnlichen Einträge gefunden.")
         }
       </div>
     )
@@ -251,13 +252,11 @@ export default function MergePreview({ groups, entityType, analysisType: _analys
       {/* Info about ignored groups */}
       {ignoredCount > 0 && (
         <div className="text-sm text-surface-400 flex items-center gap-2">
-          <span>{ignoredCount} Vorschläge ignoriert</span>
+          <span>{ignoredCount}{tr(" Vorschläge ignoriert")}</span>
           <button
             onClick={() => setIgnoredGroups(new Set())}
             className="text-primary-400 hover:text-primary-300 underline"
-          >
-            Alle wieder anzeigen
-          </button>
+          >{tr("Alle wieder anzeigen")}</button>
         </div>
       )}
       
@@ -300,16 +299,13 @@ export default function MergePreview({ groups, entityType, analysisType: _analys
                     {targetName}
                   </h3>
                   <p className="text-sm text-surface-400">
-                    {group.members.length} Einträge · {totalDocs} Dokumente
-                  </p>
+                    {group.members.length}{tr(" Einträge · ")}{totalDocs}{tr(" Dokumente")}</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
                 {isMerged && (
                   <span className="flex items-center gap-1 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-medium">
-                    <Check className="w-4 h-4" />
-                    Erledigt!
-                  </span>
+                    <Check className="w-4 h-4" />{tr("Erledigt!")}</span>
                 )}
                 {!isMerged && (
                   isExpanded ? (
@@ -327,16 +323,14 @@ export default function MergePreview({ groups, entityType, analysisType: _analys
                 {/* Reasoning */}
                 <div className="p-3 rounded-lg bg-surface-700/30 border border-surface-600/50">
                   <p className="text-sm text-surface-300">
-                    <span className="text-surface-400">KI-Begründung: </span>
+                    <span className="text-surface-400">{tr("KI-Begründung: ")}</span>
                     {group.reasoning}
                   </p>
                 </div>
 
                 {/* Members */}
                 <div className="space-y-2">
-                  <p className="text-sm font-medium text-surface-300">
-                    Wähle die zusammenzuführenden Einträge:
-                  </p>
+                  <p className="text-sm font-medium text-surface-300">{tr("Wähle die zusammenzuführenden Einträge:")}</p>
                   {group.members.map((member) => {
                     const isSelected = selected.has(member.id)
                     const isTarget = member.id === targetId
@@ -376,7 +370,7 @@ export default function MergePreview({ groups, entityType, analysisType: _analys
                           
                           <div className="flex items-center gap-2 text-sm text-surface-400">
                             <FileText className="w-4 h-4" />
-                            <span>{member.document_count ?? 0} Dok.</span>
+                            <span>{member.document_count ?? 0}{tr(" Dok.")}</span>
                           </div>
                           
                           {/* Preview Button */}
@@ -392,14 +386,14 @@ export default function MergePreview({ groups, entityType, analysisType: _analys
                                   ? 'bg-amber-500/20 text-amber-400 border border-amber-500/50'
                                   : 'bg-surface-600/50 text-surface-400 hover:bg-surface-600 hover:text-surface-200'
                               )}
-                              title="Dokumente anzeigen"
+                              title={tr("Dokumente anzeigen")}
                             >
                               {loadingPreview && previewMemberId === member.id ? (
                                 <Loader2 className="w-3 h-3 animate-spin" />
                               ) : (
                                 <Eye className="w-3 h-3" />
                               )}
-                              <span className="hidden sm:inline">Vorschau</span>
+                              <span className="hidden sm:inline">{tr("Vorschau")}</span>
                             </button>
                           )}
                           
@@ -415,7 +409,7 @@ export default function MergePreview({ groups, entityType, analysisType: _analys
                                 : 'bg-surface-600 text-surface-300 hover:bg-surface-500'
                             )}
                           >
-                            {isTarget ? 'Ziel' : 'Als Ziel'}
+                            {isTarget ? tr("Ziel") : tr("Als Ziel")}
                           </button>
                           
                           {/* Ignore single item button */}
@@ -427,7 +421,7 @@ export default function MergePreview({ groups, entityType, analysisType: _analys
                               }}
                               disabled={ignoringItem === member.id}
                               className="px-2 py-1 rounded text-xs font-medium transition-colors bg-surface-700 text-surface-400 hover:bg-red-500/20 hover:text-red-400"
-                              title="Diesen Eintrag dauerhaft ignorieren"
+                              title={tr("Diesen Eintrag dauerhaft ignorieren")}
                             >
                               {ignoringItem === member.id ? (
                                 <Loader2 className="w-3 h-3 animate-spin" />
@@ -444,15 +438,13 @@ export default function MergePreview({ groups, entityType, analysisType: _analys
                             {loadingPreview ? (
                               <div className="flex items-center justify-center py-4">
                                 <Loader2 className="w-5 h-5 animate-spin text-primary-400" />
-                                <span className="ml-2 text-surface-400">Lade Dokumente...</span>
+                                <span className="ml-2 text-surface-400">{tr("Lade Dokumente...")}</span>
                               </div>
                             ) : previewDocs.length === 0 ? (
-                              <p className="text-surface-400 text-sm">Keine Dokumente gefunden.</p>
+                              <p className="text-surface-400 text-sm">{tr("Keine Dokumente gefunden.")}</p>
                             ) : (
                               <div className="space-y-2">
-                                <p className="text-xs text-surface-500 mb-2">
-                                  Zeige {previewDocs.length} von {member.document_count} Dokumenten:
-                                </p>
+                                <p className="text-xs text-surface-500 mb-2">{tr("Zeige ")}{previewDocs.length}{tr(" von ")}{member.document_count}{tr(" Dokumenten:")}</p>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                                   {previewDocs.map(doc => (
                                     <a
@@ -496,9 +488,7 @@ export default function MergePreview({ groups, entityType, analysisType: _analys
 
                 {/* Custom target name */}
                 <div>
-                  <label className="block text-sm font-medium text-surface-300 mb-2">
-                    Zielname (kann angepasst werden):
-                  </label>
+                  <label className="block text-sm font-medium text-surface-300 mb-2">{tr("Zielname (kann angepasst werden):")}</label>
                   <input
                     type="text"
                     value={targetName}
@@ -516,23 +506,17 @@ export default function MergePreview({ groups, entityType, analysisType: _analys
                   >
                     {merging === groupKey ? (
                       <>
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                        Zusammenführen...
-                      </>
+                        <Loader2 className="w-4 h-4 animate-spin" />{tr("Zusammenführen...")}</>
                     ) : (
                       <>
-                        <Check className="w-4 h-4" />
-                        Zusammenführen ({selected.size} Einträge)
-                      </>
+                        <Check className="w-4 h-4" />{tr("Zusammenführen (")}{selected.size}{tr(" Einträge)")}</>
                     )}
                   </button>
                   <button
                     onClick={() => handleIgnore(groupKey)}
                     className="btn btn-secondary flex items-center gap-2"
                   >
-                    <X className="w-4 h-4" />
-                    Ignorieren
-                  </button>
+                    <X className="w-4 h-4" />{tr("Ignorieren")}</button>
                 </div>
               </div>
             )}

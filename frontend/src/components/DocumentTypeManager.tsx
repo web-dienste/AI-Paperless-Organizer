@@ -3,6 +3,7 @@ import { Sparkles, RefreshCw, Loader2, FileText, AlertCircle, Info, Trash2, X, C
 import clsx from 'clsx'
 import * as api from '../services/api'
 import MergePreview from './MergePreview'
+import { tr } from '../i18n'
 
 interface DocumentType {
   id: number
@@ -154,7 +155,7 @@ export default function DocumentTypeManager() {
         // Optional
       }
     } catch (err) {
-      setError('Fehler beim Laden der Dokumententypen. Ist Paperless verbunden?')
+      setError(tr("Fehler beim Laden der Dokumententypen. Ist Paperless verbunden?"))
     } finally {
       setLoading(false)
     }
@@ -192,7 +193,7 @@ export default function DocumentTypeManager() {
       setAnalysisCompleted(true)
       setView('analyze')
     } catch (err) {
-      setError('Fehler beim Laden der gespeicherten Analyse')
+      setError(tr("Fehler beim Laden der gespeicherten Analyse"))
     } finally {
       setAnalyzing(false)
     }
@@ -214,7 +215,7 @@ export default function DocumentTypeManager() {
       setConfirmEstimate({ ...est, is_external: isExternal } as any)
     } catch (e) {
       setConfirmEstimate({
-        items_info: `${documentTypes.length} Dokumententypen`,
+        items_info: tr("{n} Dokumententypen", { n: documentTypes.length }),
         estimated_tokens: documentTypes.length * 20,
         token_limit: 128000,
         model: 'Unbekannt',
@@ -241,17 +242,17 @@ export default function DocumentTypeManager() {
       
       // Check for error in result
       if (result.error) {
-        setError(`Analyse-Fehler: ${result.error}`)
+        setError(tr("Analyse-Fehler: {error}", { error: result.error }))
       }
       
       const saved = await api.getDocTypeSavedAnalysis()
       setSavedAnalysis(saved)
       
       if (result.error) {
-        setError(`Analyse-Fehler: ${result.error}`)
+        setError(tr("Analyse-Fehler: {error}", { error: result.error }))
       }
     } catch (err) {
-      setError('Fehler bei der Analyse. Ist ein LLM Provider konfiguriert?')
+      setError(tr("Fehler bei der Analyse. Ist ein LLM Provider konfiguriert?"))
     } finally {
       setAnalyzing(false)
     }
@@ -349,12 +350,9 @@ export default function DocumentTypeManager() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="font-display text-2xl font-bold text-surface-100">
-            Dokumententypen
-          </h2>
+          <h2 className="font-display text-2xl font-bold text-surface-100">{tr("Dokumententypen")}</h2>
           <p className="text-surface-400 mt-1">
-            {documentTypes.length} Dokumententypen in Paperless
-          </p>
+            {documentTypes.length}{tr(" Dokumententypen in Paperless")}</p>
         </div>
         
         <div className="flex items-center gap-3">
@@ -364,8 +362,7 @@ export default function DocumentTypeManager() {
               className="btn btn-secondary flex items-center gap-2 text-amber-400 border-amber-500/50 hover:bg-amber-500/10"
             >
               <Trash2 className="w-4 h-4" />
-              {emptyCount} Leere entfernen
-            </button>
+              {emptyCount}{tr(" Leere entfernen")}</button>
           )}
           <button
             onClick={() => loadDocumentTypes(true)}
@@ -373,9 +370,7 @@ export default function DocumentTypeManager() {
             className="btn btn-secondary flex items-center gap-2 group"
           >
             <RefreshCw className={clsx('w-4 h-4 transition-transform group-hover:rotate-180', loading && 'animate-spin')} />
-            <span className="flex items-center gap-2">
-              Aktualisieren
-              <span className="text-xs text-surface-500 flex items-center gap-1">
+            <span className="flex items-center gap-2">{tr("Aktualisieren")}<span className="text-xs text-surface-500 flex items-center gap-1">
                 <Clock className="w-3 h-3" />
                 {formatLastSync()}
               </span>
@@ -388,17 +383,11 @@ export default function DocumentTypeManager() {
           >
             {analyzing ? (
               <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                Analysiere...
-              </>
+                <Loader2 className="w-4 h-4 animate-spin" />{tr("Analysiere...")}</>
             ) : (
               <>
-                <Sparkles className="w-4 h-4" />
-                Mit KI analysieren
-                {savedAnalysis?.exists && (
-                  <span className="ml-1 px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-400 text-xs">
-                    ✓ gespeichert
-                  </span>
+                <Sparkles className="w-4 h-4" />{tr("Mit KI analysieren")}{savedAnalysis?.exists && (
+                  <span className="ml-1 px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-400 text-xs">{tr("✓ gespeichert")}</span>
                 )}
               </>
             )}
@@ -416,22 +405,20 @@ export default function DocumentTypeManager() {
           <div className="text-sm">
             <div className="flex flex-wrap gap-4">
               <span>
-                <span className="text-surface-400">Items:</span>
-                <span className="ml-1 text-surface-100 font-medium">{estimate.items_info || 'Dokumententypen'}</span>
+                <span className="text-surface-400">{tr("Items:")}</span>
+                <span className="ml-1 text-surface-100 font-medium">{estimate.items_info || tr("Dokumententypen")}</span>
               </span>
               <span>
-                <span className="text-surface-400">Tokens:</span>
+                <span className="text-surface-400">{tr("Tokens:")}</span>
                 <span className="ml-1 text-surface-100 font-medium">
                   ~{estimate.estimated_tokens.toLocaleString()}
                   {estimate.token_limit && (
-                    <span className="text-surface-500"> / {(estimate.token_limit / 1000).toFixed(0)}k Limit</span>
+                    <span className="text-surface-500"> / {(estimate.token_limit / 1000).toFixed(0)}{tr("k Limit")}</span>
                   )}
                 </span>
               </span>
               {estimate.recommended_batches > 1 && (
-                <span className="text-amber-400">
-                  Wird in {estimate.recommended_batches} Batches aufgeteilt
-                </span>
+                <span className="text-amber-400">{tr("Wird in ")}{estimate.recommended_batches}{tr(" Batches aufgeteilt")}</span>
               )}
             </div>
             {estimate.warning && (
@@ -460,24 +447,23 @@ export default function DocumentTypeManager() {
               {analysisLoadedAt && (
                 <div className="flex items-center gap-1 px-2 py-1 rounded bg-primary-500/10 border border-primary-500/30">
                   <History className="w-3 h-3 text-primary-400" />
-                  <span className="text-primary-400 text-xs">
-                    Geladen: {new Date(analysisLoadedAt).toLocaleString('de-DE')}
+                  <span className="text-primary-400 text-xs">{tr("Geladen: ")}{new Date(analysisLoadedAt).toLocaleString('de-DE')}
                   </span>
                 </div>
               )}
               <div>
-                <span className="text-surface-400">Items:</span>
+                <span className="text-surface-400">{tr("Items:")}</span>
                 <span className="ml-2 text-surface-100 font-medium">{stats.items_count}</span>
               </div>
               <div>
-                <span className="text-surface-400">Tokens:</span>
+                <span className="text-surface-400">{tr("Tokens:")}</span>
                 <span className="ml-2 text-surface-100 font-medium">
                   ~{stats.estimated_total_tokens?.toLocaleString() || 0}
                 </span>
               </div>
               {stats.batches_total && stats.batches_total > 1 && (
                 <div>
-                  <span className="text-surface-400">Batches:</span>
+                  <span className="text-surface-400">{tr("Batches:")}</span>
                   <span className="ml-2 text-surface-100 font-medium">
                     {stats.batches_processed}/{stats.batches_total}
                   </span>
@@ -485,7 +471,7 @@ export default function DocumentTypeManager() {
               )}
               {stats.cross_batch_phase && (
                 <div>
-                  <span className="text-emerald-400">Cross-Batch:</span>
+                  <span className="text-emerald-400">{tr("Cross-Batch:")}</span>
                   <span className="ml-2 text-surface-100 font-medium">
                     {stats.groups_before_merge} → {stats.groups_after_merge}
                   </span>
@@ -497,9 +483,7 @@ export default function DocumentTypeManager() {
               disabled={analyzing}
               className="btn btn-secondary btn-sm flex items-center gap-2"
             >
-              <Zap className="w-4 h-4" />
-              NEU analysieren
-            </button>
+              <Zap className="w-4 h-4" />{tr("NEU analysieren")}</button>
           </div>
           {stats.warning && (
             <div className="mt-2 text-sm text-amber-400">
@@ -520,8 +504,7 @@ export default function DocumentTypeManager() {
                 ? 'bg-surface-700 text-surface-100' 
                 : 'text-surface-400 hover:text-surface-200'
             )}
-          >
-            Liste ({documentTypes.length})
+          >{tr("Liste (")}{documentTypes.length})
           </button>
           <button
             onClick={() => setView('analyze')}
@@ -531,8 +514,7 @@ export default function DocumentTypeManager() {
                 ? 'bg-surface-700 text-surface-100' 
                 : 'text-surface-400 hover:text-surface-200'
             )}
-          >
-            Vorschläge ({groups.length})
+          >{tr("Vorschläge (")}{groups.length})
           </button>
         </div>
       )}
@@ -550,25 +532,16 @@ export default function DocumentTypeManager() {
       ) : view === 'analyze' && groups.length === 0 && analysisCompleted ? (
         <div className="card p-8 text-center">
           <div className="text-4xl mb-4">✅</div>
-          <h3 className="text-xl font-semibold text-surface-200 mb-2">
-            Keine ähnlichen Dokumententypen gefunden
-          </h3>
-          <p className="text-surface-400 mb-4">
-            Die KI-Analyse hat keine Gruppen von ähnlichen Dokumententypen identifiziert, 
-            die zusammengeführt werden könnten. Alle Dokumententypen sind einzigartig!
-          </p>
+          <h3 className="text-xl font-semibold text-surface-200 mb-2">{tr("Keine ähnlichen Dokumententypen gefunden")}</h3>
+          <p className="text-surface-400 mb-4">{tr("Die KI-Analyse hat keine Gruppen von ähnlichen Dokumententypen identifiziert, die zusammengeführt werden könnten. Alle Dokumententypen sind einzigartig!")}</p>
           {stats && (
-            <p className="text-sm text-surface-500">
-              Analysiert: {stats.items_count} Dokumententypen • 
-              Tokens: ~{stats.estimated_total_tokens?.toLocaleString() || 'N/A'}
+            <p className="text-sm text-surface-500">{tr("Analysiert: ")}{stats.items_count}{tr(" Dokumententypen • Tokens: ~")}{stats.estimated_total_tokens?.toLocaleString() || 'N/A'}
             </p>
           )}
           <button
             onClick={() => setView('list')}
             className="mt-4 px-4 py-2 bg-surface-700 hover:bg-surface-600 rounded-lg text-surface-200 transition-colors"
-          >
-            Zurück zur Liste
-          </button>
+          >{tr("Zurück zur Liste")}</button>
         </div>
       ) : (
         <div className="card overflow-hidden">
@@ -576,8 +549,8 @@ export default function DocumentTypeManager() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-surface-700">
-                  <th className="px-4 py-3 text-left text-sm font-medium text-surface-400">Name</th>
-                  <th className="px-4 py-3 text-right text-sm font-medium text-surface-400">Dokumente</th>
+                  <th className="px-4 py-3 text-left text-sm font-medium text-surface-400">{tr("Name")}</th>
+                  <th className="px-4 py-3 text-right text-sm font-medium text-surface-400">{tr("Dokumente")}</th>
                   <th className="px-4 py-3 w-10"></th>
                 </tr>
               </thead>
@@ -617,13 +590,13 @@ export default function DocumentTypeManager() {
                           {loadingPreview ? (
                             <div className="flex items-center justify-center py-4">
                               <Loader2 className="w-5 h-5 animate-spin text-primary-400" />
-                              <span className="ml-2 text-surface-400">Lade Dokumente...</span>
+                              <span className="ml-2 text-surface-400">{tr("Lade Dokumente...")}</span>
                             </div>
                           ) : previewDocs.length > 0 ? (
                             <div>
                               <div className="flex items-center gap-2 mb-3 text-sm text-surface-400">
                                 <Eye className="w-4 h-4" />
-                                <span>Vorschau ({Math.min(previewDocs.length, 6)} von {docType.document_count} Dokumenten)</span>
+                                <span>{tr("Vorschau (")}{Math.min(previewDocs.length, 6)}{tr(" von ")}{docType.document_count}{tr(" Dokumenten)")}</span>
                               </div>
                               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                                 {previewDocs.map(doc => (
@@ -660,9 +633,7 @@ export default function DocumentTypeManager() {
                               </div>
                             </div>
                           ) : (
-                            <div className="text-center py-4 text-surface-400">
-                              Keine Dokumente gefunden
-                            </div>
+                            <div className="text-center py-4 text-surface-400">{tr("Keine Dokumente gefunden")}</div>
                           )}
                         </td>
                       </tr>
@@ -674,9 +645,7 @@ export default function DocumentTypeManager() {
           </div>
           
           {documentTypes.length === 0 && (
-            <div className="py-12 text-center text-surface-400">
-              Keine Dokumententypen gefunden.
-            </div>
+            <div className="py-12 text-center text-surface-400">{tr("Keine Dokumententypen gefunden.")}</div>
           )}
         </div>
       )}
@@ -687,9 +656,7 @@ export default function DocumentTypeManager() {
           <div className="card p-6 max-w-md w-full mx-4">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-display font-semibold text-lg text-surface-100 flex items-center gap-2">
-                <History className="w-5 h-5 text-primary-400" />
-                Gespeicherte Analyse gefunden
-              </h3>
+                <History className="w-5 h-5 text-primary-400" />{tr("Gespeicherte Analyse gefunden")}</h3>
               <button 
                 onClick={() => setShowLoadAnalysisModal(false)}
                 className="text-surface-400 hover:text-surface-200"
@@ -699,24 +666,22 @@ export default function DocumentTypeManager() {
             </div>
             
             <div className="p-4 rounded-lg bg-surface-800/50 border border-surface-700 mb-6">
-              <p className="text-surface-300 mb-3">
-                Es gibt eine gespeicherte Analyse:
-              </p>
+              <p className="text-surface-300 mb-3">{tr("Es gibt eine gespeicherte Analyse:")}</p>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-surface-400">Erstellt am:</span>
+                  <span className="text-surface-400">{tr("Erstellt am:")}</span>
                   <span className="text-surface-100">
                     {savedAnalysis.created_at 
                       ? new Date(savedAnalysis.created_at).toLocaleString('de-DE') 
-                      : 'Unbekannt'}
+                      : tr("Unbekannt")}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-surface-400">Gruppen gefunden:</span>
+                  <span className="text-surface-400">{tr("Gruppen gefunden:")}</span>
                   <span className="text-surface-100">{savedAnalysis.groups_count || 0}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-surface-400">Analysierte Items:</span>
+                  <span className="text-surface-400">{tr("Analysierte Items:")}</span>
                   <span className="text-surface-100">{savedAnalysis.items_count || 0}</span>
                 </div>
               </div>
@@ -727,17 +692,13 @@ export default function DocumentTypeManager() {
                 onClick={loadSavedAnalysis}
                 className="btn btn-primary w-full flex items-center justify-center gap-2"
               >
-                <History className="w-4 h-4" />
-                Gespeicherte Analyse laden
-                <span className="text-xs opacity-75">(kostenlos)</span>
+                <History className="w-4 h-4" />{tr("Gespeicherte Analyse laden")}<span className="text-xs opacity-75">{tr("(kostenlos)")}</span>
               </button>
               <button
                 onClick={openAnalysisConfirm}
                 className="btn btn-secondary w-full flex items-center justify-center gap-2"
               >
-                <Zap className="w-4 h-4" />
-                Neue Analyse starten
-              </button>
+                <Zap className="w-4 h-4" />{tr("Neue Analyse starten")}</button>
             </div>
           </div>
         </div>
@@ -748,9 +709,7 @@ export default function DocumentTypeManager() {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="card p-6 max-w-lg w-full mx-4 max-h-[80vh] flex flex-col">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="font-display font-semibold text-lg text-surface-100">
-                Leere Dokumententypen entfernen
-              </h3>
+              <h3 className="font-display font-semibold text-lg text-surface-100">{tr("Leere Dokumententypen entfernen")}</h3>
               <button 
                 onClick={() => {
                   setShowCleanupModal(false)
@@ -765,24 +724,16 @@ export default function DocumentTypeManager() {
             {!cleanupResult ? (
               <>
                 <p className="text-surface-300 mb-2">
-                  <strong className="text-amber-400">{emptyCount} Dokumententypen</strong> mit 0 Dokumenten gefunden.
-                </p>
-                <p className="text-surface-500 text-sm mb-4">
-                  Wähle aus, welche gelöscht werden sollen:
-                </p>
+                  <strong className="text-amber-400">{emptyCount}{tr(" Dokumententypen")}</strong>{tr(" mit 0 Dokumenten gefunden.")}</p>
+                <p className="text-surface-500 text-sm mb-4">{tr("Wähle aus, welche gelöscht werden sollen:")}</p>
                 
                 {/* Selection controls */}
                 <div className="flex gap-2 mb-3">
-                  <button onClick={selectAllEmpty} className="text-xs text-primary-400 hover:text-primary-300">
-                    Alle auswählen
-                  </button>
+                  <button onClick={selectAllEmpty} className="text-xs text-primary-400 hover:text-primary-300">{tr("Alle auswählen")}</button>
                   <span className="text-surface-600">|</span>
-                  <button onClick={deselectAllEmpty} className="text-xs text-surface-400 hover:text-surface-300">
-                    Keine
-                  </button>
+                  <button onClick={deselectAllEmpty} className="text-xs text-surface-400 hover:text-surface-300">{tr("Keine")}</button>
                   <span className="ml-auto text-xs text-surface-500">
-                    {selectedEmpty.size} von {emptyItems.length} ausgewählt
-                  </span>
+                    {selectedEmpty.size}{tr(" von ")}{emptyItems.length}{tr(" ausgewählt")}</span>
                 </div>
                 
                 {/* List of empty items */}
@@ -805,11 +756,11 @@ export default function DocumentTypeManager() {
                       />
                       <FileText className="w-4 h-4 text-surface-500" />
                       <span className="text-surface-200 flex-1 truncate">{dt.name}</span>
-                      <span className="text-xs text-surface-500">0 Dok.</span>
+                      <span className="text-xs text-surface-500">{tr("0 Dok.")}</span>
                     </label>
                   ))}
                   {emptyItems.length === 0 && (
-                    <p className="text-center text-surface-500 py-4">Keine leeren Dokumententypen.</p>
+                    <p className="text-center text-surface-500 py-4">{tr("Keine leeren Dokumententypen.")}</p>
                   )}
                 </div>
                 
@@ -817,9 +768,7 @@ export default function DocumentTypeManager() {
                   <button
                     onClick={() => setShowCleanupModal(false)}
                     className="btn btn-secondary flex-1"
-                  >
-                    Abbrechen
-                  </button>
+                  >{tr("Abbrechen")}</button>
                   <button
                     onClick={handleCleanup}
                     disabled={cleaningUp || selectedEmpty.size === 0}
@@ -827,14 +776,11 @@ export default function DocumentTypeManager() {
                   >
                     {cleaningUp ? (
                       <>
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                        Lösche...
-                      </>
+                        <Loader2 className="w-4 h-4 animate-spin" />{tr("Lösche...")}</>
                     ) : (
                       <>
                         <Trash2 className="w-4 h-4" />
-                        {selectedEmpty.size} löschen
-                      </>
+                        {selectedEmpty.size}{tr(" löschen")}</>
                     )}
                   </button>
                 </div>
@@ -852,11 +798,10 @@ export default function DocumentTypeManager() {
                     cleanupResult.errors?.length ? 'text-amber-400' : 'text-emerald-400'
                   )}>
                     <Check className="w-5 h-5" />
-                    {cleanupResult.deleted} von {cleanupResult.total} Dokumententypen erfolgreich gelöscht!
-                  </p>
+                    {cleanupResult.deleted}{tr(" von ")}{cleanupResult.total}{tr(" Dokumententypen erfolgreich gelöscht!")}</p>
                   {cleanupResult.errors && cleanupResult.errors.length > 0 && (
                     <div className="mt-2 text-sm text-surface-400">
-                      <p>Fehler:</p>
+                      <p>{tr("Fehler:")}</p>
                       <ul className="list-disc list-inside">
                         {cleanupResult.errors.slice(0, 5).map((e, i) => (
                           <li key={i}>{e}</li>
@@ -871,9 +816,7 @@ export default function DocumentTypeManager() {
                     setCleanupResult(null)
                   }}
                   className="btn btn-primary w-full"
-                >
-                  Schließen
-                </button>
+                >{tr("Schließen")}</button>
               </>
             )}
           </div>
@@ -889,39 +832,37 @@ export default function DocumentTypeManager() {
                 <Sparkles className="w-6 h-6 text-primary-400" />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-surface-100">
-                  KI-Analyse starten
-                </h3>
-                <p className="text-sm text-surface-400">Dokumententypen gruppieren</p>
+                <h3 className="text-lg font-semibold text-surface-100">{tr("KI-Analyse starten")}</h3>
+                <p className="text-sm text-surface-400">{tr("Dokumententypen gruppieren")}</p>
               </div>
             </div>
             
             {loadingEstimate ? (
               <div className="py-8 text-center">
                 <Loader2 className="w-8 h-8 animate-spin mx-auto text-primary-400 mb-2" />
-                <p className="text-surface-400">Berechne Token-Schätzung...</p>
+                <p className="text-surface-400">{tr("Berechne Token-Schätzung...")}</p>
               </div>
             ) : confirmEstimate && (
               <>
                 <div className="bg-surface-700/50 rounded-lg p-4 mb-4 space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-surface-400">Modell</span>
-                    <span className="text-primary-400 font-medium">{confirmEstimate.model || 'Unbekannt'}</span>
+                    <span className="text-surface-400">{tr("Modell")}</span>
+                    <span className="text-primary-400 font-medium">{confirmEstimate.model || tr("Unbekannt")}</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-surface-400">Daten</span>
-                    <span className="text-surface-200">{confirmEstimate.items_info || `${documentTypes.length} Items`}</span>
+                    <span className="text-surface-400">{tr("Daten")}</span>
+                    <span className="text-surface-200">{confirmEstimate.items_info || tr("{length} Items", { length: documentTypes.length })}</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-surface-400">Geschätzte Tokens</span>
+                    <span className="text-surface-400">{tr("Geschätzte Tokens")}</span>
                     <span className="text-surface-200">~{confirmEstimate.estimated_tokens.toLocaleString()}</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-surface-400">Token-Limit</span>
+                    <span className="text-surface-400">{tr("Token-Limit")}</span>
                     <span className="text-surface-200">{(confirmEstimate.token_limit || 128000).toLocaleString()}</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-surface-400">Auslastung</span>
+                    <span className="text-surface-400">{tr("Auslastung")}</span>
                     <span className={clsx(
                       'px-2 py-0.5 rounded text-xs font-medium',
                       confirmEstimate.estimated_tokens > (confirmEstimate.token_limit || 128000) * 0.8 
@@ -944,9 +885,7 @@ export default function DocumentTypeManager() {
                     <p className="text-blue-400 text-sm flex items-start gap-2">
                       <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
                       <span>
-                        <strong>Hinweis:</strong> Du verwendest einen externen LLM-Anbieter. 
-                        Deine Dokumententyp-Namen werden zur Analyse übertragen.
-                      </span>
+                        <strong>{tr("Hinweis:")}</strong>{tr(" Du verwendest einen externen LLM-Anbieter. Deine Dokumententyp-Namen werden zur Analyse übertragen.")}</span>
                     </p>
                   </div>
                 )}
@@ -957,17 +896,13 @@ export default function DocumentTypeManager() {
               <button
                 onClick={() => setShowConfirmModal(false)}
                 className="btn btn-secondary"
-              >
-                Abbrechen
-              </button>
+              >{tr("Abbrechen")}</button>
               <button
                 onClick={runNewAnalysis}
                 disabled={loadingEstimate}
                 className="btn btn-primary flex items-center gap-2"
               >
-                <Sparkles className="w-4 h-4" />
-                Analyse starten
-              </button>
+                <Sparkles className="w-4 h-4" />{tr("Analyse starten")}</button>
             </div>
           </div>
         </div>

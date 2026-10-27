@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Save, Check, X, Eye, EyeOff, TestTube, Loader2, ChevronDown, ChevronUp, Cpu, Lock, Bug, Trash2, Ban, Key, Copy, Power, Code2 } from 'lucide-react'
 import clsx from 'clsx'
 import * as api from '../services/api'
+import { tr } from '../i18n'
 
 interface LLMProvider {
   id: number
@@ -232,22 +233,22 @@ export default function SettingsPanel() {
       if (testResult.success && testResult.is_paperless) {
         setPaperlessTestResult({ 
           success: true, 
-          message: `Verbindung erfolgreich! API gefunden: ${testResult.working_url}`
+          message: tr("Verbindung erfolgreich! API gefunden: {url}", { url: testResult.working_url })
         })
       } else {
         // Fallback to simple status check
         const status = await api.getPaperlessStatus()
         if (status.connected) {
-          setPaperlessTestResult({ success: true, message: 'Verbindung erfolgreich!' })
+          setPaperlessTestResult({ success: true, message: tr("Verbindung erfolgreich!") })
         } else {
           setPaperlessTestResult({ 
             success: false, 
-            message: testResult.message || status.error || 'Verbindung fehlgeschlagen'
+            message: testResult.message || status.error || tr("Verbindung fehlgeschlagen")
           })
         }
       }
     } catch (error) {
-      setPaperlessTestResult({ success: false, message: 'Fehler beim Speichern' })
+      setPaperlessTestResult({ success: false, message: tr("Fehler beim Speichern") })
     } finally {
       setPaperlessSaving(false)
     }
@@ -338,12 +339,12 @@ export default function SettingsPanel() {
     try {
       const result = await api.testLLMConnection()
       if (result.success) {
-        setLlmTestResult({ success: true, message: `Verbunden mit ${result.provider} (${result.model})` })
+        setLlmTestResult({ success: true, message: tr("Verbunden mit {provider} ({model})", { provider: result.provider, model: result.model }) })
       } else {
-        setLlmTestResult({ success: false, message: result.error || 'Test fehlgeschlagen' })
+        setLlmTestResult({ success: false, message: result.error || tr("Test fehlgeschlagen") })
       }
     } catch (error) {
-      setLlmTestResult({ success: false, message: 'Verbindung fehlgeschlagen' })
+      setLlmTestResult({ success: false, message: tr("Verbindung fehlgeschlagen") })
     } finally {
       setTestingLLM(false)
     }
@@ -353,15 +354,11 @@ export default function SettingsPanel() {
     <div className="space-y-8 max-w-4xl">
       {/* Paperless Settings */}
       <div className="card p-6">
-        <h2 className="font-display font-semibold text-xl text-surface-100 mb-6">
-          Paperless-ngx Verbindung
-        </h2>
+        <h2 className="font-display font-semibold text-xl text-surface-100 mb-6">{tr("Paperless-ngx Verbindung")}</h2>
 
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-surface-300 mb-2">
-              Paperless URL
-            </label>
+            <label className="block text-sm font-medium text-surface-300 mb-2">{tr("Paperless URL")}</label>
             <input
               type="url"
               value={paperlessUrl}
@@ -369,21 +366,18 @@ export default function SettingsPanel() {
               placeholder="https://paperless.example.com"
               className="input"
             />
-            <p className="mt-1 text-xs text-surface-500">
-              Tipp: Für lokales Paperless nutze <code className="text-primary-400">http://host.docker.internal:PORT</code>
+            <p className="mt-1 text-xs text-surface-500">{tr("Tipp: Für lokales Paperless nutze ")}<code className="text-primary-400">{tr("http://host.docker.internal:PORT")}</code>
             </p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-surface-300 mb-2">
-              API Token
-            </label>
+            <label className="block text-sm font-medium text-surface-300 mb-2">{tr("API Token")}</label>
             <div className="relative">
               <input
                 type={showToken ? 'text' : 'password'}
                 value={paperlessToken}
                 onChange={(e) => setPaperlessToken(e.target.value)}
-                placeholder="Token aus Paperless Admin-Bereich"
+                placeholder={tr("Token aus Paperless Admin-Bereich")}
                 className="input pr-12"
               />
               <button
@@ -410,7 +404,7 @@ export default function SettingsPanel() {
                   <X className="w-5 h-5 text-red-400" />
                 )}
                 <span className={paperlessTestResult.success ? 'text-emerald-400' : 'text-red-400'}>
-                  {paperlessTestResult.success ? 'Verbindung erfolgreich!' : 'Verbindung fehlgeschlagen'}
+                  {paperlessTestResult.success ? tr("Verbindung erfolgreich!") : tr("Verbindung fehlgeschlagen")}
                 </span>
               </div>
               <p className="mt-2 text-sm text-surface-300">{paperlessTestResult.message}</p>
@@ -426,18 +420,14 @@ export default function SettingsPanel() {
               <Loader2 className="w-4 h-4 animate-spin" />
             ) : (
               <Save className="w-4 h-4" />
-            )}
-            Speichern & Testen
-          </button>
+            )}{tr("Speichern & Testen")}</button>
         </div>
       </div>
 
       {/* LLM Providers */}
       <div className="card p-6">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="font-display font-semibold text-xl text-surface-100">
-            LLM Provider
-          </h2>
+          <h2 className="font-display font-semibold text-xl text-surface-100">{tr("LLM Provider")}</h2>
           <button
             onClick={testLLM}
             disabled={testingLLM}
@@ -447,9 +437,7 @@ export default function SettingsPanel() {
               <Loader2 className="w-4 h-4 animate-spin" />
             ) : (
               <TestTube className="w-4 h-4" />
-            )}
-            Aktiven Provider testen
-          </button>
+            )}{tr("Aktiven Provider testen")}</button>
         </div>
 
         {llmTestResult && (
@@ -494,10 +482,10 @@ export default function SettingsPanel() {
                       {provider.display_name}
                     </span>
                     {provider.is_active && (
-                      <span className="badge badge-primary">Aktiv</span>
+                      <span className="badge badge-primary">{tr("Aktiv")}</span>
                     )}
                     {provider.is_configured && !provider.is_active && (
-                      <span className="badge badge-success">Konfiguriert</span>
+                      <span className="badge badge-success">{tr("Konfiguriert")}</span>
                     )}
                   </div>
                   {!provider.is_active && (
@@ -512,7 +500,7 @@ export default function SettingsPanel() {
                       {savingProvider === provider.name ? (
                         <Loader2 className="w-4 h-4 animate-spin" />
                       ) : (
-                        'Aktivieren'
+                        tr("Aktivieren")
                       )}
                     </button>
                   )}
@@ -524,20 +512,18 @@ export default function SettingsPanel() {
                     {/* API Key (not for Ollama) */}
                     {provider.name !== 'ollama' && (
                       <div>
-                        <label className="block text-sm font-medium text-surface-300 mb-2">
-                          API Key
-                        </label>
+                        <label className="block text-sm font-medium text-surface-300 mb-2">{tr("API Key")}</label>
                         <input
                           type="password"
                           value={editState.api_key === '***' ? '' : editState.api_key}
                           onChange={(e) => updateEditState(provider.name, 'api_key', e.target.value)}
-                          placeholder={provider.api_key ? '••••••••••••••••' : 'API Key eingeben'}
+                          placeholder={provider.api_key ? '••••••••••••••••' : tr("API Key eingeben")}
                           className="input"
                         />
                         <p className="mt-1 text-xs text-surface-500">
-                          {provider.name === 'openai' && 'Hole deinen Key von platform.openai.com/api-keys'}
-                          {provider.name === 'anthropic' && 'Hole deinen Key von console.anthropic.com'}
-                          {provider.name === 'azure' && 'Azure Portal → Cognitive Services → Keys'}
+                          {provider.name === 'openai' && tr("Hole deinen Key von platform.openai.com/api-keys")}
+                          {provider.name === 'anthropic' && tr("Hole deinen Key von console.anthropic.com")}
+                          {provider.name === 'azure' && tr("Azure Portal → Cognitive Services → Keys")}
                         </p>
                       </div>
                     )}
@@ -546,7 +532,7 @@ export default function SettingsPanel() {
                     {(provider.name === 'azure' || provider.name === 'ollama') && (
                       <div>
                         <label className="block text-sm font-medium text-surface-300 mb-2">
-                          {provider.name === 'azure' ? 'Azure Endpoint' : 'Ollama URL'}
+                          {provider.name === 'azure' ? tr("Azure Endpoint") : tr("Ollama URL")}
                         </label>
                         <input
                           type="url"
@@ -556,8 +542,7 @@ export default function SettingsPanel() {
                           className="input"
                         />
                         {provider.name === 'ollama' && (
-                          <p className="mt-1 text-xs text-surface-500">
-                            Für lokales Ollama: <code className="text-primary-400">http://host.docker.internal:11434</code>
+                          <p className="mt-1 text-xs text-surface-500">{tr("Für lokales Ollama: ")}<code className="text-primary-400">{tr("http://host.docker.internal:11434")}</code>
                           </p>
                         )}
                       </div>
@@ -567,21 +552,19 @@ export default function SettingsPanel() {
                     {provider.name === 'ollama' ? (
                       <div className="space-y-4">
                         <div className="flex items-center justify-between">
-                          <label className="block text-sm font-medium text-surface-300">Modelle</label>
+                          <label className="block text-sm font-medium text-surface-300">{tr("Modelle")}</label>
                           <button
                             onClick={loadOllamaInstalledModels}
                             disabled={ollamaModelsLoading}
                             className="btn text-xs flex items-center gap-1.5 bg-surface-700 hover:bg-surface-600 text-surface-300"
                           >
-                            {ollamaModelsLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Cpu className="w-3 h-3" />}
-                            Installierte Modelle laden
-                          </button>
+                            {ollamaModelsLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Cpu className="w-3 h-3" />}{tr("Installierte Modelle laden")}</button>
                         </div>
 
                         {/* Bereinigung Model */}
                         <div className="p-3 bg-surface-700/30 rounded-lg space-y-2">
-                          <label className="block text-sm font-medium text-surface-200">Bereinigung-Modell</label>
-                          <p className="text-xs text-surface-500">Fuer Metadaten-Bereinigung (Tags, Korrespondenten, Dokumententypen zusammenfuehren)</p>
+                          <label className="block text-sm font-medium text-surface-200">{tr("Bereinigung-Modell")}</label>
+                          <p className="text-xs text-surface-500">{tr("Fuer Metadaten-Bereinigung (Tags, Korrespondenten, Dokumententypen zusammenfuehren)")}</p>
                           {ollamaInstalledModels.length > 0 ? (
                             <select
                               value={editState.model}
@@ -589,7 +572,7 @@ export default function SettingsPanel() {
                               className="input"
                             >
                               {!ollamaInstalledModels.includes(editState.model) && editState.model && (
-                                <option value={editState.model}>{editState.model} (nicht gefunden)</option>
+                                <option value={editState.model}>{editState.model}{tr(" (nicht gefunden)")}</option>
                               )}
                               {ollamaInstalledModels.map(m => (
                                 <option key={m} value={m}>{m}</option>
@@ -600,7 +583,7 @@ export default function SettingsPanel() {
                               type="text"
                               value={editState.model}
                               onChange={(e) => updateEditState(provider.name, 'model', e.target.value)}
-                              placeholder="z.B. llama3.1"
+                              placeholder={tr("z.B. llama3.1")}
                               className="input"
                             />
                           )}
@@ -608,15 +591,15 @@ export default function SettingsPanel() {
 
                         {/* Klassifizierer Model */}
                         <div className="p-3 bg-surface-700/30 rounded-lg space-y-2">
-                          <label className="block text-sm font-medium text-surface-200">Klassifizierer-Modell</label>
-                          <p className="text-xs text-surface-500">Fuer Dokument-Klassifizierung (Tags, Typ, Korrespondent zuordnen)</p>
+                          <label className="block text-sm font-medium text-surface-200">{tr("Klassifizierer-Modell")}</label>
+                          <p className="text-xs text-surface-500">{tr("Fuer Dokument-Klassifizierung (Tags, Typ, Korrespondent zuordnen)")}</p>
                           {ollamaInstalledModels.length > 0 ? (
                             <select
                               value={editState.classifier_model || ''}
                               onChange={(e) => updateEditState(provider.name, 'classifier_model', e.target.value)}
                               className="input"
                             >
-                              <option value="">Gleich wie Bereinigung ({editState.model || '-'})</option>
+                              <option value="">{tr("Gleich wie Bereinigung (")}{editState.model || '-'})</option>
                               {ollamaInstalledModels.map(m => (
                                 <option key={m} value={m}>{m}</option>
                               ))}
@@ -626,7 +609,7 @@ export default function SettingsPanel() {
                               type="text"
                               value={editState.classifier_model || ''}
                               onChange={(e) => updateEditState(provider.name, 'classifier_model', e.target.value)}
-                              placeholder={editState.model || 'Gleich wie Bereinigung'}
+                              placeholder={editState.model || tr("Gleich wie Bereinigung")}
                               className="input"
                             />
                           )}
@@ -634,15 +617,15 @@ export default function SettingsPanel() {
 
                         {/* Vision Model */}
                         <div className="p-3 bg-surface-700/30 rounded-lg space-y-2">
-                          <label className="block text-sm font-medium text-surface-200">OCR Vision-Modell</label>
-                          <p className="text-xs text-surface-500">Fuer Texterkennung mit Ollama Vision (wird in OCR-Einstellungen verwaltet)</p>
+                          <label className="block text-sm font-medium text-surface-200">{tr("OCR Vision-Modell")}</label>
+                          <p className="text-xs text-surface-500">{tr("Fuer Texterkennung mit Ollama Vision (wird in OCR-Einstellungen verwaltet)")}</p>
                           {ollamaInstalledModels.length > 0 ? (
                             <select
                               value={editState.vision_model || ''}
                               onChange={(e) => updateEditState(provider.name, 'vision_model', e.target.value)}
                               className="input"
                             >
-                              <option value="">Nicht gesetzt</option>
+                              <option value="">{tr("Nicht gesetzt")}</option>
                               {ollamaInstalledModels.map(m => (
                                 <option key={m} value={m}>{m}</option>
                               ))}
@@ -652,28 +635,28 @@ export default function SettingsPanel() {
                               type="text"
                               value={editState.vision_model || ''}
                               onChange={(e) => updateEditState(provider.name, 'vision_model', e.target.value)}
-                              placeholder="z.B. qwen3-vl:4b-instruct"
+                              placeholder={tr("z.B. qwen3-vl:4b-instruct")}
                               className="input"
                             />
                           )}
                         </div>
 
                         {ollamaInstalledModels.length === 0 && !ollamaModelsLoading && (
-                          <p className="text-xs text-surface-500">Klicke "Installierte Modelle laden" um Dropdowns zu sehen.</p>
+                          <p className="text-xs text-surface-500">{tr("Klicke \"Installierte Modelle laden\" um Dropdowns zu sehen.")}</p>
                         )}
                       </div>
                     ) : provider.name === 'mistral-ocr' ? (
                       /* === MISTRAL OCR: Nur API-Key, kein Modell === */
                       <div className="p-3 bg-orange-500/5 border border-orange-500/20 rounded-lg space-y-1">
-                        <p className="text-xs text-orange-300 font-medium">Dedizierter OCR-Service</p>
-                        <p className="text-xs text-surface-400">Mistral OCR ist ein eigener API-Service mit nur einem Modell (mistral-ocr-latest). Es wird nur ein API-Key benötigt — kein Modell auswählen. Wird ausschließlich für OCR genutzt (nicht für Klassifizierung/Bereinigung).</p>
+                        <p className="text-xs text-orange-300 font-medium">{tr("Dedizierter OCR-Service")}</p>
+                        <p className="text-xs text-surface-400">{tr("Mistral OCR ist ein eigener API-Service mit nur einem Modell (mistral-ocr-latest). Es wird nur ein API-Key benötigt — kein Modell auswählen. Wird ausschließlich für OCR genutzt (nicht für Klassifizierung/Bereinigung).")}</p>
                       </div>
                     ) : (
                       /* === CLOUD PROVIDERS: Simple text inputs === */
                       <>
                         <div className="p-3 bg-surface-700/30 rounded-lg space-y-2">
-                          <label className="block text-sm font-medium text-surface-200">Bereinigung-Modell</label>
-                          <p className="text-xs text-surface-500">Fuer Metadaten-Bereinigung (Tags, Korrespondenten, Dokumententypen zusammenfuehren)</p>
+                          <label className="block text-sm font-medium text-surface-200">{tr("Bereinigung-Modell")}</label>
+                          <p className="text-xs text-surface-500">{tr("Fuer Metadaten-Bereinigung (Tags, Korrespondenten, Dokumententypen zusammenfuehren)")}</p>
                           <input
                             type="text"
                             value={editState.model}
@@ -684,19 +667,19 @@ export default function SettingsPanel() {
                               azure: 'z.B. gpt-4',
                               mistral: 'z.B. mistral-small-latest',
                               openrouter: 'z.B. mistralai/mistral-small-2603',
-                            }[provider.name] || 'Modellname eingeben'}
+                            }[provider.name] || tr("Modellname eingeben")}
                             className="input"
                           />
                         </div>
 
                         <div className="p-3 bg-surface-700/30 rounded-lg space-y-2">
-                          <label className="block text-sm font-medium text-surface-200">Klassifizierer-Modell <span className="text-surface-500 font-normal">(optional)</span></label>
-                          <p className="text-xs text-surface-500">Eigenes Modell fuer Dokument-Klassifizierung (leer = Bereinigung-Modell wird verwendet)</p>
+                          <label className="block text-sm font-medium text-surface-200">{tr("Klassifizierer-Modell ")}<span className="text-surface-500 font-normal">{tr("(optional)")}</span></label>
+                          <p className="text-xs text-surface-500">{tr("Eigenes Modell fuer Dokument-Klassifizierung (leer = Bereinigung-Modell wird verwendet)")}</p>
                           <input
                             type="text"
                             value={editState.classifier_model || ''}
                             onChange={(e) => updateEditState(provider.name, 'classifier_model', e.target.value)}
-                            placeholder={editState.model ? `Gleich wie ${editState.model}` : 'Gleich wie Bereinigung-Modell'}
+                            placeholder={editState.model ? tr("Gleich wie {model}", { model: editState.model }) : tr("Gleich wie Bereinigung-Modell")}
                             className="input"
                           />
                         </div>
@@ -714,9 +697,7 @@ export default function SettingsPanel() {
                           <Loader2 className="w-4 h-4 animate-spin" />
                         ) : (
                           <Save className="w-4 h-4" />
-                        )}
-                        Speichern
-                      </button>
+                        )}{tr("Speichern")}</button>
                     </div>
                   </div>
                 )}
@@ -729,18 +710,14 @@ export default function SettingsPanel() {
       {/* Job-Zuweisung */}
       <div className="card p-6">
         <h2 className="text-lg font-semibold text-surface-100 mb-4 flex items-center gap-2">
-          <Cpu className="w-5 h-5 text-primary-400" />
-          Job-Zuweisung
-        </h2>
-        <p className="text-sm text-surface-400 mb-4">
-          Welcher Provider wird fuer welchen Job verwendet?
-        </p>
+          <Cpu className="w-5 h-5 text-primary-400" />{tr("Job-Zuweisung")}</h2>
+        <p className="text-sm text-surface-400 mb-4">{tr("Welcher Provider wird fuer welchen Job verwendet?")}</p>
         <div className="space-y-4">
           {/* Bereinigung */}
           <div className="flex items-center justify-between p-3 bg-surface-700/50 rounded-lg">
             <div>
-              <p className="text-sm font-medium text-surface-200">Metadaten-Bereinigung</p>
-              <p className="text-xs text-surface-500">Tags, Korrespondenten, Dokumententypen aufraeumen</p>
+              <p className="text-sm font-medium text-surface-200">{tr("Metadaten-Bereinigung")}</p>
+              <p className="text-xs text-surface-500">{tr("Tags, Korrespondenten, Dokumententypen aufraeumen")}</p>
             </div>
             <select
               value={providers.find(p => p.is_active)?.name || ''}
@@ -776,8 +753,8 @@ export default function SettingsPanel() {
           {/* Klassifizierer */}
           <div className="flex items-center justify-between p-3 bg-surface-700/50 rounded-lg">
             <div>
-              <p className="text-sm font-medium text-surface-200">Dokument-Klassifizierer</p>
-              <p className="text-xs text-surface-500">Tags, Typ, Korrespondent, Speicherpfad zuordnen</p>
+              <p className="text-sm font-medium text-surface-200">{tr("Dokument-Klassifizierer")}</p>
+              <p className="text-xs text-surface-500">{tr("Tags, Typ, Korrespondent, Speicherpfad zuordnen")}</p>
             </div>
             <select
               value={appSettings.classifier_provider}
@@ -797,23 +774,19 @@ export default function SettingsPanel() {
           {/* Benchmark */}
           <div className="flex items-center justify-between p-3 bg-surface-700/50 rounded-lg">
             <div>
-              <p className="text-sm font-medium text-surface-200">Benchmark</p>
-              <p className="text-xs text-surface-500">Mehrere Provider gleichzeitig testen</p>
+              <p className="text-sm font-medium text-surface-200">{tr("Benchmark")}</p>
+              <p className="text-xs text-surface-500">{tr("Mehrere Provider gleichzeitig testen")}</p>
             </div>
-            <div className="text-sm text-surface-400">
-              Freie Auswahl im Klassifizierer
-            </div>
+            <div className="text-sm text-surface-400">{tr("Freie Auswahl im Klassifizierer")}</div>
           </div>
 
           {/* OCR */}
           <div className="flex items-center justify-between p-3 bg-surface-700/50 rounded-lg">
             <div>
-              <p className="text-sm font-medium text-surface-200">OCR Vision</p>
-              <p className="text-xs text-surface-500">Texterkennung mit Ollama Vision-Modellen</p>
+              <p className="text-sm font-medium text-surface-200">{tr("OCR Vision")}</p>
+              <p className="text-xs text-surface-500">{tr("Texterkennung mit Ollama Vision-Modellen")}</p>
             </div>
-            <div className="text-sm text-surface-400">
-              Ollama (eigene OCR-Einstellungen)
-            </div>
+            <div className="text-sm text-surface-400">{tr("Ollama (eigene OCR-Einstellungen)")}</div>
           </div>
         </div>
       </div>
@@ -821,31 +794,25 @@ export default function SettingsPanel() {
       {/* App Settings */}
       <div className="card p-6">
         <h2 className="font-display font-semibold text-lg text-surface-100 mb-6 flex items-center gap-2">
-          <Lock className="w-5 h-5 text-primary-400" />
-          App-Einstellungen
-        </h2>
+          <Lock className="w-5 h-5 text-primary-400" />{tr("App-Einstellungen")}</h2>
 
         <div className="space-y-6">
           {/* Password Protection */}
           <div className="p-4 rounded-lg bg-surface-800/50 border border-surface-700">
-            <h3 className="font-medium text-surface-100 mb-3">Passwort-Schutz</h3>
-            <p className="text-sm text-surface-400 mb-4">
-              Schütze die gesamte Anwendung mit einem Passwort. Ohne Passwort ist kein Zugriff möglich!
-            </p>
+            <h3 className="font-medium text-surface-100 mb-3">{tr("Passwort-Schutz")}</h3>
+            <p className="text-sm text-surface-400 mb-4">{tr("Schütze die gesamte Anwendung mit einem Passwort. Ohne Passwort ist kein Zugriff möglich!")}</p>
             
             {appSettings.password_set ? (
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 text-emerald-400">
                   <Check className="w-4 h-4" />
-                  <span>Passwort ist gesetzt</span>
+                  <span>{tr("Passwort ist gesetzt")}</span>
                 </div>
                 <button
                   onClick={handleRemovePassword}
                   className="btn btn-danger btn-sm flex items-center gap-2"
                 >
-                  <Trash2 className="w-4 h-4" />
-                  Entfernen
-                </button>
+                  <Trash2 className="w-4 h-4" />{tr("Entfernen")}</button>
               </div>
             ) : (
               <div className="flex gap-3">
@@ -854,7 +821,7 @@ export default function SettingsPanel() {
                     type={showNewPassword ? 'text' : 'password'}
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
-                    placeholder="Neues Passwort"
+                    placeholder={tr("Neues Passwort")}
                     className="input w-full pr-10"
                   />
                   <button
@@ -870,9 +837,7 @@ export default function SettingsPanel() {
                   disabled={!newPassword || savingAppSettings}
                   className="btn btn-primary flex items-center gap-2"
                 >
-                  <Lock className="w-4 h-4" />
-                  Setzen
-                </button>
+                  <Lock className="w-4 h-4" />{tr("Setzen")}</button>
               </div>
             )}
           </div>
@@ -882,12 +847,8 @@ export default function SettingsPanel() {
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="font-medium text-surface-100 flex items-center gap-2">
-                  <Bug className="w-4 h-4 text-surface-400" />
-                  Debug-Menü in Sidebar
-                </h3>
-                <p className="text-sm text-surface-400 mt-1">
-                  Zeigt Netzwerk-Diagnose-Tools in der Navigation
-                </p>
+                  <Bug className="w-4 h-4 text-surface-400" />{tr("Debug-Menü in Sidebar")}</h3>
+                <p className="text-sm text-surface-400 mt-1">{tr("Zeigt Netzwerk-Diagnose-Tools in der Navigation")}</p>
               </div>
               <button
                 onClick={() => saveAppSettings({ show_debug_menu: !appSettings.show_debug_menu })}
@@ -907,9 +868,7 @@ export default function SettingsPanel() {
           {/* Save Confirmation */}
           {appSettingsSaved && (
             <div className="flex items-center gap-2 text-emerald-400 text-sm">
-              <Check className="w-4 h-4" />
-              Einstellungen gespeichert
-            </div>
+              <Check className="w-4 h-4" />{tr("Einstellungen gespeichert")}</div>
           )}
         </div>
       </div>
@@ -917,25 +876,19 @@ export default function SettingsPanel() {
       {/* Ignored Items */}
       <div className="card p-6">
         <h2 className="font-display font-semibold text-lg text-surface-100 mb-6 flex items-center gap-2">
-          <Ban className="w-5 h-5 text-red-400" />
-          Ignorierte Einträge
-          {ignoredItems.length > 0 && (
+          <Ban className="w-5 h-5 text-red-400" />{tr("Ignorierte Einträge")}{ignoredItems.length > 0 && (
             <span className="text-sm font-normal text-surface-400">({ignoredItems.length})</span>
           )}
         </h2>
         
-        <p className="text-sm text-surface-400 mb-4">
-          Diese Einträge werden bei KI-Analysen nicht mehr vorgeschlagen. Du kannst sie hier wieder aktivieren.
-        </p>
+        <p className="text-sm text-surface-400 mb-4">{tr("Diese Einträge werden bei KI-Analysen nicht mehr vorgeschlagen. Du kannst sie hier wieder aktivieren.")}</p>
         
         {loadingIgnored ? (
           <div className="flex items-center justify-center py-8">
             <Loader2 className="w-6 h-6 animate-spin text-primary-400" />
           </div>
         ) : ignoredItems.length === 0 ? (
-          <div className="text-center py-8 text-surface-500">
-            Keine ignorierten Einträge vorhanden.
-          </div>
+          <div className="text-center py-8 text-surface-500">{tr("Keine ignorierten Einträge vorhanden.")}</div>
         ) : (
           <div className="space-y-2 max-h-80 overflow-y-auto">
             {ignoredItems.map(item => (
@@ -947,24 +900,23 @@ export default function SettingsPanel() {
                   <div className="flex items-center gap-2">
                     <span className="font-medium text-surface-200">{item.item_name}</span>
                     <span className="text-xs px-2 py-0.5 rounded bg-surface-700 text-surface-400">
-                      {item.entity_type === 'tag' ? 'Tag' : 
-                       item.entity_type === 'correspondent' ? 'Korrespondent' : 'Dokumententyp'}
+                      {item.entity_type === 'tag' ? tr("Tag") : 
+                       item.entity_type === 'correspondent' ? tr("Korrespondent") : tr("Dokumententyp")}
                     </span>
                     <span className="text-xs px-2 py-0.5 rounded bg-surface-700 text-surface-400">
-                      {item.analysis_type === 'nonsense' ? 'Unsinnig' :
-                       item.analysis_type === 'correspondent_match' ? 'Korrespondent-Match' :
-                       item.analysis_type === 'doctype_match' ? 'Dokumententyp-Match' : 'Ähnlich'}
+                      {item.analysis_type === 'nonsense' ? tr("Unsinnig") :
+                       item.analysis_type === 'correspondent_match' ? tr("Korrespondent-Match") :
+                       item.analysis_type === 'doctype_match' ? tr("Dokumententyp-Match") : tr("Ähnlich")}
                     </span>
                   </div>
-                  <p className="text-xs text-surface-500 mt-1">
-                    Ignoriert am {new Date(item.created_at).toLocaleDateString('de-DE')}
+                  <p className="text-xs text-surface-500 mt-1">{tr("Ignoriert am ")}{new Date(item.created_at).toLocaleDateString('de-DE')}
                   </p>
                 </div>
                 <button
                   onClick={() => handleRemoveIgnored(item.id)}
                   disabled={removingIgnored === item.id}
                   className="p-2 rounded text-surface-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors"
-                  title="Wieder aktivieren"
+                  title={tr("Wieder aktivieren")}
                 >
                   {removingIgnored === item.id ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
@@ -982,20 +934,15 @@ export default function SettingsPanel() {
       <div className="card p-6">
         <div className="flex items-center gap-3 mb-4">
           <Code2 className="w-6 h-6 text-primary-400" />
-          <h2 className="text-xl font-semibold text-surface-100">Externe API (RAG Chat)</h2>
+          <h2 className="text-xl font-semibold text-surface-100">{tr("Externe API (RAG Chat)")}</h2>
         </div>
 
-        <p className="text-sm text-surface-400 mb-4">
-          Binde den Dokumenten-Chat in deine eigene Software ein. Generiere einen API-Key und nutze die REST-API,
-          um per Chat Dokumente zu finden und Fragen zu beantworten.
-        </p>
+        <p className="text-sm text-surface-400 mb-4">{tr("Binde den Dokumenten-Chat in deine eigene Software ein. Generiere einen API-Key und nutze die REST-API, um per Chat Dokumente zu finden und Fragen zu beantworten.")}</p>
 
         {/* API Key generieren */}
         <div className="border border-surface-600 rounded-lg p-4 mb-4">
           <h3 className="text-sm font-semibold text-surface-200 mb-3 flex items-center gap-2">
-            <Key className="w-4 h-4 text-primary-400" />
-            API-Keys verwalten
-          </h3>
+            <Key className="w-4 h-4 text-primary-400" />{tr("API-Keys verwalten")}</h3>
 
           <div className="flex gap-2 mb-3">
             <input
@@ -1003,7 +950,7 @@ export default function SettingsPanel() {
               value={newKeyName}
               onChange={(e) => setNewKeyName(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleGenerateKey()}
-              placeholder="Name fuer den Key (z.B. 'Mein ERP-System')"
+              placeholder={tr("Name fuer den Key (z.B. 'Mein ERP-System')")}
               className="flex-1 px-3 py-2 bg-surface-700 border border-surface-600 rounded-lg text-sm text-surface-100 placeholder-surface-500"
             />
             <button
@@ -1011,14 +958,12 @@ export default function SettingsPanel() {
               disabled={!newKeyName.trim() || generatingKey}
               className="btn btn-primary flex items-center gap-2"
             >
-              {generatingKey ? <Loader2 className="w-4 h-4 animate-spin" /> : <Key className="w-4 h-4" />}
-              Key generieren
-            </button>
+              {generatingKey ? <Loader2 className="w-4 h-4 animate-spin" /> : <Key className="w-4 h-4" />}{tr("Key generieren")}</button>
           </div>
 
           {generatedKey && (
             <div className="bg-green-900/30 border border-green-700 rounded-lg p-3 mb-3">
-              <div className="text-sm font-medium text-green-300 mb-1">Neuer API-Key erstellt:</div>
+              <div className="text-sm font-medium text-green-300 mb-1">{tr("Neuer API-Key erstellt:")}</div>
               <div className="flex items-center gap-2">
                 <code className="flex-1 bg-surface-800 px-3 py-2 rounded border border-green-700 text-sm font-mono text-green-300 break-all">
                   {generatedKey}
@@ -1026,14 +971,12 @@ export default function SettingsPanel() {
                 <button
                   onClick={() => { navigator.clipboard.writeText(generatedKey); }}
                   className="p-2 text-green-400 hover:bg-green-900/50 rounded"
-                  title="Kopieren"
+                  title={tr("Kopieren")}
                 >
                   <Copy className="w-4 h-4" />
                 </button>
               </div>
-              <p className="text-xs text-green-400 mt-1">
-                Speichere diesen Key jetzt! Er wird nicht erneut angezeigt.
-              </p>
+              <p className="text-xs text-green-400 mt-1">{tr("Speichere diesen Key jetzt! Er wird nicht erneut angezeigt.")}</p>
             </div>
           )}
 
@@ -1046,8 +989,8 @@ export default function SettingsPanel() {
                     <div>
                       <div className="text-sm font-medium text-surface-100">{k.name}</div>
                       <div className="text-xs text-surface-400">
-                        {k.key_prefix}... | Erstellt: {k.created_at ? new Date(k.created_at).toLocaleDateString('de-DE') : '-'}
-                        {k.last_used_at && <> | Zuletzt: {new Date(k.last_used_at).toLocaleDateString('de-DE')}</>}
+                        {k.key_prefix}{tr("... | Erstellt: ")}{k.created_at ? new Date(k.created_at).toLocaleDateString('de-DE') : '-'}
+                        {k.last_used_at && <>{tr(" | Zuletzt: ")}{new Date(k.last_used_at).toLocaleDateString('de-DE')}</>}
                       </div>
                     </div>
                   </div>
@@ -1055,7 +998,7 @@ export default function SettingsPanel() {
                     <button
                       onClick={() => handleToggleKey(k.id)}
                       className={clsx('p-1.5 rounded', k.is_active ? 'text-green-400 hover:bg-surface-600' : 'text-surface-500 hover:bg-surface-600')}
-                      title={k.is_active ? 'Deaktivieren' : 'Aktivieren'}
+                      title={k.is_active ? tr("Deaktivieren") : tr("Aktivieren")}
                     >
                       <Power className="w-4 h-4" />
                     </button>
@@ -1063,7 +1006,7 @@ export default function SettingsPanel() {
                       onClick={() => handleDeleteKey(k.id)}
                       disabled={deletingKeyId === k.id}
                       className="p-1.5 text-red-400 hover:text-red-300 hover:bg-surface-600 rounded"
-                      title="Loeschen"
+                      title={tr("Loeschen")}
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -1078,127 +1021,74 @@ export default function SettingsPanel() {
         <div className="border border-surface-600 rounded-lg p-4">
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-sm font-semibold text-surface-200 flex items-center gap-2">
-              <Code2 className="w-4 h-4 text-primary-400" />
-              API-Dokumentation
-            </h3>
+              <Code2 className="w-4 h-4 text-primary-400" />{tr("API-Dokumentation")}</h3>
             <a
               href="/docs"
               target="_blank"
               rel="noopener"
               className="btn btn-primary flex items-center gap-2 text-sm"
             >
-              <TestTube className="w-4 h-4" />
-              Swagger UI oeffnen
-            </a>
+              <TestTube className="w-4 h-4" />{tr("Swagger UI oeffnen")}</a>
           </div>
 
           <div className="space-y-4 text-sm">
             <div>
-              <h4 className="font-medium text-surface-100 mb-1">Was kann die API?</h4>
+              <h4 className="font-medium text-surface-100 mb-1">{tr("Was kann die API?")}</h4>
               <ul className="list-disc list-inside text-surface-400 space-y-1">
-                <li><strong className="text-surface-200">Chat</strong> - Stelle Fragen zu deinen Dokumenten, die KI antwortet mit Quellenangaben</li>
-                <li><strong className="text-surface-200">Suche</strong> - Semantische Dokumentensuche (findet Bedeutung, nicht nur Stichworte)</li>
-                <li><strong className="text-surface-200">Sessions</strong> - Chat-Verlaeufe werden gespeichert und koennen abgerufen werden</li>
-                <li><strong className="text-surface-200">Transaktions-Match</strong> - Bank-/PayPal-Buchung an Paperless-Beleg matchen (für EÜR/Buchhaltung)</li>
+                <li><strong className="text-surface-200">{tr("Chat")}</strong>{tr(" - Stelle Fragen zu deinen Dokumenten, die KI antwortet mit Quellenangaben")}</li>
+                <li><strong className="text-surface-200">{tr("Suche")}</strong>{tr(" - Semantische Dokumentensuche (findet Bedeutung, nicht nur Stichworte)")}</li>
+                <li><strong className="text-surface-200">{tr("Sessions")}</strong>{tr(" - Chat-Verlaeufe werden gespeichert und koennen abgerufen werden")}</li>
+                <li><strong className="text-surface-200">{tr("Transaktions-Match")}</strong>{tr(" - Bank-/PayPal-Buchung an Paperless-Beleg matchen (für EÜR/Buchhaltung)")}</li>
               </ul>
             </div>
 
             <div>
-              <h4 className="font-medium text-surface-100 mb-1">Authentifizierung</h4>
-              <p className="text-surface-400 mb-2">Sende den API-Key als Bearer-Token im Authorization-Header:</p>
+              <h4 className="font-medium text-surface-100 mb-1">{tr("Authentifizierung")}</h4>
+              <p className="text-surface-400 mb-2">{tr("Sende den API-Key als Bearer-Token im Authorization-Header:")}</p>
               <pre className="bg-surface-900 text-green-400 rounded-lg p-3 overflow-x-auto text-xs">
-{`Authorization: Bearer po_dein_api_key_hier`}</pre>
+{tr("Authorization: Bearer po_dein_api_key_hier")}</pre>
             </div>
 
             <div>
-              <h4 className="font-medium text-surface-100 mb-1">Chat-Endpunkt (SSE Streaming)</h4>
+              <h4 className="font-medium text-surface-100 mb-1">{tr("Chat-Endpunkt (SSE Streaming)")}</h4>
               <pre className="bg-surface-900 text-green-400 rounded-lg p-3 overflow-x-auto text-xs">
-{`POST /api/rag/chat
-Content-Type: application/json
-Authorization: Bearer po_dein_api_key
-
-{
-  "question": "Welche Rechnungen habe ich von Vodafone?",
-  "session_id": null,
-  "filters": {
-    "correspondent_id": null,
-    "document_type_id": null,
-    "tags": null
-  }
-}`}</pre>
-              <p className="text-surface-500 mt-1">Antwort: Server-Sent Events (SSE) mit Token-Stream und Quellenangaben.</p>
+{tr("POST /api/rag/chat\nContent-Type: application/json\nAuthorization: Bearer po_dein_api_key\n\n{\n  \"question\": \"Welche Rechnungen habe ich von Vodafone?\",\n  \"session_id\": null,\n  \"filters\": {\n    \"correspondent_id\": null,\n    \"document_type_id\": null,\n    \"tags\": null\n  }\n}")}</pre>
+              <p className="text-surface-500 mt-1">{tr("Antwort: Server-Sent Events (SSE) mit Token-Stream und Quellenangaben.")}</p>
             </div>
 
             <div>
-              <h4 className="font-medium text-surface-100 mb-1">Such-Endpunkt</h4>
+              <h4 className="font-medium text-surface-100 mb-1">{tr("Such-Endpunkt")}</h4>
               <pre className="bg-surface-900 text-green-400 rounded-lg p-3 overflow-x-auto text-xs">
-{`POST /api/rag/search
-Content-Type: application/json
-Authorization: Bearer po_dein_api_key
-
-{
-  "query": "Mietvertrag",
-  "limit": 5
-}`}</pre>
-              <p className="text-surface-500 mt-1">Antwort: JSON mit relevanten Dokumenten, Scores und Snippets.</p>
+{tr("POST /api/rag/search\nContent-Type: application/json\nAuthorization: Bearer po_dein_api_key\n\n{\n  \"query\": \"Mietvertrag\",\n  \"limit\": 5\n}")}</pre>
+              <p className="text-surface-500 mt-1">{tr("Antwort: JSON mit relevanten Dokumenten, Scores und Snippets.")}</p>
             </div>
 
             <div>
-              <h4 className="font-medium text-surface-100 mb-1">Transaktions-Match (für EÜR/Buchhaltung)</h4>
-              <p className="text-surface-400 mb-2 text-xs">
-                Matcht eine Bank-/PayPal-Buchung gegen deine Paperless-Dokumente per Score-System
-                (Rechnungsnummer, Betrag, IBAN, Datum, Kundenname, Volltext). Gibt Top 3 Treffer mit Score 0-100% zurück.
-              </p>
+              <h4 className="font-medium text-surface-100 mb-1">{tr("Transaktions-Match (für EÜR/Buchhaltung)")}</h4>
+              <p className="text-surface-400 mb-2 text-xs">{tr("Matcht eine Bank-/PayPal-Buchung gegen deine Paperless-Dokumente per Score-System (Rechnungsnummer, Betrag, IBAN, Datum, Kundenname, Volltext). Gibt Top 3 Treffer mit Score 0-100% zurück.")}</p>
               <pre className="bg-surface-900 text-green-400 rounded-lg p-3 overflow-x-auto text-xs">
-{`POST /api/match/transaction
-Content-Type: application/json
-Authorization: Bearer po_dein_api_key
-
-{
-  "transaction": {
-    "amount": 41.22,
-    "date": "2025-11-10",
-    "description": "Domain renewal",
-    "customer": "TLD Registrar Ltd",
-    "iban": "DE...",
-    "bookingNumber": "WEB-2025-0058",
-    "paypalTransactionId": "1048329975057"
-  },
-  "options": {
-    "dateWindowDays": 7,
-    "amountToleranceEur": 0.5,
-    "amountTolerancePercent": 0,
-    "fuzzyThreshold": 75,
-    "limit": 3
-  }
-}`}</pre>
-              <p className="text-surface-500 mt-1 text-xs">
-                Antwort: <code className="text-surface-300">matches[]</code> mit
-                {' '}<code className="text-surface-300">documentId</code>, <code className="text-surface-300">score</code>,
-                {' '}<code className="text-surface-300">confidence</code> (high/medium/low),
-                {' '}<code className="text-surface-300">matchedOn[]</code> (welches Feld welches Gewicht beisteuerte).
-              </p>
+{tr("POST /api/match/transaction\nContent-Type: application/json\nAuthorization: Bearer po_dein_api_key\n\n{\n  \"transaction\": {\n    \"amount\": 41.22,\n    \"date\": \"2025-11-10\",\n    \"description\": \"Domain renewal\",\n    \"customer\": \"TLD Registrar Ltd\",\n    \"iban\": \"DE...\",\n    \"bookingNumber\": \"WEB-2025-0058\",\n    \"paypalTransactionId\": \"1048329975057\"\n  },\n  \"options\": {\n    \"dateWindowDays\": 7,\n    \"amountToleranceEur\": 0.5,\n    \"amountTolerancePercent\": 0,\n    \"fuzzyThreshold\": 75,\n    \"limit\": 3\n  }\n}")}</pre>
+              <p className="text-surface-500 mt-1 text-xs">{tr("Antwort: ")}<code className="text-surface-300">{tr("matches[]")}</code>{tr(" mit")}{' '}<code className="text-surface-300">{tr("documentId")}</code>, <code className="text-surface-300">{tr("score")}</code>,
+                {' '}<code className="text-surface-300">{tr("confidence")}</code>{tr(" (high/medium/low),")}{' '}<code className="text-surface-300">{tr("matchedOn[]")}</code>{tr(" (welches Feld welches Gewicht beisteuerte).")}</p>
             </div>
 
             <div>
-              <h4 className="font-medium text-surface-100 mb-1">Weitere Endpunkte</h4>
+              <h4 className="font-medium text-surface-100 mb-1">{tr("Weitere Endpunkte")}</h4>
               <div className="bg-surface-700/50 rounded-lg p-3 space-y-1 text-xs font-mono text-surface-200">
-                <div><span className="text-blue-400">GET</span> /api/rag/sessions - Alle Chat-Sessions auflisten</div>
-                <div><span className="text-blue-400">GET</span> /api/rag/sessions/:id - Einzelne Session mit Nachrichten</div>
-                <div><span className="text-red-400">DELETE</span> /api/rag/sessions/:id - Session loeschen</div>
-                <div><span className="text-green-400">POST</span> /api/rag/index/start - Indexierung starten</div>
-                <div><span className="text-blue-400">GET</span> /api/rag/index/status - Indexierungsstatus</div>
-                <div><span className="text-blue-400">GET</span> /api/rag/config - RAG-Konfiguration</div>
-                <div><span className="text-blue-400">GET</span> /api/match/health - Health-Check Match-API</div>
-                <div><span className="text-blue-400">GET</span> /api/match/log - Letzte 30 Match-Anfragen</div>
+                <div><span className="text-blue-400">{tr("GET")}</span>{tr(" /api/rag/sessions - Alle Chat-Sessions auflisten")}</div>
+                <div><span className="text-blue-400">{tr("GET")}</span>{tr(" /api/rag/sessions/:id - Einzelne Session mit Nachrichten")}</div>
+                <div><span className="text-red-400">{tr("DELETE")}</span>{tr(" /api/rag/sessions/:id - Session loeschen")}</div>
+                <div><span className="text-green-400">{tr("POST")}</span>{tr(" /api/rag/index/start - Indexierung starten")}</div>
+                <div><span className="text-blue-400">{tr("GET")}</span>{tr(" /api/rag/index/status - Indexierungsstatus")}</div>
+                <div><span className="text-blue-400">{tr("GET")}</span>{tr(" /api/rag/config - RAG-Konfiguration")}</div>
+                <div><span className="text-blue-400">{tr("GET")}</span>{tr(" /api/match/health - Health-Check Match-API")}</div>
+                <div><span className="text-blue-400">{tr("GET")}</span>{tr(" /api/match/log - Letzte 30 Match-Anfragen")}</div>
               </div>
             </div>
 
             <div className="bg-primary-900/30 border border-primary-700 rounded-lg p-3">
               <p className="text-primary-300 text-xs">
-                <strong>Tipp:</strong> In der Swagger UI kannst du alle Endpunkte direkt im Browser testen.
-                Klicke auf einen Endpunkt, dann auf "Try it out", fuege deinen API-Key ein und sende die Anfrage.
-              </p>
+                <strong>{tr("Tipp:")}</strong>{tr(" In der Swagger UI kannst du alle Endpunkte direkt im Browser testen. Klicke auf einen Endpunkt, dann auf \"Try it out\", fuege deinen API-Key ein und sende die Anfrage.")}</p>
             </div>
           </div>
         </div>

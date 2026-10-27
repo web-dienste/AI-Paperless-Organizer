@@ -6,6 +6,7 @@ import {
 } from 'lucide-react'
 import clsx from 'clsx'
 import * as api from '../services/api'
+import { tr } from '../i18n'
 
 // Confirmation modal for AI analysis
 interface AnalysisConfirmInfo {
@@ -70,12 +71,12 @@ interface StepStatus {
 }
 
 const STEPS = [
-  { id: 1, title: 'Leere Tags löschen', icon: Trash2, description: 'Tags mit 0 Dokumenten entfernen', needsAI: false },
-  { id: 2, title: 'Einzelgänger-Tags', icon: Hash, description: 'Tags mit nur 1 Dokument prüfen', needsAI: false },
-  { id: 3, title: 'Unsinnige Tags', icon: AlertCircle, description: 'KI identifiziert sinnlose Tags', needsAI: true },
-  { id: 4, title: 'Korrespondenten-Tags', icon: Users, description: 'KI findet Tags die Firmen/Personen sind', needsAI: true },
-  { id: 5, title: 'Dokumententyp-Tags', icon: FileText, description: 'KI findet Tags die Dokumententypen sind', needsAI: true },
-  { id: 6, title: 'Ähnliche zusammenlegen', icon: Layers, description: 'KI findet Duplikate und Varianten', needsAI: true },
+  { id: 1, title: tr("Leere Tags löschen"), icon: Trash2, description: tr("Tags mit 0 Dokumenten entfernen"), needsAI: false },
+  { id: 2, title: tr("Einzelgänger-Tags"), icon: Hash, description: tr("Tags mit nur 1 Dokument prüfen"), needsAI: false },
+  { id: 3, title: tr("Unsinnige Tags"), icon: AlertCircle, description: tr("KI identifiziert sinnlose Tags"), needsAI: true },
+  { id: 4, title: tr("Korrespondenten-Tags"), icon: Users, description: tr("KI findet Tags die Firmen/Personen sind"), needsAI: true },
+  { id: 5, title: tr("Dokumententyp-Tags"), icon: FileText, description: tr("KI findet Tags die Dokumententypen sind"), needsAI: true },
+  { id: 6, title: tr("Ähnliche zusammenlegen"), icon: Layers, description: tr("KI findet Duplikate und Varianten"), needsAI: true },
 ]
 
 export default function TagCleanupWizard() {
@@ -203,13 +204,13 @@ export default function TagCleanupWizard() {
         {loadingPreview ? (
           <div className="flex items-center justify-center py-3">
             <Loader2 className="w-4 h-4 animate-spin text-primary-400" />
-            <span className="ml-2 text-sm text-surface-400">Lade Dokumente...</span>
+            <span className="ml-2 text-sm text-surface-400">{tr("Lade Dokumente...")}</span>
           </div>
         ) : previewDocs.length > 0 ? (
           <div>
             <div className="flex items-center gap-2 mb-2 text-xs text-surface-400">
               <Eye className="w-3 h-3" />
-              <span>Vorschau ({previewDocs.length} von {docCount})</span>
+              <span>{tr("Vorschau (")}{previewDocs.length}{tr(" von ")}{docCount})</span>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {previewDocs.map(doc => (
@@ -246,9 +247,7 @@ export default function TagCleanupWizard() {
             </div>
           </div>
         ) : (
-          <div className="text-center py-2 text-sm text-surface-400">
-            Keine Dokumente gefunden
-          </div>
+          <div className="text-center py-2 text-sm text-surface-400">{tr("Keine Dokumente gefunden")}</div>
         )}
       </div>
     )
@@ -366,15 +365,12 @@ export default function TagCleanupWizard() {
       <div className="flex items-center justify-between p-2 bg-emerald-500/10 border border-emerald-500/30 rounded-lg">
         <span className="text-sm text-emerald-400 flex items-center gap-1.5">
           <Shield className="w-4 h-4" />
-          {count} Tag(s) auf Ignorier-Liste
-        </span>
+          {count}{tr(" Tag(s) auf Ignorier-Liste")}</span>
         <button
           onClick={() => openIgnoreListModal(analysisType, title)}
           className="text-sm text-primary-400 hover:text-primary-300 flex items-center gap-1"
         >
-          <List className="w-3.5 h-3.5" />
-          Liste anzeigen
-        </button>
+          <List className="w-3.5 h-3.5" />{tr("Liste anzeigen")}</button>
       </div>
     )
   }
@@ -390,7 +386,7 @@ export default function TagCleanupWizard() {
       setNewIgnorePattern('')
       setNewIgnoreReason('')
     } catch (e: any) {
-      setError(e.message || 'Fehler beim Hinzufügen')
+      setError(e.message || tr("Fehler beim Hinzufügen"))
     }
   }
   
@@ -410,7 +406,7 @@ export default function TagCleanupWizard() {
       const startTime = Date.now()
       await api.refreshPaperlessCache()
       const elapsed = Date.now() - startTime
-      setCachedInfo(`Cache neu geladen in ${(elapsed / 1000).toFixed(1)}s`)
+      setCachedInfo(tr("Cache neu geladen in {seconds}s", { seconds: (elapsed / 1000).toFixed(1) }))
       await loadInitialData()
     } catch (e) {
       console.error('Failed to refresh cache:', e)
@@ -459,10 +455,10 @@ export default function TagCleanupWizard() {
   // Open confirmation modal before AI analysis
   const openAnalysisConfirm = async (step: number, forceNew: boolean = false) => {
     const stepInfo: Record<number, { name: string; type: 'nonsense' | 'correspondent' | 'doctype' | 'similar' }> = {
-      3: { name: 'Unsinnige Tags', type: 'nonsense' },
-      4: { name: 'Korrespondenten-Tags', type: 'correspondent' },
-      5: { name: 'Dokumententyp-Tags', type: 'doctype' },
-      6: { name: 'Ähnliche Tags', type: 'similar' }
+      3: { name: tr("Unsinnige Tags"), type: 'nonsense' },
+      4: { name: tr("Korrespondenten-Tags"), type: 'correspondent' },
+      5: { name: tr("Dokumententyp-Tags"), type: 'doctype' },
+      6: { name: tr("Ähnliche Tags"), type: 'similar' }
     }
     
     const info = stepInfo[step]
@@ -614,7 +610,7 @@ export default function TagCleanupWizard() {
       }))
       
     } catch (e: any) {
-      setError(e.message || 'Analyse fehlgeschlagen. Ist ein LLM Provider konfiguriert?')
+      setError(e.message || tr("Analyse fehlgeschlagen. Ist ein LLM Provider konfiguriert?"))
     } finally {
       setAnalyzing(false)
     }
@@ -633,7 +629,7 @@ export default function TagCleanupWizard() {
       setProgress({ current: i + chunk.length, total: ids.length })
     }
     if (allDeleted.length === 0 && allFailed > 0) {
-      throw new Error(`Kein Tag konnte gelöscht werden (${allFailed} Fehler). Bitte "Neu laden" klicken und erneut versuchen.`)
+      throw new Error(tr("Kein Tag konnte gelöscht werden ({count} Fehler). Bitte \"Neu laden\" klicken und erneut versuchen.", { count: allFailed }))
     }
     return { deleted: allDeleted, deleted_count: allDeleted.length }
   }
@@ -742,7 +738,7 @@ export default function TagCleanupWizard() {
       
     } catch (e: any) {
       console.error('Error executing step:', e)
-      setError(e?.message || 'Fehler beim Ausführen')
+      setError(e?.message || tr("Fehler beim Ausführen"))
     } finally {
       setProcessing(false)
       setProgress(null)
@@ -767,25 +763,20 @@ export default function TagCleanupWizard() {
         const visibleEmptyTags = emptyTags.filter(t => !ignoredItemIds.empty.includes(t.id))
         return (
           <div className="space-y-4">
-            {renderIgnoredNotice('empty', 'Leere Tags', ignoredItemIds.empty.length)}
+            {renderIgnoredNotice('empty', tr("Leere Tags"), ignoredItemIds.empty.length)}
             
             <div className="flex items-center justify-between">
               <p className="text-surface-300">
-                <strong className="text-amber-400">{visibleEmptyTags.length}</strong> Tags haben 0 Dokumente
-              </p>
+                <strong className="text-amber-400">{visibleEmptyTags.length}</strong>{tr(" Tags haben 0 Dokumente")}</p>
               <div className="flex gap-2">
                 <button
                   onClick={() => setSelectedEmpty(new Set(visibleEmptyTags.map(t => t.id)))}
                   className="text-sm text-primary-400 hover:text-primary-300"
-                >
-                  Alle auswählen
-                </button>
+                >{tr("Alle auswählen")}</button>
                 <button
                   onClick={() => setSelectedEmpty(new Set())}
                   className="text-sm text-surface-400 hover:text-surface-300"
-                >
-                  Keine
-                </button>
+                >{tr("Keine")}</button>
               </div>
             </div>
             
@@ -809,7 +800,7 @@ export default function TagCleanupWizard() {
                     onClick={() => handleIgnoreItem(tag.id, tag.name, 'empty')}
                     disabled={ignoringItemId === tag.id}
                     className="p-1.5 rounded text-surface-500 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors"
-                    title="Auf Ignorier-Liste setzen"
+                    title={tr("Auf Ignorier-Liste setzen")}
                   >
                     {ignoringItemId === tag.id ? (
                       <Loader2 className="w-4 h-4 animate-spin" />
@@ -820,7 +811,7 @@ export default function TagCleanupWizard() {
                 </div>
               ))}
               {visibleEmptyTags.length === 0 && (
-                <p className="text-center text-surface-400 py-8">Keine leeren Tags gefunden! ✓</p>
+                <p className="text-center text-surface-400 py-8">{tr("Keine leeren Tags gefunden! ✓")}</p>
               )}
             </div>
           </div>
@@ -832,32 +823,23 @@ export default function TagCleanupWizard() {
         return (
           <div className="space-y-4">
             <div className="p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg">
-              <p className="text-blue-300 text-sm">
-                Tags die nur an einem einzigen Dokument hängen sind oft auto-generierte Keywords 
-                (z.B. "Ameisenköder", "AdBlue", "Aromazucker") ohne organisatorischen Wert.
-                Prüfe die Vorschau, bevor du löschst.
-              </p>
+              <p className="text-blue-300 text-sm">{tr("Tags die nur an einem einzigen Dokument hängen sind oft auto-generierte Keywords (z.B. \"Ameisenköder\", \"AdBlue\", \"Aromazucker\") ohne organisatorischen Wert. Prüfe die Vorschau, bevor du löschst.")}</p>
             </div>
             
-            {renderIgnoredNotice('single_doc', 'Einzelgänger-Tags', ignoredItemIds.single_doc.length)}
+            {renderIgnoredNotice('single_doc', tr("Einzelgänger-Tags"), ignoredItemIds.single_doc.length)}
             
             <div className="flex items-center justify-between">
               <p className="text-surface-300">
-                <strong className="text-amber-400">{visibleSingleDocTags.length}</strong> Tags mit nur 1 Dokument
-              </p>
+                <strong className="text-amber-400">{visibleSingleDocTags.length}</strong>{tr(" Tags mit nur 1 Dokument")}</p>
               <div className="flex gap-2">
                 <button
                   onClick={() => setSelectedSingleDoc(new Set(visibleSingleDocTags.map(t => t.id)))}
                   className="text-sm text-primary-400 hover:text-primary-300"
-                >
-                  Alle auswählen
-                </button>
+                >{tr("Alle auswählen")}</button>
                 <button
                   onClick={() => setSelectedSingleDoc(new Set())}
                   className="text-sm text-surface-400 hover:text-surface-300"
-                >
-                  Keine
-                </button>
+                >{tr("Keine")}</button>
               </div>
             </div>
             
@@ -880,7 +862,7 @@ export default function TagCleanupWizard() {
                       <div className="flex items-center gap-2 flex-wrap">
                         <Tag className="w-4 h-4 text-purple-400" />
                         <span className="text-surface-200 font-medium">{tag.name}</span>
-                        <span className="text-surface-500 text-sm">(1 Dok.)</span>
+                        <span className="text-surface-500 text-sm">{tr("(1 Dok.)")}</span>
                         <button
                           onClick={() => toggleDocPreview(tag.id)}
                           className={clsx(
@@ -890,9 +872,7 @@ export default function TagCleanupWizard() {
                               : "bg-surface-600/50 text-surface-400 hover:text-primary-300"
                           )}
                         >
-                          <Eye className="w-3 h-3" />
-                          Vorschau
-                        </button>
+                          <Eye className="w-3 h-3" />{tr("Vorschau")}</button>
                       </div>
                       {renderDocPreview(tag.id, 1)}
                     </div>
@@ -900,7 +880,7 @@ export default function TagCleanupWizard() {
                       onClick={() => handleIgnoreItem(tag.id, tag.name, 'single_doc')}
                       disabled={ignoringItemId === tag.id}
                       className="p-1.5 rounded text-surface-500 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors"
-                      title="Auf Ignorier-Liste setzen"
+                      title={tr("Auf Ignorier-Liste setzen")}
                     >
                       {ignoringItemId === tag.id ? (
                         <Loader2 className="w-4 h-4 animate-spin" />
@@ -912,7 +892,7 @@ export default function TagCleanupWizard() {
                 </div>
               ))}
               {visibleSingleDocTags.length === 0 && (
-                <p className="text-center text-surface-400 py-8">Keine Einzelgänger-Tags gefunden! ✓</p>
+                <p className="text-center text-surface-400 py-8">{tr("Keine Einzelgänger-Tags gefunden! ✓")}</p>
               )}
             </div>
           </div>
@@ -928,19 +908,15 @@ export default function TagCleanupWizard() {
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2">
                     <Shield className="w-5 h-5 text-emerald-400" />
-                    <span className="font-medium text-surface-100">Geschützte Tags ({ignoredTags.length})</span>
+                    <span className="font-medium text-surface-100">{tr("Geschützte Tags (")}{ignoredTags.length})</span>
                   </div>
                   <button
                     onClick={() => setShowIgnoreModal(true)}
                     className="text-sm text-primary-400 hover:text-primary-300 flex items-center gap-1"
                   >
-                    <Plus className="w-4 h-4" />
-                    Hinzufügen
-                  </button>
+                    <Plus className="w-4 h-4" />{tr("Hinzufügen")}</button>
                 </div>
-                <p className="text-sm text-surface-400 mb-3">
-                  Diese Tags werden bei der Analyse ignoriert und nicht als "unsinnig" markiert.
-                </p>
+                <p className="text-sm text-surface-400 mb-3">{tr("Diese Tags werden bei der Analyse ignoriert und nicht als \"unsinnig\" markiert.")}</p>
                 <div className="flex flex-wrap gap-2">
                   {ignoredTags.map(t => (
                     <span key={t.id} className="inline-flex items-center gap-1 px-2 py-1 bg-emerald-500/20 text-emerald-400 rounded text-sm">
@@ -954,7 +930,7 @@ export default function TagCleanupWizard() {
                     </span>
                   ))}
                   {ignoredTags.length === 0 && (
-                    <span className="text-surface-500 text-sm">Keine geschützten Tags</span>
+                    <span className="text-surface-500 text-sm">{tr("Keine geschützten Tags")}</span>
                   )}
                 </div>
               </div>
@@ -962,12 +938,12 @@ export default function TagCleanupWizard() {
               <div className="text-center py-8">
                 <Brain className="w-16 h-16 mx-auto text-primary-500 mb-4" />
                 <h4 className="text-lg font-medium text-surface-100 mb-2">
-                  {savedNonsenseInfo?.exists ? 'Gespeicherte Analyse vorhanden' : 'KI-Analyse erforderlich'}
+                  {savedNonsenseInfo?.exists ? tr("Gespeicherte Analyse vorhanden") : tr("KI-Analyse erforderlich")}
                 </h4>
                 <p className="text-surface-400 mb-6 max-w-md mx-auto">
                   {savedNonsenseInfo?.exists 
-                    ? `Letzte Analyse: ${savedNonsenseInfo.created_at ? new Date(savedNonsenseInfo.created_at).toLocaleString('de-DE') : 'Unbekannt'}` 
-                    : 'Die KI analysiert alle Tags und identifiziert unsinnige, generische oder sinnlose Tags wie "test", "Dokument", "Sonstige" etc.'}
+                    ? tr("Letzte Analyse: {v0}", { v0: savedNonsenseInfo.created_at ? new Date(savedNonsenseInfo.created_at).toLocaleString('de-DE') : 'Unbekannt' }) 
+                    : tr("Die KI analysiert alle Tags und identifiziert unsinnige, generische oder sinnlose Tags wie \"test\", \"Dokument\", \"Sonstige\" etc.")}
                 </p>
                 
                 <div className="flex gap-3 justify-center">
@@ -980,14 +956,10 @@ export default function TagCleanupWizard() {
                       >
                         {analyzing ? (
                           <>
-                            <Loader2 className="w-4 h-4 animate-spin" />
-                            Lade...
-                          </>
+                            <Loader2 className="w-4 h-4 animate-spin" />{tr("Lade...")}</>
                         ) : (
                           <>
-                            <RefreshCw className="w-4 h-4" />
-                            Gespeicherte laden
-                          </>
+                            <RefreshCw className="w-4 h-4" />{tr("Gespeicherte laden")}</>
                         )}
                       </button>
                       <button
@@ -995,9 +967,7 @@ export default function TagCleanupWizard() {
                         disabled={analyzing}
                         className="btn btn-secondary flex items-center gap-2"
                       >
-                        <Sparkles className="w-4 h-4" />
-                        Neu analysieren
-                      </button>
+                        <Sparkles className="w-4 h-4" />{tr("Neu analysieren")}</button>
                     </>
                   ) : (
                     <button
@@ -1007,14 +977,10 @@ export default function TagCleanupWizard() {
                     >
                       {analyzing ? (
                         <>
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                          Analysiere...
-                        </>
+                          <Loader2 className="w-4 h-4 animate-spin" />{tr("Analysiere...")}</>
                       ) : (
                         <>
-                          <Sparkles className="w-4 h-4" />
-                          KI-Analyse starten
-                        </>
+                          <Sparkles className="w-4 h-4" />{tr("KI-Analyse starten")}</>
                       )}
                     </button>
                   )}
@@ -1029,28 +995,22 @@ export default function TagCleanupWizard() {
             
             <div className="flex items-center justify-between">
               <p className="text-surface-300">
-                <strong className="text-amber-400">{nonsenseTags.length}</strong> unsinnige Tags gefunden
-              </p>
+                <strong className="text-amber-400">{nonsenseTags.length}</strong>{tr(" unsinnige Tags gefunden")}</p>
               <div className="flex gap-2">
                 <button
                   onClick={() => setShowIgnoreModal(true)}
                   className="text-sm text-emerald-400 hover:text-emerald-300 flex items-center gap-1"
                 >
-                  <Shield className="w-4 h-4" />
-                  Ignorieren ({ignoredTags.length})
+                  <Shield className="w-4 h-4" />{tr("Ignorieren (")}{ignoredTags.length})
                 </button>
                 <button
                   onClick={() => setSelectedNonsense(new Set(nonsenseTags.map(t => t.id)))}
                   className="text-sm text-primary-400 hover:text-primary-300"
-                >
-                  Alle auswählen
-                </button>
+                >{tr("Alle auswählen")}</button>
                 <button
                   onClick={() => setSelectedNonsense(new Set())}
                   className="text-sm text-surface-400 hover:text-surface-300"
-                >
-                  Keine
-                </button>
+                >{tr("Keine")}</button>
               </div>
             </div>
             
@@ -1075,7 +1035,7 @@ export default function TagCleanupWizard() {
                       <div className="flex items-center gap-2 flex-wrap">
                         <Tag className="w-4 h-4 text-amber-400" />
                         <span className="text-surface-200 font-medium">{tag.name}</span>
-                        <span className="text-surface-500 text-sm">({tag.document_count} Dok.)</span>
+                        <span className="text-surface-500 text-sm">({tag.document_count}{tr(" Dok.)")}</span>
                         <span className="text-xs text-amber-400 bg-amber-500/20 px-2 py-0.5 rounded">
                           {Math.round(tag.confidence * 100)}%
                         </span>
@@ -1089,9 +1049,7 @@ export default function TagCleanupWizard() {
                                 : "bg-surface-600/50 text-surface-400 hover:text-primary-300"
                             )}
                           >
-                            <Eye className="w-3 h-3" />
-                            Dokumente
-                          </button>
+                            <Eye className="w-3 h-3" />{tr("Dokumente")}</button>
                         )}
                       </div>
                       <p className="text-sm text-surface-400 mt-1">{tag.reason}</p>
@@ -1101,7 +1059,7 @@ export default function TagCleanupWizard() {
                       onClick={() => handleIgnoreItem(tag.id, tag.name, 'nonsense')}
                       disabled={ignoringItemId === tag.id}
                       className="p-1.5 rounded text-surface-500 hover:text-red-400 hover:bg-red-500/10 transition-colors"
-                      title="Dauerhaft ignorieren"
+                      title={tr("Dauerhaft ignorieren")}
                     >
                       {ignoringItemId === tag.id ? (
                         <Loader2 className="w-4 h-4 animate-spin" />
@@ -1113,7 +1071,7 @@ export default function TagCleanupWizard() {
                 </div>
               ))}
               {nonsenseTags.filter(t => !ignoredItemIds.nonsense.includes(t.id)).length === 0 && (
-                <p className="text-center text-surface-400 py-8">Keine unsinnigen Tags gefunden! ✓</p>
+                <p className="text-center text-surface-400 py-8">{tr("Keine unsinnigen Tags gefunden! ✓")}</p>
               )}
             </div>
           </div>
@@ -1125,12 +1083,12 @@ export default function TagCleanupWizard() {
             <div className="text-center py-12">
               <Brain className="w-16 h-16 mx-auto text-blue-500 mb-4" />
               <h4 className="text-lg font-medium text-surface-100 mb-2">
-                {savedCorrespondentInfo?.exists ? 'Gespeicherte Analyse vorhanden' : 'KI-Analyse erforderlich'}
+                {savedCorrespondentInfo?.exists ? tr("Gespeicherte Analyse vorhanden") : tr("KI-Analyse erforderlich")}
               </h4>
               <p className="text-surface-400 mb-6 max-w-md mx-auto">
                 {savedCorrespondentInfo?.exists 
-                  ? `Letzte Analyse: ${savedCorrespondentInfo.created_at ? new Date(savedCorrespondentInfo.created_at).toLocaleString('de-DE') : 'Unbekannt'}` 
-                  : 'Die KI analysiert alle Tags und findet Tags die eigentlich Firmen oder Personen (Korrespondenten) sind.'}
+                  ? tr("Letzte Analyse: {v0}", { v0: savedCorrespondentInfo.created_at ? new Date(savedCorrespondentInfo.created_at).toLocaleString('de-DE') : 'Unbekannt' }) 
+                  : tr("Die KI analysiert alle Tags und findet Tags die eigentlich Firmen oder Personen (Korrespondenten) sind.")}
               </p>
               
               
@@ -1143,16 +1101,14 @@ export default function TagCleanupWizard() {
                       className="btn btn-primary flex items-center gap-2"
                     >
                       {analyzing ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
-                      {analyzing ? 'Lade...' : 'Gespeicherte laden'}
+                      {analyzing ? tr("Lade...") : tr("Gespeicherte laden")}
                     </button>
                     <button
                       onClick={() => openAnalysisConfirm(4, true)}
                       disabled={analyzing}
                       className="btn btn-secondary flex items-center gap-2"
                     >
-                      <Sparkles className="w-4 h-4" />
-                      Neu analysieren
-                    </button>
+                      <Sparkles className="w-4 h-4" />{tr("Neu analysieren")}</button>
                   </>
                 ) : (
                   <button
@@ -1161,7 +1117,7 @@ export default function TagCleanupWizard() {
                     className="btn btn-primary flex items-center gap-2"
                   >
                     {analyzing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-                    {analyzing ? 'Analysiere...' : 'KI-Analyse starten'}
+                    {analyzing ? tr("Analysiere...") : tr("KI-Analyse starten")}
                   </button>
                 )}
               </div>
@@ -1174,23 +1130,18 @@ export default function TagCleanupWizard() {
             
             <div className="flex items-center justify-between">
               <p className="text-surface-300">
-                <strong className="text-blue-400">{correspondentMatches.length}</strong> Tags sind eigentlich Korrespondenten
-              </p>
+                <strong className="text-blue-400">{correspondentMatches.length}</strong>{tr(" Tags sind eigentlich Korrespondenten")}</p>
               <div className="flex gap-2">
                 <button
                   onClick={() => setSelectedCorrespondentMatches(new Set(
                     correspondentMatches.filter(m => !ignoredItemIds.correspondent.includes(m.tag_id)).map(m => m.tag_id)
                   ))}
                   className="text-sm text-primary-400 hover:text-primary-300"
-                >
-                  Alle auswählen
-                </button>
+                >{tr("Alle auswählen")}</button>
                 <button
                   onClick={() => setSelectedCorrespondentMatches(new Set())}
                   className="text-sm text-surface-400 hover:text-surface-300"
-                >
-                  Keine
-                </button>
+                >{tr("Keine")}</button>
               </div>
             </div>
             
@@ -1214,8 +1165,8 @@ export default function TagCleanupWizard() {
                     <div className="flex-1">
                       <div className="flex items-center gap-2 flex-wrap">
                         <Tag className="w-4 h-4 text-purple-400" />
-                        <span className="text-surface-200">Tag: {match.tag_name}</span>
-                        <span className="text-surface-500 text-sm">({match.document_count} Dok.)</span>
+                        <span className="text-surface-200">{tr("Tag: ")}{match.tag_name}</span>
+                        <span className="text-surface-500 text-sm">({match.document_count}{tr(" Dok.)")}</span>
                         {match.document_count > 0 && (
                           <button
                             onClick={() => toggleDocPreview(match.tag_id)}
@@ -1226,16 +1177,13 @@ export default function TagCleanupWizard() {
                                 : "bg-surface-600/50 text-surface-400 hover:text-primary-300"
                             )}
                           >
-                            <Eye className="w-3 h-3" />
-                            Dokumente
-                          </button>
+                            <Eye className="w-3 h-3" />{tr("Dokumente")}</button>
                         )}
                       </div>
                       <div className="flex items-center gap-2 mt-1 text-sm">
                         <Users className="w-4 h-4 text-blue-400" />
-                        <span className="text-surface-400">
-                          → Korrespondent: {match.suggested_correspondent}
-                          {match.correspondent_exists && <span className="text-emerald-400 ml-1">(existiert)</span>}
+                        <span className="text-surface-400">{tr("→ Korrespondent: ")}{match.suggested_correspondent}
+                          {match.correspondent_exists && <span className="text-emerald-400 ml-1">{tr("(existiert)")}</span>}
                         </span>
                       </div>
                       <p className="text-sm text-surface-500 mt-1">{match.reason}</p>
@@ -1245,7 +1193,7 @@ export default function TagCleanupWizard() {
                       onClick={() => handleIgnoreItem(match.tag_id, match.tag_name, 'correspondent')}
                       disabled={ignoringItemId === match.tag_id}
                       className="p-1.5 rounded text-surface-500 hover:text-red-400 hover:bg-red-500/10 transition-colors"
-                      title="Dauerhaft ignorieren"
+                      title={tr("Dauerhaft ignorieren")}
                     >
                       {ignoringItemId === match.tag_id ? (
                         <Loader2 className="w-4 h-4 animate-spin" />
@@ -1257,7 +1205,7 @@ export default function TagCleanupWizard() {
                 </div>
               ))}
               {correspondentMatches.filter(m => !ignoredItemIds.correspondent.includes(m.tag_id)).length === 0 && (
-                <p className="text-center text-surface-400 py-8">Keine solchen Tags gefunden! ✓</p>
+                <p className="text-center text-surface-400 py-8">{tr("Keine solchen Tags gefunden! ✓")}</p>
               )}
             </div>
           </div>
@@ -1269,12 +1217,12 @@ export default function TagCleanupWizard() {
             <div className="text-center py-12">
               <Brain className="w-16 h-16 mx-auto text-amber-500 mb-4" />
               <h4 className="text-lg font-medium text-surface-100 mb-2">
-                {savedDoctypeInfo?.exists ? 'Gespeicherte Analyse vorhanden' : 'KI-Analyse erforderlich'}
+                {savedDoctypeInfo?.exists ? tr("Gespeicherte Analyse vorhanden") : tr("KI-Analyse erforderlich")}
               </h4>
               <p className="text-surface-400 mb-6 max-w-md mx-auto">
                 {savedDoctypeInfo?.exists 
-                  ? `Letzte Analyse: ${savedDoctypeInfo.created_at ? new Date(savedDoctypeInfo.created_at).toLocaleString('de-DE') : 'Unbekannt'}` 
-                  : 'Die KI analysiert alle Tags und findet Tags die eigentlich Dokumententypen sind (z.B. "Rechnung", "Vertrag").'}
+                  ? tr("Letzte Analyse: {v0}", { v0: savedDoctypeInfo.created_at ? new Date(savedDoctypeInfo.created_at).toLocaleString('de-DE') : 'Unbekannt' }) 
+                  : tr("Die KI analysiert alle Tags und findet Tags die eigentlich Dokumententypen sind (z.B. \"Rechnung\", \"Vertrag\").")}
               </p>
               
               
@@ -1287,16 +1235,14 @@ export default function TagCleanupWizard() {
                       className="btn btn-primary flex items-center gap-2"
                     >
                       {analyzing ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
-                      {analyzing ? 'Lade...' : 'Gespeicherte laden'}
+                      {analyzing ? tr("Lade...") : tr("Gespeicherte laden")}
                     </button>
                     <button
                       onClick={() => openAnalysisConfirm(5, true)}
                       disabled={analyzing}
                       className="btn btn-secondary flex items-center gap-2"
                     >
-                      <Sparkles className="w-4 h-4" />
-                      Neu analysieren
-                    </button>
+                      <Sparkles className="w-4 h-4" />{tr("Neu analysieren")}</button>
                   </>
                 ) : (
                   <button
@@ -1305,7 +1251,7 @@ export default function TagCleanupWizard() {
                     className="btn btn-primary flex items-center gap-2"
                   >
                     {analyzing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-                    {analyzing ? 'Analysiere...' : 'KI-Analyse starten'}
+                    {analyzing ? tr("Analysiere...") : tr("KI-Analyse starten")}
                   </button>
                 )}
               </div>
@@ -1318,23 +1264,18 @@ export default function TagCleanupWizard() {
             
             <div className="flex items-center justify-between">
               <p className="text-surface-300">
-                <strong className="text-amber-400">{docTypeMatches.length}</strong> Tags sind eigentlich Dokumententypen
-              </p>
+                <strong className="text-amber-400">{docTypeMatches.length}</strong>{tr(" Tags sind eigentlich Dokumententypen")}</p>
               <div className="flex gap-2">
                 <button
                   onClick={() => setSelectedDocTypeMatches(new Set(
                     docTypeMatches.filter(m => !ignoredItemIds.doctype.includes(m.tag_id)).map(m => m.tag_id)
                   ))}
                   className="text-sm text-primary-400 hover:text-primary-300"
-                >
-                  Alle auswählen
-                </button>
+                >{tr("Alle auswählen")}</button>
                 <button
                   onClick={() => setSelectedDocTypeMatches(new Set())}
                   className="text-sm text-surface-400 hover:text-surface-300"
-                >
-                  Keine
-                </button>
+                >{tr("Keine")}</button>
               </div>
             </div>
             
@@ -1358,8 +1299,8 @@ export default function TagCleanupWizard() {
                     <div className="flex-1">
                       <div className="flex items-center gap-2 flex-wrap">
                         <Tag className="w-4 h-4 text-purple-400" />
-                        <span className="text-surface-200">Tag: {match.tag_name}</span>
-                        <span className="text-surface-500 text-sm">({match.document_count} Dok.)</span>
+                        <span className="text-surface-200">{tr("Tag: ")}{match.tag_name}</span>
+                        <span className="text-surface-500 text-sm">({match.document_count}{tr(" Dok.)")}</span>
                         {match.document_count > 0 && (
                           <button
                             onClick={() => toggleDocPreview(match.tag_id)}
@@ -1370,16 +1311,13 @@ export default function TagCleanupWizard() {
                                 : "bg-surface-600/50 text-surface-400 hover:text-primary-300"
                             )}
                           >
-                            <Eye className="w-3 h-3" />
-                            Dokumente
-                          </button>
+                            <Eye className="w-3 h-3" />{tr("Dokumente")}</button>
                         )}
                       </div>
                       <div className="flex items-center gap-2 mt-1 text-sm">
                         <FileText className="w-4 h-4 text-amber-400" />
-                        <span className="text-surface-400">
-                          → Dokumententyp: {match.suggested_doctype}
-                          {match.doctype_exists && <span className="text-emerald-400 ml-1">(existiert)</span>}
+                        <span className="text-surface-400">{tr("→ Dokumententyp: ")}{match.suggested_doctype}
+                          {match.doctype_exists && <span className="text-emerald-400 ml-1">{tr("(existiert)")}</span>}
                         </span>
                       </div>
                       <p className="text-sm text-surface-500 mt-1">{match.reason}</p>
@@ -1389,7 +1327,7 @@ export default function TagCleanupWizard() {
                       onClick={() => handleIgnoreItem(match.tag_id, match.tag_name, 'doctype')}
                       disabled={ignoringItemId === match.tag_id}
                       className="p-1.5 rounded text-surface-500 hover:text-red-400 hover:bg-red-500/10 transition-colors"
-                      title="Dauerhaft ignorieren"
+                      title={tr("Dauerhaft ignorieren")}
                     >
                       {ignoringItemId === match.tag_id ? (
                         <Loader2 className="w-4 h-4 animate-spin" />
@@ -1401,7 +1339,7 @@ export default function TagCleanupWizard() {
                 </div>
               ))}
               {docTypeMatches.filter(m => !ignoredItemIds.doctype.includes(m.tag_id)).length === 0 && (
-                <p className="text-center text-surface-400 py-8">Keine solchen Tags gefunden! ✓</p>
+                <p className="text-center text-surface-400 py-8">{tr("Keine solchen Tags gefunden! ✓")}</p>
               )}
             </div>
           </div>
@@ -1413,12 +1351,12 @@ export default function TagCleanupWizard() {
             <div className="text-center py-12">
               <Brain className="w-16 h-16 mx-auto text-purple-500 mb-4" />
               <h4 className="text-lg font-medium text-surface-100 mb-2">
-                {savedSimilarInfo?.exists ? 'Gespeicherte Analyse vorhanden' : 'KI-Analyse erforderlich'}
+                {savedSimilarInfo?.exists ? tr("Gespeicherte Analyse vorhanden") : tr("KI-Analyse erforderlich")}
               </h4>
               <p className="text-surface-400 mb-6 max-w-md mx-auto">
                 {savedSimilarInfo?.exists 
-                  ? `Letzte Analyse: ${savedSimilarInfo.created_at ? new Date(savedSimilarInfo.created_at).toLocaleString('de-DE') : 'Unbekannt'}` 
-                  : 'Die KI findet ähnliche Tags wie "Hoster", "Webhoster", "Web-Hoster" und schlägt vor, sie zusammenzulegen.'}
+                  ? tr("Letzte Analyse: {v0}", { v0: savedSimilarInfo.created_at ? new Date(savedSimilarInfo.created_at).toLocaleString('de-DE') : 'Unbekannt' }) 
+                  : tr("Die KI findet ähnliche Tags wie \"Hoster\", \"Webhoster\", \"Web-Hoster\" und schlägt vor, sie zusammenzulegen.")}
               </p>
               
               
@@ -1431,16 +1369,14 @@ export default function TagCleanupWizard() {
                       className="btn btn-primary flex items-center gap-2"
                     >
                       {analyzing ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
-                      {analyzing ? 'Lade...' : 'Gespeicherte laden'}
+                      {analyzing ? tr("Lade...") : tr("Gespeicherte laden")}
                     </button>
                     <button
                       onClick={() => openAnalysisConfirm(6, true)}
                       disabled={analyzing}
                       className="btn btn-secondary flex items-center gap-2"
                     >
-                      <Sparkles className="w-4 h-4" />
-                      Neu analysieren
-                    </button>
+                      <Sparkles className="w-4 h-4" />{tr("Neu analysieren")}</button>
                   </>
                 ) : (
                   <button
@@ -1449,7 +1385,7 @@ export default function TagCleanupWizard() {
                     className="btn btn-primary flex items-center gap-2"
                   >
                     {analyzing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-                    {analyzing ? 'Analysiere...' : 'KI-Analyse starten'}
+                    {analyzing ? tr("Analysiere...") : tr("KI-Analyse starten")}
                   </button>
                 )}
               </div>
@@ -1461,20 +1397,16 @@ export default function TagCleanupWizard() {
           <div className="space-y-4">
             
             <p className="text-surface-300">
-              <strong className="text-purple-400">{similarGroups.length}</strong> Gruppen ähnlicher Tags gefunden
-            </p>
+              <strong className="text-purple-400">{similarGroups.length}</strong>{tr(" Gruppen ähnlicher Tags gefunden")}</p>
             
             {similarGroups.length > 0 ? (
               <div className="p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-lg">
                 <p className="text-emerald-400 mb-2">
-                  {similarGroups.length} Gruppen gefunden!
-                </p>
-                <p className="text-surface-400 text-sm">
-                  Gehe zu <strong>Tags</strong> im Menü, um die Vorschläge anzusehen und zusammenzuführen.
-                </p>
+                  {similarGroups.length}{tr(" Gruppen gefunden!")}</p>
+                <p className="text-surface-400 text-sm">{tr("Gehe zu ")}<strong>{tr("Tags")}</strong>{tr(" im Menü, um die Vorschläge anzusehen und zusammenzuführen.")}</p>
               </div>
             ) : (
-              <p className="text-center text-surface-400 py-8">Keine ähnlichen Tags gefunden! ✓</p>
+              <p className="text-center text-surface-400 py-8">{tr("Keine ähnlichen Tags gefunden! ✓")}</p>
             )}
           </div>
         )
@@ -1486,16 +1418,16 @@ export default function TagCleanupWizard() {
 
   const getStepActionLabel = () => {
     const needsAnalysis = STEPS[currentStep - 1].needsAI && !stepStatus[currentStep]?.analyzed
-    if (needsAnalysis) return 'Erst analysieren'
+    if (needsAnalysis) return tr("Erst analysieren")
     
     switch(currentStep) {
-      case 1: return `${selectedEmpty.size} Tags löschen`
-      case 2: return `${selectedSingleDoc.size} Tags löschen`
-      case 3: return `${selectedNonsense.size} Tags löschen`
-      case 4: return `${selectedCorrespondentMatches.size} Tags entfernen`
-      case 5: return `${selectedDocTypeMatches.size} Tags entfernen`
-      case 6: return 'Fertig'
-      default: return 'Ausführen'
+      case 1: return tr("{count} Tags löschen", { count: selectedEmpty.size })
+      case 2: return tr("{count} Tags löschen", { count: selectedSingleDoc.size })
+      case 3: return tr("{count} Tags löschen", { count: selectedNonsense.size })
+      case 4: return tr("{count} Tags entfernen", { count: selectedCorrespondentMatches.size })
+      case 5: return tr("{count} Tags entfernen", { count: selectedDocTypeMatches.size })
+      case 6: return tr("Fertig")
+      default: return tr("Ausführen")
     }
   }
   
@@ -1527,14 +1459,9 @@ export default function TagCleanupWizard() {
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>
-          <h2 className="font-display text-2xl font-bold text-surface-100">
-            Tag Cleanup Wizard
-          </h2>
-          <p className="text-surface-400 mt-1">
-            Mehrstufige KI-Bereinigung deiner {tags.length} Tags
-            {loadTime !== null && (
-              <span className="text-surface-500 ml-2">
-                (geladen in {(loadTime / 1000).toFixed(1)}s {cachedInfo})
+          <h2 className="font-display text-2xl font-bold text-surface-100">{tr("Tag Cleanup Wizard")}</h2>
+          <p className="text-surface-400 mt-1">{tr("Mehrstufige KI-Bereinigung deiner ")}{tags.length}{tr(" Tags")}{loadTime !== null && (
+              <span className="text-surface-500 ml-2">{tr("(geladen in ")}{(loadTime / 1000).toFixed(1)}s {cachedInfo})
               </span>
             )}
           </p>
@@ -1543,10 +1470,10 @@ export default function TagCleanupWizard() {
           onClick={refreshCache}
           disabled={refreshing || loading}
           className="btn btn-secondary flex items-center gap-2"
-          title="Cache neu laden"
+          title={tr("Cache neu laden")}
         >
           <RefreshCw className={clsx('w-4 h-4', refreshing && 'animate-spin')} />
-          {refreshing ? 'Lade...' : 'Neu laden'}
+          {refreshing ? tr("Lade...") : tr("Neu laden")}
         </button>
       </div>
 
@@ -1588,7 +1515,7 @@ export default function TagCleanupWizard() {
                     {step.title}
                   </span>
                   {step.needsAI && (
-                    <span className="text-[10px] text-purple-400">KI</span>
+                    <span className="text-[10px] text-purple-400">{tr("KI")}</span>
                   )}
                 </button>
                 {index < STEPS.length - 1 && (
@@ -1603,7 +1530,7 @@ export default function TagCleanupWizard() {
       {/* Error Display */}
       {error && (
         <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400">
-          <strong>Fehler:</strong> {error}
+          <strong>{tr("Fehler:")}</strong> {error}
         </div>
       )}
 
@@ -1615,8 +1542,7 @@ export default function TagCleanupWizard() {
             return <Icon className="w-6 h-6 text-primary-400" />
           })()}
           <div>
-            <h3 className="font-semibold text-lg text-surface-100">
-              Schritt {currentStep}: {STEPS[currentStep - 1].title}
+            <h3 className="font-semibold text-lg text-surface-100">{tr("Schritt ")}{currentStep}: {STEPS[currentStep - 1].title}
             </h3>
             <p className="text-sm text-surface-400">{STEPS[currentStep - 1].description}</p>
           </div>
@@ -1625,20 +1551,17 @@ export default function TagCleanupWizard() {
         {stepStatus[currentStep]?.completed ? (
           <div className="p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-lg mb-4">
             <p className="text-emerald-400 flex items-center gap-2">
-              <Check className="w-5 h-5" />
-              Schritt abgeschlossen! Insgesamt {stepStatus[currentStep].result?.deleted || 0} gelöscht.
-            </p>
+              <Check className="w-5 h-5" />{tr("Schritt abgeschlossen! Insgesamt ")}{stepStatus[currentStep].result?.deleted || 0}{tr(" gelöscht.")}</p>
           </div>
         ) : stepStatus[currentStep]?.result?.deleted ? (
           <div className="p-4 bg-blue-500/10 border border-blue-500/30 rounded-lg mb-4">
             <p className="text-blue-300 flex items-center gap-2">
               <Check className="w-5 h-5 text-emerald-400" />
-              {stepStatus[currentStep].result.deleted} Tag(s) gelöscht. Restliche Tags können weiter bearbeitet werden.
-            </p>
+              {stepStatus[currentStep].result.deleted}{tr(" Tag(s) gelöscht. Restliche Tags können weiter bearbeitet werden.")}</p>
           </div>
         ) : stepStatus[currentStep]?.skipped ? (
           <div className="p-4 bg-surface-700/50 border border-surface-600 rounded-lg mb-4">
-            <p className="text-surface-400">Schritt übersprungen</p>
+            <p className="text-surface-400">{tr("Schritt übersprungen")}</p>
           </div>
         ) : null}
 
@@ -1651,17 +1574,13 @@ export default function TagCleanupWizard() {
             disabled={currentStep === 1}
             className="btn btn-secondary flex items-center gap-2"
           >
-            <ChevronLeft className="w-4 h-4" />
-            Zurück
-          </button>
+            <ChevronLeft className="w-4 h-4" />{tr("Zurück")}</button>
           
           <div className="flex items-center gap-3">
             <button
               onClick={skipStep}
               className="btn btn-secondary"
-            >
-              Überspringen
-            </button>
+            >{tr("Überspringen")}</button>
             <button
               onClick={() => executeStep(currentStep)}
               disabled={processing || stepStatus[currentStep]?.completed || !canExecute()}
@@ -1673,7 +1592,7 @@ export default function TagCleanupWizard() {
                   {progress ? (
                     <span>{progress.current}/{progress.total} ({Math.round(progress.current / progress.total * 100)}%)</span>
                   ) : (
-                    <span>Verarbeite...</span>
+                    <span>{tr("Verarbeite...")}</span>
                   )}
                 </>
               ) : (
@@ -1691,9 +1610,7 @@ export default function TagCleanupWizard() {
               <button
                 onClick={() => setCurrentStep(currentStep + 1)}
                 className="btn btn-secondary flex items-center gap-2"
-              >
-                Weiter
-                <ChevronRight className="w-4 h-4" />
+              >{tr("Weiter")}<ChevronRight className="w-4 h-4" />
               </button>
             )}
           </div>
@@ -1706,9 +1623,7 @@ export default function TagCleanupWizard() {
           <div className="bg-surface-800 rounded-xl p-6 w-full max-w-lg mx-4 border border-surface-700">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-surface-100 flex items-center gap-2">
-                <Shield className="w-5 h-5 text-emerald-400" />
-                Geschützte Tags verwalten
-              </h3>
+                <Shield className="w-5 h-5 text-emerald-400" />{tr("Geschützte Tags verwalten")}</h3>
               <button
                 onClick={() => setShowIgnoreModal(false)}
                 className="text-surface-400 hover:text-surface-200"
@@ -1717,10 +1632,7 @@ export default function TagCleanupWizard() {
               </button>
             </div>
             
-            <p className="text-sm text-surface-400 mb-4">
-              Diese Tags werden bei der KI-Analyse ignoriert und nicht als "unsinnig" markiert.
-              Du kannst Wildcards (*) verwenden, z.B. "*@*" für E-Mail-Adressen.
-            </p>
+            <p className="text-sm text-surface-400 mb-4">{tr("Diese Tags werden bei der KI-Analyse ignoriert und nicht als \"unsinnig\" markiert. Du kannst Wildcards (*) verwenden, z.B. \"*@*\" für E-Mail-Adressen.")}</p>
             
             {/* Add new pattern */}
             <div className="flex gap-2 mb-4">
@@ -1728,7 +1640,7 @@ export default function TagCleanupWizard() {
                 type="text"
                 value={newIgnorePattern}
                 onChange={(e) => setNewIgnorePattern(e.target.value)}
-                placeholder="Tag-Name oder Muster..."
+                placeholder={tr("Tag-Name oder Muster...")}
                 className="flex-1 px-3 py-2 bg-surface-900 border border-surface-600 rounded-lg text-surface-100 placeholder-surface-500"
               />
               <button
@@ -1736,16 +1648,14 @@ export default function TagCleanupWizard() {
                 disabled={!newIgnorePattern.trim()}
                 className="btn btn-primary flex items-center gap-1"
               >
-                <Plus className="w-4 h-4" />
-                Hinzufügen
-              </button>
+                <Plus className="w-4 h-4" />{tr("Hinzufügen")}</button>
             </div>
             
             <input
               type="text"
               value={newIgnoreReason}
               onChange={(e) => setNewIgnoreReason(e.target.value)}
-              placeholder="Grund (optional)..."
+              placeholder={tr("Grund (optional)...")}
               className="w-full px-3 py-2 bg-surface-900 border border-surface-600 rounded-lg text-surface-100 placeholder-surface-500 mb-4"
             />
             
@@ -1768,7 +1678,7 @@ export default function TagCleanupWizard() {
                 </div>
               ))}
               {ignoredTags.length === 0 && (
-                <p className="text-center text-surface-500 py-4">Keine geschützten Tags</p>
+                <p className="text-center text-surface-500 py-4">{tr("Keine geschützten Tags")}</p>
               )}
             </div>
             
@@ -1776,9 +1686,7 @@ export default function TagCleanupWizard() {
               <button
                 onClick={() => setShowIgnoreModal(false)}
                 className="btn btn-primary"
-              >
-                Fertig
-              </button>
+              >{tr("Fertig")}</button>
             </div>
           </div>
         </div>
@@ -1790,8 +1698,7 @@ export default function TagCleanupWizard() {
           <div className="bg-surface-800 rounded-xl p-6 w-full max-w-lg mx-4 border border-surface-700">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-surface-100 flex items-center gap-2">
-                <Shield className="w-5 h-5 text-emerald-400" />
-                Ignorier-Liste: {showIgnoreListModal.title}
+                <Shield className="w-5 h-5 text-emerald-400" />{tr("Ignorier-Liste: ")}{showIgnoreListModal.title}
               </h3>
               <button
                 onClick={() => setShowIgnoreListModal(null)}
@@ -1801,10 +1708,7 @@ export default function TagCleanupWizard() {
               </button>
             </div>
             
-            <p className="text-sm text-surface-400 mb-4">
-              Diese Tags werden in diesem Schritt nicht mehr angezeigt. 
-              Entferne einen Tag, um ihn wieder sichtbar zu machen.
-            </p>
+            <p className="text-sm text-surface-400 mb-4">{tr("Diese Tags werden in diesem Schritt nicht mehr angezeigt. Entferne einen Tag, um ihn wieder sichtbar zu machen.")}</p>
             
             {loadingIgnoredList ? (
               <div className="flex items-center justify-center py-8">
@@ -1818,22 +1722,21 @@ export default function TagCleanupWizard() {
                       <Tag className="w-4 h-4 text-surface-500 flex-shrink-0" />
                       <div className="min-w-0">
                         <span className="text-surface-200 font-medium block truncate">{item.item_name}</span>
-                        <span className="text-xs text-surface-500">
-                          Ignoriert am {new Date(item.created_at).toLocaleDateString('de-DE')}
+                        <span className="text-xs text-surface-500">{tr("Ignoriert am ")}{new Date(item.created_at).toLocaleDateString('de-DE')}
                         </span>
                       </div>
                     </div>
                     <button
                       onClick={() => removeFromIgnoreItemsList(item.id)}
                       className="text-red-400 hover:text-red-300 p-1.5 hover:bg-red-500/10 rounded flex-shrink-0 ml-2"
-                      title="Von Ignorier-Liste entfernen"
+                      title={tr("Von Ignorier-Liste entfernen")}
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
                 ))}
                 {ignoredItemsList.length === 0 && (
-                  <p className="text-center text-surface-500 py-6">Keine ignorierten Tags</p>
+                  <p className="text-center text-surface-500 py-6">{tr("Keine ignorierten Tags")}</p>
                 )}
               </div>
             )}
@@ -1842,9 +1745,7 @@ export default function TagCleanupWizard() {
               <button
                 onClick={() => setShowIgnoreListModal(null)}
                 className="btn btn-primary"
-              >
-                Fertig
-              </button>
+              >{tr("Fertig")}</button>
             </div>
           </div>
         </div>
@@ -1859,9 +1760,7 @@ export default function TagCleanupWizard() {
                 <Sparkles className="w-6 h-6 text-primary-400" />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-surface-100">
-                  KI-Analyse starten
-                </h3>
+                <h3 className="text-lg font-semibold text-surface-100">{tr("KI-Analyse starten")}</h3>
                 <p className="text-sm text-surface-400">{confirmModal.stepName}</p>
               </div>
             </div>
@@ -1869,30 +1768,30 @@ export default function TagCleanupWizard() {
             {loadingEstimate ? (
               <div className="py-8 text-center">
                 <Loader2 className="w-8 h-8 animate-spin mx-auto text-primary-400 mb-2" />
-                <p className="text-surface-400">Berechne Token-Schätzung...</p>
+                <p className="text-surface-400">{tr("Berechne Token-Schätzung...")}</p>
               </div>
             ) : confirmEstimate && (
               <>
                 {/* Token Info */}
                 <div className="bg-surface-700/50 rounded-lg p-4 mb-4 space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-surface-400">Modell</span>
+                    <span className="text-surface-400">{tr("Modell")}</span>
                     <span className="text-primary-400 font-medium">{confirmEstimate.model}</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-surface-400">Daten</span>
+                    <span className="text-surface-400">{tr("Daten")}</span>
                     <span className="text-surface-200">{confirmEstimate.items_info}</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-surface-400">Geschätzte Tokens</span>
+                    <span className="text-surface-400">{tr("Geschätzte Tokens")}</span>
                     <span className="text-surface-200">~{confirmEstimate.estimated_tokens.toLocaleString()}</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-surface-400">Token-Limit</span>
+                    <span className="text-surface-400">{tr("Token-Limit")}</span>
                     <span className="text-surface-200">{confirmEstimate.token_limit.toLocaleString()}</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-surface-400">Auslastung</span>
+                    <span className="text-surface-400">{tr("Auslastung")}</span>
                     <span className={clsx(
                       'px-2 py-0.5 rounded text-xs font-medium',
                       confirmEstimate.estimated_tokens > confirmEstimate.token_limit * 0.8 
@@ -1916,9 +1815,7 @@ export default function TagCleanupWizard() {
                     <p className="text-blue-400 text-sm flex items-start gap-2">
                       <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
                       <span>
-                        <strong>Hinweis:</strong> Du verwendest einen externen LLM-Anbieter. 
-                        Deine Tag-Namen werden zur Analyse an diesen Dienst übertragen.
-                      </span>
+                        <strong>{tr("Hinweis:")}</strong>{tr(" Du verwendest einen externen LLM-Anbieter. Deine Tag-Namen werden zur Analyse an diesen Dienst übertragen.")}</span>
                     </p>
                   </div>
                 )}
@@ -1929,17 +1826,13 @@ export default function TagCleanupWizard() {
               <button
                 onClick={() => setConfirmModal(null)}
                 className="btn btn-secondary"
-              >
-                Abbrechen
-              </button>
+              >{tr("Abbrechen")}</button>
               <button
                 onClick={confirmAndAnalyze}
                 disabled={loadingEstimate}
                 className="btn btn-primary flex items-center gap-2"
               >
-                <Sparkles className="w-4 h-4" />
-                Analyse starten
-              </button>
+                <Sparkles className="w-4 h-4" />{tr("Analyse starten")}</button>
             </div>
           </div>
         </div>
