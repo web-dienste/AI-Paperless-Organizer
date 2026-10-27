@@ -8,6 +8,7 @@ from datetime import datetime
 from typing import Dict, List, Optional
 
 import httpx
+from app.services.ui_lang import ui_text
 
 logger = logging.getLogger(__name__)
 
@@ -433,8 +434,8 @@ class CloudImportService:
             elif source.source_type == "local":
                 files = await self.list_files_local(source)
             else:
-                return {"ok": False, "message": "Unbekannter Quelltyp", "files": 0}
-            return {"ok": True, "message": f"Verbindung OK – {len(files)} Dokument(e) gefunden", "files": len(files)}
+                return {"ok": False, "message": ui_text("Unbekannter Quelltyp", "Unknown source type"), "files": 0}
+            return {"ok": True, "message": ui_text(f"Verbindung OK – {len(files)} Dokument(e) gefunden", f"Connection OK – {len(files)} document(s) found"), "files": len(files)}
         except Exception as e:
             return {"ok": False, "message": str(e), "files": 0}
 

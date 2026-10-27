@@ -465,7 +465,7 @@ export default function OcrManager() {
                                             {batchStatus.log.map((entry, i) => (
                                                 <div key={i} className={clsx(
                                                     'py-1 border-l-2 pl-2 mb-1',
-                                                    entry.includes('pausiert') ? 'border-amber-500 text-amber-400' :
+                                                    entry.includes('pausiert') || entry.startsWith('⏸️') ? 'border-amber-500 text-amber-400' :
                                                         entry.startsWith('✅') ? 'border-emerald-500 text-emerald-400' :
                                                             entry.startsWith('❌') ? 'border-red-500 text-red-400' :
                                                                 entry.startsWith('⚠️') ? 'border-amber-500 text-amber-400' :

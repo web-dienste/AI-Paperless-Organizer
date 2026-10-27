@@ -1088,7 +1088,7 @@ function RcloneConnectFlow({
           className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary-600 hover:bg-primary-500 text-white rounded-xl text-sm font-medium transition-colors"
         >
           <Cloud className="w-5 h-5" />
-          {RCLONE_PROVIDERS.find(p => p.id === selectedProvider)?.label}{tr(" verbinden")}</button>
+          {tr("{provider} verbinden", { provider: RCLONE_PROVIDERS.find(p => p.id === selectedProvider)?.label ?? '' })}</button>
       )}
 
       {authStatus === 'starting' && (

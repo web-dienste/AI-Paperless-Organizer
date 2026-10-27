@@ -22,6 +22,7 @@ from app.database import get_db
 from app.models.match_log import MatchLog
 from app.services.paperless_client import PaperlessClient, get_paperless_client
 from app.services.transaction_matcher import TransactionMatcher
+from app.services.ui_lang import ui_text
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -101,7 +102,7 @@ async def match_transaction(
         )
     except Exception as e:
         logger.exception("Transaction match failed")
-        raise HTTPException(status_code=500, detail=f"Match-Fehler: {e}")
+        raise HTTPException(status_code=500, detail=ui_text(f"Match-Fehler: {e}", f"Match error: {e}"))
 
     duration_ms = int((time.time() - start) * 1000)
 

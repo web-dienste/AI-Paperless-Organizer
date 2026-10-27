@@ -601,7 +601,7 @@ export default function RagChat() {
                                 href={paperlessUrl ? `${paperlessUrl}/documents/${src.document_id}/details` : '#'}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                title={tr("{title} — Score: {v1}% {v2}", { title: src.title, v1: (src.score * 100).toFixed(0), v2: isCited ? '· Vom KI verwendet' : '' })}
+                                title={tr("{title} — Score: {v1}% {v2}", { title: src.title, v1: (src.score * 100).toFixed(0), v2: isCited ? tr("· Vom KI verwendet") : '' })}
                                 className={clsx(
                                   'flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-medium transition-all group border',
                                   isCited

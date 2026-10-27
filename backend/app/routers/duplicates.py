@@ -10,6 +10,7 @@ from sqlalchemy import select, delete, and_
 from app.database import get_db
 from app.models.duplicates import DuplicateIgnore
 from app.services.duplicate_service import DuplicateService, get_scan_state, _scan_state
+from app.services.ui_lang import ui_text
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -32,7 +33,7 @@ class IgnoreRequest(BaseModel):
 async def start_scan(body: ScanRequest, db: AsyncSession = Depends(get_db)):
     """Startet einen Duplikat-Scan im Hintergrund."""
     if _scan_state.get("running"):
-        raise HTTPException(status_code=409, detail="Scan läuft bereits")
+        raise HTTPException(status_code=409, detail=ui_text("Scan läuft bereits", "Scan already running"))
 
     service = DuplicateService()
 
@@ -75,7 +76,7 @@ async def scan_results():
     """Gibt die Ergebnis-Gruppen des letzten Scans zurück."""
     state = get_scan_state()
     if state.get("running"):
-        raise HTTPException(status_code=409, detail="Scan läuft noch")
+        raise HTTPException(status_code=409, detail=ui_text("Scan läuft noch", "Scan still running"))
     return {"groups": state.get("results", [])}
 
 
@@ -85,7 +86,7 @@ async def scan_results():
 async def ignore_group(body: IgnoreRequest, db: AsyncSession = Depends(get_db)):
     """Markiert eine Gruppe von Dokumenten als 'kein Duplikat'."""
     if len(body.doc_ids) < 2:
-        raise HTTPException(status_code=400, detail="Mindestens 2 Dokument-IDs erforderlich")
+        raise HTTPException(status_code=400, detail=ui_text("Mindestens 2 Dokument-IDs erforderlich", "At least 2 document IDs required"))
 
     # Alle Paare speichern (sortiert, um Duplikate zu vermeiden)
     added = 0
@@ -141,7 +142,7 @@ async def remove_ignore(doc_id_a: int, doc_id_b: int, db: AsyncSession = Depends
     await db.commit()
 
     if result.rowcount == 0:
-        raise HTTPException(status_code=404, detail="Paar nicht gefunden")
+        raise HTTPException(status_code=404, detail=ui_text("Paar nicht gefunden", "Pair not found"))
 
     logger.info("Removed ignore pair (%d, %d)", a, b)
     return {"removed": True}

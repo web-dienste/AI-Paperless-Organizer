@@ -11,6 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
 from app.models.rag import ApiKey
+from app.services.ui_lang import ui_text
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -36,7 +37,7 @@ def _hash_key(key: str) -> str:
 @router.post("/generate")
 async def generate_api_key(request: CreateKeyRequest, db: AsyncSession = Depends(get_db)):
     if not request.name.strip():
-        raise HTTPException(status_code=400, detail="Name darf nicht leer sein")
+        raise HTTPException(status_code=400, detail=ui_text("Name darf nicht leer sein", "Name must not be empty"))
 
     raw_key = f"po_{secrets.token_hex(24)}"
     key_hash = _hash_key(raw_key)
@@ -56,7 +57,7 @@ async def generate_api_key(request: CreateKeyRequest, db: AsyncSession = Depends
         "name": api_key.name,
         "key": raw_key,
         "key_prefix": key_prefix,
-        "message": "Speichere diesen Key sicher ab - er wird nicht erneut angezeigt!",
+        "message": ui_text("Speichere diesen Key sicher ab - er wird nicht erneut angezeigt!", "Store this key securely - it will not be shown again!"),
     }
 
 
@@ -82,7 +83,7 @@ async def delete_api_key(key_id: int, db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(ApiKey).where(ApiKey.id == key_id))
     key = result.scalar_one_or_none()
     if not key:
-        raise HTTPException(status_code=404, detail="API-Key nicht gefunden")
+        raise HTTPException(status_code=404, detail=ui_text("API-Key nicht gefunden", "API key not found"))
     await db.execute(sa_delete(ApiKey).where(ApiKey.id == key_id))
     await db.commit()
     return {"deleted": True}
@@ -93,7 +94,7 @@ async def toggle_api_key(key_id: int, db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(ApiKey).where(ApiKey.id == key_id))
     key = result.scalar_one_or_none()
     if not key:
-        raise HTTPException(status_code=404, detail="API-Key nicht gefunden")
+        raise HTTPException(status_code=404, detail=ui_text("API-Key nicht gefunden", "API key not found"))
     key.is_active = not key.is_active
     await db.commit()
     return {"id": key.id, "is_active": key.is_active}

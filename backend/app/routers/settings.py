@@ -7,6 +7,7 @@ from app.database import get_db
 from app.models import PaperlessSettings, LLMProvider, CustomPrompt, IgnoredTag, AppSettings
 import hashlib
 from app.prompts.default_prompts import DEFAULT_PROMPTS
+from app.services.ui_lang import ui_text
 
 router = APIRouter()
 
@@ -71,7 +72,7 @@ async def save_paperless_settings(
     else:
         # New settings - token must be provided
         if data.api_token == "***":
-            raise HTTPException(status_code=400, detail="API Token muss angegeben werden")
+            raise HTTPException(status_code=400, detail=ui_text("API Token muss angegeben werden", "API token must be provided"))
         settings = PaperlessSettings(
             id=1,
             url=data.url,

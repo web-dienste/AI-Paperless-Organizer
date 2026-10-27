@@ -329,7 +329,7 @@ export default function OcrCompare() {
                                     <span className="text-sm text-surface-300">
                                         {selectedModels.length === 0
                                             ? tr("Modelle auswählen...")
-                                            : tr("{length} Modell{v1} ausgewählt", { length: selectedModels.length, v1: selectedModels.length > 1 ? 'e' : '' })
+                                            : tr(selectedModels.length > 1 ? "{count} Modelle ausgewählt" : "{count} Modell ausgewählt", { count: selectedModels.length })
                                         }
                                     </span>
                                     {showModelPicker
@@ -424,7 +424,7 @@ export default function OcrCompare() {
                                 <Loader2 className="w-5 h-5 animate-spin" />{tr("Vergleich läuft...")}</>
                         ) : (
                             <>
-                                <Play className="w-5 h-5 fill-current" />{tr("Vergleich starten (")}{selectedModels.length}{tr(" Modell")}{selectedModels.length !== 1 ? 'e' : ''})
+                                <Play className="w-5 h-5 fill-current" />{tr(selectedModels.length !== 1 ? "Vergleich starten ({count} Modelle)" : "Vergleich starten ({count} Modell)", { count: selectedModels.length })}
                             </>
                         )}
                     </button>
@@ -514,7 +514,7 @@ export default function OcrCompare() {
                                 <span className="text-surface-500">{tr("(ID: ")}{result.document_id})</span>
                             </div>
                             <div className="text-surface-500">
-                                {result.total_pages}{tr(" Seite")}{result.total_pages !== 1 ? 'n' : ''}
+                                {tr(result.total_pages !== 1 ? "{count} Seiten" : "{count} Seite", { count: result.total_pages })}
                                 {result.compared_page > 0 && tr(" (Seite {compared_page} getestet)", { compared_page: result.compared_page })}
                             </div>
                         </div>
@@ -605,7 +605,7 @@ export default function OcrCompare() {
                                                     {r.chars.toLocaleString(locale)}{tr(" Zeichen")}</span>
                                             </div>
                                             <div className="text-surface-500">
-                                                {r.pages_processed}{tr(" Seite")}{r.pages_processed !== 1 ? 'n' : ''}
+                                                {tr(r.pages_processed !== 1 ? "{count} Seiten" : "{count} Seite", { count: r.pages_processed })}
                                             </div>
                                             {!r.error && r.chars > 0 && (
                                                 <div className="text-surface-500">

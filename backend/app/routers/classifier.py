@@ -12,6 +12,7 @@ from dataclasses import asdict
 from app.database import get_db
 from app.services.paperless_client import PaperlessClient, get_paperless_client
 from app.services.classifier.service import DocumentClassifierService
+from app.services.ui_lang import ui_text
 from app.models.classifier import (
     ClassifierConfig, StoragePathProfile, CustomFieldMapping, ClassificationHistory,
 )
@@ -613,7 +614,7 @@ async def test_ollama_connection(
                     "model_available": False,
                     "model": model,
                     "installed_models": model_names,
-                    "message": f"Modell '{model}' nicht installiert. Verfuegbar: {', '.join(model_names[:10])}",
+                    "message": ui_text(f"Modell '{model}' nicht installiert. Verfuegbar: {', '.join(model_names[:10])}", f"Model '{model}' not installed. Available: {', '.join(model_names[:10])}"),
                     "install_hint": f"ollama pull {model}",
                 }
 
@@ -629,7 +630,7 @@ async def test_ollama_connection(
                 "connected": True,
                 "model_available": True,
                 "model": model,
-                "message": f"Ollama verbunden, Modell '{model}' funktioniert.",
+                "message": ui_text(f"Ollama verbunden, Modell '{model}' funktioniert.", f"Ollama connected, model '{model}' works."),
             }
 
     except httpx.ConnectError:
@@ -637,14 +638,14 @@ async def test_ollama_connection(
             "connected": False,
             "model_available": False,
             "model": model,
-            "message": f"Keine Verbindung zu Ollama unter {ollama_host}. Laeuft Ollama?",
+            "message": ui_text(f"Keine Verbindung zu Ollama unter {ollama_host}. Laeuft Ollama?", f"No connection to Ollama at {ollama_host}. Is Ollama running?"),
         }
     except Exception as e:
         return {
             "connected": False,
             "model_available": False,
             "model": model,
-            "message": f"Fehler: {str(e)}",
+            "message": ui_text(f"Fehler: {str(e)}", f"Error: {str(e)}"),
         }
 
 
@@ -660,7 +661,7 @@ async def test_mistral_connection(
     model = (prov.classifier_model or prov.model) if prov else "mistral-small-latest"
 
     if not api_key:
-        return {"connected": False, "message": "Kein Mistral API-Key konfiguriert. Einstellungen → LLM."}
+        return {"connected": False, "message": ui_text("Kein Mistral API-Key konfiguriert. Einstellungen → LLM.", "No Mistral API key configured. Settings → LLM.")}
 
     try:
         from openai import AsyncOpenAI
@@ -673,10 +674,10 @@ async def test_mistral_connection(
         return {
             "connected": True,
             "model": model,
-            "message": f"Mistral verbunden, Modell '{model}' funktioniert.",
+            "message": ui_text(f"Mistral verbunden, Modell '{model}' funktioniert.", f"Mistral connected, model '{model}' works."),
         }
     except Exception as e:
-        return {"connected": False, "model": model, "message": f"Fehler: {str(e)}"}
+        return {"connected": False, "model": model, "message": ui_text(f"Fehler: {str(e)}", f"Error: {str(e)}")}
 
 
 @router.post("/openrouter/test")
@@ -691,7 +692,7 @@ async def test_openrouter_connection(
     model = (prov.classifier_model or prov.model) if prov else "mistralai/mistral-small-2603"
 
     if not api_key:
-        return {"connected": False, "message": "Kein OpenRouter API-Key konfiguriert. Einstellungen → LLM."}
+        return {"connected": False, "message": ui_text("Kein OpenRouter API-Key konfiguriert. Einstellungen → LLM.", "No OpenRouter API key configured. Settings → LLM.")}
 
     try:
         from openai import AsyncOpenAI
@@ -708,10 +709,10 @@ async def test_openrouter_connection(
         return {
             "connected": True,
             "model": model,
-            "message": f"OpenRouter verbunden, Modell '{model}' funktioniert.",
+            "message": ui_text(f"OpenRouter verbunden, Modell '{model}' funktioniert.", f"OpenRouter connected, model '{model}' works."),
         }
     except Exception as e:
-        return {"connected": False, "model": model, "message": f"Fehler: {str(e)}"}
+        return {"connected": False, "model": model, "message": ui_text(f"Fehler: {str(e)}", f"Error: {str(e)}")}
 
 
 # --- Storage Path Profiles ---
@@ -1707,7 +1708,7 @@ async def bulk_approve_tag_idea(
     affected = 0
     tag_obj = await client.get_or_create_tag(tag_name)
     if not tag_obj:
-        raise HTTPException(status_code=500, detail=f"Tag '{tag_name}' konnte nicht erstellt werden")
+        raise HTTPException(status_code=500, detail=ui_text(f"Tag '{tag_name}' konnte nicht erstellt werden", f"Could not create tag '{tag_name}'"))
 
     for entry in entries:
         ideas = entry.tag_ideas
@@ -1794,11 +1795,11 @@ async def assign_existing_tag(
     tag_name = req.tag_name
     tag = await client.get_or_create_tag(tag_name)
     if not tag:
-        raise HTTPException(status_code=500, detail=f"Tag '{tag_name}' nicht gefunden")
+        raise HTTPException(status_code=500, detail=ui_text(f"Tag '{tag_name}' nicht gefunden", f"Tag '{tag_name}' not found"))
 
     doc = await client.get_document(entry.document_id)
     if not doc:
-        raise HTTPException(status_code=404, detail="Dokument nicht gefunden")
+        raise HTTPException(status_code=404, detail=ui_text("Dokument nicht gefunden", "Document not found"))
 
     existing_tags = doc.get("tags", [])
     if tag["id"] not in existing_tags:

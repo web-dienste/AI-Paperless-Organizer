@@ -6,6 +6,7 @@ from pydantic import BaseModel
 from typing import Optional, List
 from app.database import get_db
 from app.models.settings_model import IgnoredItem
+from app.services.ui_lang import ui_text
 
 router = APIRouter(tags=["Ignored Items"])
 
@@ -80,7 +81,7 @@ async def add_ignored_item(
         )
     )
     if existing.scalar_one_or_none():
-        raise HTTPException(status_code=400, detail="Item ist bereits auf der Ignorierliste")
+        raise HTTPException(status_code=400, detail=ui_text("Item ist bereits auf der Ignorierliste", "Item is already on the ignore list"))
     
     item = IgnoredItem(
         item_id=data.item_id,
@@ -116,12 +117,12 @@ async def remove_ignored_item(
     item = result.scalar_one_or_none()
     
     if not item:
-        raise HTTPException(status_code=404, detail="Item nicht gefunden")
+        raise HTTPException(status_code=404, detail=ui_text("Item nicht gefunden", "Item not found"))
     
     await db.delete(item)
     await db.commit()
     
-    return {"status": "ok", "message": "Item von Ignorierliste entfernt"}
+    return {"status": "ok", "message": ui_text("Item von Ignorierliste entfernt", "Item removed from ignore list")}
 
 
 @router.get("/check/{entity_type}/{analysis_type}/{paperless_item_id}")

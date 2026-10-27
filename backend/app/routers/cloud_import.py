@@ -16,6 +16,7 @@ from app.services.cloud_import_service import (
     cloud_sync_loop,
     _cloud_sync_state,
 )
+from app.services.ui_lang import ui_text
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -78,7 +79,7 @@ async def update_source(source_id: int, body: CloudSourceUpdate, db: AsyncSessio
     result = await db.execute(select(CloudSource).where(CloudSource.id == source_id))
     source = result.scalar_one_or_none()
     if not source:
-        raise HTTPException(status_code=404, detail="Quelle nicht gefunden")
+        raise HTTPException(status_code=404, detail=ui_text("Quelle nicht gefunden", "Source not found"))
 
     for key, val in body.model_dump().items():
         setattr(source, key, val)
@@ -92,7 +93,7 @@ async def delete_source(source_id: int, db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(CloudSource).where(CloudSource.id == source_id))
     source = result.scalar_one_or_none()
     if not source:
-        raise HTTPException(status_code=404, detail="Quelle nicht gefunden")
+        raise HTTPException(status_code=404, detail=ui_text("Quelle nicht gefunden", "Source not found"))
     await db.delete(source)
     await db.commit()
     return {"ok": True}
@@ -105,7 +106,7 @@ async def test_source(source_id: int, db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(CloudSource).where(CloudSource.id == source_id))
     source = result.scalar_one_or_none()
     if not source:
-        raise HTTPException(status_code=404, detail="Quelle nicht gefunden")
+        raise HTTPException(status_code=404, detail=ui_text("Quelle nicht gefunden", "Source not found"))
     return await get_cloud_import_service().test_connection(source)
 
 
@@ -119,12 +120,12 @@ async def sync_source_now(source_id: int, db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(CloudSource).where(CloudSource.id == source_id))
     source = result.scalar_one_or_none()
     if not source:
-        raise HTTPException(status_code=404, detail="Quelle nicht gefunden")
+        raise HTTPException(status_code=404, detail=ui_text("Quelle nicht gefunden", "Source not found"))
 
     pl_q = await db.execute(select(PaperlessSettings).where(PaperlessSettings.id == 1))
     pl_settings = pl_q.scalar_one_or_none()
     if not pl_settings or not pl_settings.is_configured:
-        raise HTTPException(status_code=400, detail="Paperless nicht konfiguriert")
+        raise HTTPException(status_code=400, detail=ui_text("Paperless nicht konfiguriert", "Paperless not configured"))
 
     pl_client = PaperlessClient(base_url=pl_settings.url, api_token=pl_settings.api_token)
 
@@ -147,7 +148,7 @@ async def browse_source_folders(source_id: int, path: str = "/", db: AsyncSessio
     result = await db.execute(select(CloudSource).where(CloudSource.id == source_id))
     source = result.scalar_one_or_none()
     if not source:
-        raise HTTPException(status_code=404, detail="Quelle nicht gefunden")
+        raise HTTPException(status_code=404, detail=ui_text("Quelle nicht gefunden", "Source not found"))
     try:
         svc = get_cloud_import_service()
         folders = await svc.list_folders(source, path)
@@ -163,7 +164,7 @@ async def list_source_files(source_id: int, db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(CloudSource).where(CloudSource.id == source_id))
     source = result.scalar_one_or_none()
     if not source:
-        raise HTTPException(status_code=404, detail="Quelle nicht gefunden")
+        raise HTTPException(status_code=404, detail=ui_text("Quelle nicht gefunden", "Source not found"))
     try:
         svc = get_cloud_import_service()
         if source.source_type == "webdav":
@@ -376,7 +377,7 @@ async def _tcp_proxy_handler(reader, writer):
 async def start_rclone_authorize(provider: str = "gdrive"):
     """Start rclone OAuth flow with TCP proxy for Docker."""
     if provider not in _RCLONE_PROVIDERS:
-        raise HTTPException(400, f"Unbekannter Provider: {provider}")
+        raise HTTPException(400, ui_text(f"Unbekannter Provider: {provider}", f"Unknown provider: {provider}"))
 
     # Kill any previous rclone authorize + proxy
     await _cleanup_rclone_auth()
@@ -443,7 +444,7 @@ async def start_rclone_authorize(provider: str = "gdrive"):
                 "error": _rclone_auth_state["error"],
             }
 
-    return {"status": "waiting", "auth_url": None, "message": "Auth-URL wird geladen…"}
+    return {"status": "waiting", "auth_url": None, "message": ui_text("Auth-URL wird geladen…", "Loading auth URL…")}
 
 
 async def _read_rclone_auth(proc):
@@ -503,10 +504,10 @@ async def _read_rclone_auth(proc):
         logger.info("rclone auth: Token erfasst")
     elif proc.returncode == 0:
         _rclone_auth_state["status"] = "error"
-        _rclone_auth_state["error"] = "Token konnte nicht gelesen werden. Bitte erneut versuchen."
+        _rclone_auth_state["error"] = ui_text("Token konnte nicht gelesen werden. Bitte erneut versuchen.", "Could not read token. Please try again.")
     else:
         _rclone_auth_state["status"] = "error"
-        _rclone_auth_state["error"] = f"rclone Fehler (exit {proc.returncode})"
+        _rclone_auth_state["error"] = ui_text(f"rclone Fehler (exit {proc.returncode})", f"rclone error (exit {proc.returncode})")
 
 
 @router.get("/rclone/authorize/status")
@@ -530,7 +531,7 @@ async def create_source_from_rclone_auth(
 ):
     """Create a CloudSource from a successful rclone authorization."""
     if _rclone_auth_state["status"] != "success" or not _rclone_auth_state["token"]:
-        raise HTTPException(400, "Kein gültiger Token vorhanden. Bitte zuerst autorisieren.")
+        raise HTTPException(400, ui_text("Kein gültiger Token vorhanden. Bitte zuerst autorisieren.", "No valid token available. Please authorize first."))
 
     provider = _rclone_auth_state["provider"] or "gdrive"
     rclone_type = _RCLONE_PROVIDERS.get(provider, {}).get("rclone_type", "drive")

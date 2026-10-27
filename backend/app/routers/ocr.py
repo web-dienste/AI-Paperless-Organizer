@@ -20,6 +20,7 @@ from app.services.paperless_client import PaperlessClient, get_paperless_client
 from app.services.ocr_service import OcrService, batch_state, watchdog_state, single_ocr_running, ocr_page_progress, load_review_queue, save_review_queue, load_ocr_ignore_list, save_ocr_ignore_list, load_ocr_error_list, save_ocr_error_list, load_ocr_error_counts, save_ocr_error_counts, DEFAULT_OLLAMA_URL, DEFAULT_OCR_MODEL
 import app.services.ocr_service as ocr_service_module
 from app.services.llm_provider import LLMProviderService, get_llm_service
+from app.services.ui_lang import ui_text
 
 logger = logging.getLogger(__name__)
 
@@ -197,19 +198,19 @@ async def set_watchdog_settings(
 async def pause_batch_ocr():
     """Pause the running batch OCR job."""
     if not batch_state["running"]:
-        return {"success": False, "message": "Kein Batch-Job aktiv"}
+        return {"success": False, "message": ui_text("Kein Batch-Job aktiv", "No batch job running")}
     
     batch_state["paused"] = True
-    return {"success": True, "message": "Batch-Job pausiert", "paused": True}
+    return {"success": True, "message": ui_text("Batch-Job pausiert", "Batch job paused"), "paused": True}
 
 @router.post("/batch/resume")
 async def resume_batch_ocr():
     """Resume the paused batch OCR job."""
     if not batch_state["running"]:
-        return {"success": False, "message": "Kein Batch-Job aktiv"}
+        return {"success": False, "message": ui_text("Kein Batch-Job aktiv", "No batch job running")}
     
     batch_state["paused"] = False
-    return {"success": True, "message": "Batch-Job fortgesetzt", "paused": False}
+    return {"success": True, "message": ui_text("Batch-Job fortgesetzt", "Batch job resumed"), "paused": False}
 
 # ... (Watchdog auto-start is handled in main.py lifespan)
 
@@ -228,7 +229,7 @@ async def ensure_ocr_tags(
             "ocrfinish": {"id": ocrfinish_tag.get("id"), "name": "ocrfinish"}
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Tag-Fehler: {str(e)}")
+        raise HTTPException(status_code=500, detail=ui_text(f"Tag-Fehler: {str(e)}", f"Tag error: {str(e)}"))
 
 
 @router.post("/test-connection")
@@ -275,7 +276,7 @@ async def get_ocr_status(
         }
     except Exception as e:
         logger.error(f"Error getting OCR status: {e}")
-        raise HTTPException(status_code=500, detail=f"Fehler beim Abrufen des OCR-Status: {str(e)}")
+        raise HTTPException(status_code=500, detail=ui_text(f"Fehler beim Abrufen des OCR-Status: {str(e)}", f"Error loading OCR status: {str(e)}"))
 
 
 # --- Single Document OCR ---
@@ -294,11 +295,11 @@ async def ocr_single_document(
         from app.services.mistral_ocr_service import mistral_ocr_document
         api_key = await _get_mistral_api_key(db)
         if not api_key:
-            raise HTTPException(status_code=400, detail="Kein Mistral OCR API-Key konfiguriert. Bitte unter Einstellungen → LLM → Mistral OCR hinterlegen.")
+            raise HTTPException(status_code=400, detail=ui_text("Kein Mistral OCR API-Key konfiguriert. Bitte unter Einstellungen → LLM → Mistral OCR hinterlegen.", "No Mistral OCR API key configured. Please add one under Settings → LLM → Mistral OCR."))
         try:
             pdf_bytes = await client.download_document_file(document_id)
             if not pdf_bytes or pdf_bytes[:4] != b'%PDF':
-                raise HTTPException(status_code=400, detail="Dokument ist kein PDF")
+                raise HTTPException(status_code=400, detail=ui_text("Dokument ist kein PDF", "Document is not a PDF"))
             mistral_result = await mistral_ocr_document(pdf_bytes, api_key)
             doc = await client.get_document(document_id)
             return {
@@ -317,7 +318,7 @@ async def ocr_single_document(
             raise
         except Exception as e:
             logger.error(f"Mistral OCR error for doc {document_id}: {e}")
-            raise HTTPException(status_code=500, detail=f"Mistral OCR Fehler: {str(e)}")
+            raise HTTPException(status_code=500, detail=ui_text(f"Mistral OCR Fehler: {str(e)}", f"Mistral OCR error: {str(e)}"))
 
     # Default: Ollama OCR
     try:
@@ -330,10 +331,10 @@ async def ocr_single_document(
         logger.error(f"OCR ValueError for doc {document_id}: {error_msg}")
         if "nicht gefunden" in error_msg and f"Dokument {document_id}" in error_msg:
             raise HTTPException(status_code=404, detail=error_msg)
-        raise HTTPException(status_code=422, detail=f"OCR Verarbeitungsfehler: {error_msg}")
+        raise HTTPException(status_code=422, detail=ui_text(f"OCR Verarbeitungsfehler: {error_msg}", f"OCR processing error: {error_msg}"))
     except Exception as e:
         logger.error(f"OCR single document error: {traceback.format_exc()}")
-        raise HTTPException(status_code=500, detail=f"OCR Fehler: {str(e)}")
+        raise HTTPException(status_code=500, detail=ui_text(f"OCR Fehler: {str(e)}", f"OCR error: {str(e)}"))
     finally:
         ocr_service_module.single_ocr_running = False
         ocr_service_module.ocr_page_progress.pop(document_id, None)
@@ -399,7 +400,7 @@ async def start_batch_ocr(
 ):
     """Start batch OCR processing in the background."""
     if batch_state["running"]:
-        raise HTTPException(status_code=409, detail="Ein Batch-OCR-Job läuft bereits")
+        raise HTTPException(status_code=409, detail=ui_text("Ein Batch-OCR-Job läuft bereits", "A batch OCR job is already running"))
     
     service = get_ocr_service()
     
@@ -457,10 +458,10 @@ async def get_batch_status():
 async def stop_batch_ocr():
     """Stop the running batch OCR job."""
     if not batch_state["running"]:
-        return {"stopped": False, "message": "Kein Batch-Job aktiv"}
+        return {"stopped": False, "message": ui_text("Kein Batch-Job aktiv", "No batch job running")}
     
     batch_state["should_stop"] = True
-    return {"stopped": True, "message": "Batch-Job wird gestoppt..."}
+    return {"stopped": True, "message": ui_text("Batch-Job wird gestoppt...", "Stopping batch job...")}
 
 
 # --- Tag Management ---
@@ -478,7 +479,7 @@ async def ensure_ocr_tags(
             "ocrfinish": {"id": ocrfinish_tag.get("id"), "name": "ocrfinish"}
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Tag-Fehler: {str(e)}")
+        raise HTTPException(status_code=500, detail=ui_text(f"Tag-Fehler: {str(e)}", f"Tag error: {str(e)}"))
 
 
 # --- Review Queue ---
@@ -499,7 +500,7 @@ async def apply_review_item(
     queue = load_review_queue()
     item = next((q for q in queue if q["document_id"] == document_id), None)
     if not item:
-        raise HTTPException(status_code=404, detail="Dokument nicht in Review Queue")
+        raise HTTPException(status_code=404, detail=ui_text("Dokument nicht in Review Queue", "Document not in review queue"))
     
     try:
         service = get_ocr_service()
@@ -518,7 +519,7 @@ async def dismiss_review_item(document_id: int):
     queue = load_review_queue()
     new_queue = [q for q in queue if q["document_id"] != document_id]
     if len(new_queue) == len(queue):
-        raise HTTPException(status_code=404, detail="Dokument nicht in Review Queue")
+        raise HTTPException(status_code=404, detail=ui_text("Dokument nicht in Review Queue", "Document not in review queue"))
     save_review_queue(new_queue)
     return {"dismissed": True, "document_id": document_id}
 
@@ -538,7 +539,7 @@ async def reset_all_review_items(
         ocrpruefen_tag = await client.get_or_create_tag(TAG_OCR_REVIEW)
         ocrpruefen_id = ocrpruefen_tag.get("id")
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Tag-Lookup fehlgeschlagen: {e}")
+        raise HTTPException(status_code=500, detail=ui_text(f"Tag-Lookup fehlgeschlagen: {e}", f"Tag lookup failed: {e}"))
 
     errors = []
     reset_count = 0
@@ -575,7 +576,7 @@ async def keep_all_originals(
         ocrpruefen_tag = await client.get_or_create_tag(TAG_OCR_REVIEW)
         ocrpruefen_id = ocrpruefen_tag.get("id")
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Tag-Lookup fehlgeschlagen: {e}")
+        raise HTTPException(status_code=500, detail=ui_text(f"Tag-Lookup fehlgeschlagen: {e}", f"Tag lookup failed: {e}"))
 
     errors = []
     kept_count = 0
@@ -670,7 +671,7 @@ async def remove_from_ocr_ignore_list(document_id: int):
     ignore_list = load_ocr_ignore_list()
     new_list = [entry for entry in ignore_list if entry["document_id"] != document_id]
     if len(new_list) == len(ignore_list):
-        raise HTTPException(status_code=404, detail="Dokument nicht in der Ignore-Liste")
+        raise HTTPException(status_code=404, detail=ui_text("Dokument nicht in der Ignore-Liste", "Document not on the ignore list"))
     save_ocr_ignore_list(new_list)
     return {"removed": True, "document_id": document_id}
 
@@ -755,23 +756,23 @@ async def mistral_ocr_single(
     # Get Mistral API key from LLM providers
     api_key = await _get_mistral_api_key(db)
     if not api_key:
-        raise HTTPException(status_code=400, detail="Kein Mistral API-Key konfiguriert. Bitte unter Einstellungen → LLM → Mistral hinterlegen.")
+        raise HTTPException(status_code=400, detail=ui_text("Kein Mistral API-Key konfiguriert. Bitte unter Einstellungen → LLM → Mistral hinterlegen.", "No Mistral API key configured. Please add one under Settings → LLM → Mistral."))
 
     # Download the original PDF from Paperless
     try:
         pdf_bytes = await client.download_document_file(document_id)
     except Exception as e:
-        raise HTTPException(status_code=404, detail=f"Dokument konnte nicht geladen werden: {e}")
+        raise HTTPException(status_code=404, detail=ui_text(f"Dokument konnte nicht geladen werden: {e}", f"Could not load document: {e}"))
 
     if not pdf_bytes or pdf_bytes[:4] != b'%PDF':
-        raise HTTPException(status_code=400, detail="Dokument ist kein PDF")
+        raise HTTPException(status_code=400, detail=ui_text("Dokument ist kein PDF", "Document is not a PDF"))
 
     # Run Mistral OCR
     try:
         result = await mistral_ocr_document(pdf_bytes, api_key)
     except Exception as e:
         logger.error(f"Mistral OCR failed for doc {document_id}: {e}")
-        raise HTTPException(status_code=500, detail=f"Mistral OCR Fehler: {e}")
+        raise HTTPException(status_code=500, detail=ui_text(f"Mistral OCR Fehler: {e}", f"Mistral OCR error: {e}"))
 
     return {
         "document_id": document_id,
@@ -794,11 +795,11 @@ async def apply_mistral_ocr(
 
     api_key = await _get_mistral_api_key(db)
     if not api_key:
-        raise HTTPException(status_code=400, detail="Kein Mistral API-Key konfiguriert")
+        raise HTTPException(status_code=400, detail=ui_text("Kein Mistral API-Key konfiguriert", "No Mistral API key configured"))
 
     pdf_bytes = await client.download_document_file(document_id)
     if not pdf_bytes or pdf_bytes[:4] != b'%PDF':
-        raise HTTPException(status_code=400, detail="Dokument ist kein PDF")
+        raise HTTPException(status_code=400, detail=ui_text("Dokument ist kein PDF", "Document is not a PDF"))
 
     result = await mistral_ocr_document(pdf_bytes, api_key)
 
@@ -808,7 +809,7 @@ async def apply_mistral_ocr(
         logger.info(f"Mistral OCR applied to doc {document_id}: {result['page_count']} pages, {len(result['full_text'])} chars")
         return {"applied": True, "page_count": result["page_count"], "chars": len(result["full_text"])}
 
-    return {"applied": False, "reason": "Kein Text erkannt"}
+    return {"applied": False, "reason": ui_text("Kein Text erkannt", "No text recognized")}
 
 
 @router.post("/mistral-ocr/test")
@@ -818,7 +819,7 @@ async def test_mistral_ocr(db: AsyncSession = Depends(get_db)):
 
     api_key = await _get_mistral_api_key(db)
     if not api_key:
-        return {"connected": False, "error": "Kein Mistral API-Key konfiguriert"}
+        return {"connected": False, "error": ui_text("Kein Mistral API-Key konfiguriert", "No Mistral API key configured")}
 
     return await test_mistral_ocr_connection(api_key)
 
@@ -1098,7 +1099,7 @@ async def _run_compare_job(paperless_client, document_id: int, models: list, tar
             print(f"[Compare] Checking Ollama health before model: {model_name}")
             ollama_ok = await _wait_for_ollama_ready(max_wait=60)
             if not ollama_ok:
-                error_msg = f"Ollama nicht erreichbar - überspringe {model_name}"
+                error_msg = ui_text(f"Ollama nicht erreichbar - überspringe {model_name}", f"Ollama not reachable - skipping {model_name}")
                 print(f"[Compare] {model_name} SKIPPED: Ollama not reachable")
                 compare_state["results"].append({
                     "model": model_name,
@@ -1220,13 +1221,13 @@ async def start_compare(
 ):
     """Start OCR model comparison as background task."""
     if compare_state["running"]:
-        raise HTTPException(status_code=409, detail="Ein Vergleich läuft bereits")
+        raise HTTPException(status_code=409, detail=ui_text("Ein Vergleich läuft bereits", "A comparison is already running"))
     
     models = request.models
     if not models or len(models) == 0:
-        raise HTTPException(status_code=400, detail="Mindestens ein Modell auswählen")
+        raise HTTPException(status_code=400, detail=ui_text("Mindestens ein Modell auswählen", "Select at least one model"))
     if len(models) > 5:
-        raise HTTPException(status_code=400, detail="Maximal 5 Modelle gleichzeitig")
+        raise HTTPException(status_code=400, detail=ui_text("Maximal 5 Modelle gleichzeitig", "Maximum of 5 models at once"))
     
     reset_compare_state()
     compare_state["running"] = True
@@ -1290,14 +1291,14 @@ async def evaluate_ocr_results(
     if not provider:
         raise HTTPException(
             status_code=400,
-            detail="Kein Cloud-LLM konfiguriert. Bitte unter Einstellungen → LLM Modelle einen Provider (z.B. OpenAI) mit API-Key hinterlegen."
+            detail=ui_text("Kein Cloud-LLM konfiguriert. Bitte unter Einstellungen → LLM Modelle einen Provider (z.B. OpenAI) mit API-Key hinterlegen.", "No cloud LLM configured. Please add a provider (e.g. OpenAI) with an API key under Settings → LLM Models.")
         )
 
     llm_service = LLMProviderService(provider)
     
     results = request.results
     if not results or len(results) < 1:
-        raise HTTPException(status_code=400, detail="Keine OCR-Ergebnisse zum Auswerten")
+        raise HTTPException(status_code=400, detail=ui_text("Keine OCR-Ergebnisse zum Auswerten", "No OCR results to evaluate"))
     
     eval_model = request.evaluation_model or None
     
@@ -1429,7 +1430,7 @@ WICHTIG:
                     "success": True,
                     "raw_response": raw_response,
                     "evaluation": None,
-                    "parse_error": "LLM-Antwort konnte nicht als JSON geparst werden"
+                    "parse_error": ui_text("LLM-Antwort konnte nicht als JSON geparst werden", "Could not parse LLM response as JSON")
                 }
         
         print(f"[Evaluate] Successfully evaluated with {llm_service.provider.name} / {used_model}")
@@ -1443,5 +1444,5 @@ WICHTIG:
         
     except Exception as e:
         logger.error(f"Evaluation failed: {e}")
-        raise HTTPException(status_code=500, detail=f"LLM-Auswertung fehlgeschlagen: {str(e)}")
+        raise HTTPException(status_code=500, detail=ui_text(f"LLM-Auswertung fehlgeschlagen: {str(e)}", f"LLM evaluation failed: {str(e)}"))
 

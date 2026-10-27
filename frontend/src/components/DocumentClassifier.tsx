@@ -976,7 +976,7 @@ export default function DocumentClassifier() {
                     <div>
                       <label className="text-xs text-surface-500 flex items-center gap-1 mb-2">
                         <Tags className="w-3 h-3" />{tr("Tags")}<span className="text-surface-600">
-                          ({editTags.length}{tr(" KI-Vorschlag")}{editTags.length !== 1 ? 'e' : ''}
+                          ({tr(editTags.length !== 1 ? "{count} KI-Vorschläge" : "{count} KI-Vorschlag", { count: editTags.length })}
                           {editExistingTags.length > 0 && tr(" + {length} vorhanden", { length: editExistingTags.length })})
                         </span>
                       </label>
@@ -2760,7 +2760,7 @@ export default function DocumentClassifier() {
               <div>
                 <h2 className="text-lg font-semibold text-surface-100">{tr("Prüf-Warteschlange")}</h2>
                 <p className="text-xs text-surface-500 mt-0.5">
-                  {reviewQueue.length}{tr(" Dokument")}{reviewQueue.length !== 1 ? 'e' : ''}{tr(" zur manuellen Prüfung")}</p>
+                  {tr(reviewQueue.length !== 1 ? "{count} Dokumente zur manuellen Prüfung" : "{count} Dokument zur manuellen Prüfung", { count: reviewQueue.length })}</p>
               </div>
               <div className="flex items-center gap-2">
                 <button onClick={loadReviewQueue} className="btn btn-sm bg-surface-700 hover:bg-surface-600 text-surface-300 text-xs">

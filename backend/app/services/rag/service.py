@@ -11,6 +11,7 @@ from app.services.rag.search_engine import SearchEngine, SearchResult
 from app.services.rag.indexer import Indexer
 from app.services.rag.rerank_service import RerankService
 from app.services import ollama_lock
+from app.services.ui_lang import ui_text
 
 logger = logging.getLogger(__name__)
 
@@ -134,7 +135,7 @@ class RAGService:
         search_question = question
 
         if getattr(config, 'query_rewrite_enabled', True):
-            yield json.dumps({"type": "status", "message": "Analysiere Anfrage..."})
+            yield json.dumps({"type": "status", "message": ui_text("Analysiere Anfrage...", "Analyzing query...")})
             rewritten = await self._rewrite_query_llm(question, chat_history, config)
             if rewritten and rewritten.strip().lower() != question.strip().lower():
                 logger.info(f"Query rewritten: '{question}' → '{rewritten}'")
@@ -183,7 +184,7 @@ class RAGService:
                     logger.info(f"Query expanded: +'{expansion}'")
                     break
 
-        yield json.dumps({"type": "status", "message": "Durchsuche Dokumente..."})
+        yield json.dumps({"type": "status", "message": ui_text("Durchsuche Dokumente...", "Searching documents...")})
 
         # Retrieve a larger candidate pool, then cross-encoder rerank + cutoff
         fetch_limit = max(config.max_sources * 4, 30)
@@ -229,7 +230,7 @@ class RAGService:
                     used_len += len(chunk)
                 doc_all_chunks[r.document_id] = " [...] ".join(selected)
 
-        yield json.dumps({"type": "status", "message": "Sortiere Ergebnisse..."})
+        yield json.dumps({"type": "status", "message": ui_text("Sortiere Ergebnisse...", "Sorting results...")})
 
         # Cross-encoder reranking: re-read (query, full-document-text) pairs.
         if len(raw_results) > 1:
@@ -415,9 +416,9 @@ class RAGService:
 
         # Signal that LLM is generating (show lock state if busy)
         if ollama_lock.is_locked() and ollama_lock.current_holder() != "rag_chat":
-            yield json.dumps({"type": "status", "message": f"Warte auf Ollama (läuft: {ollama_lock.current_holder()})..."})
+            yield json.dumps({"type": "status", "message": ui_text(f"Warte auf Ollama (läuft: {ollama_lock.current_holder()})...", f"Waiting for Ollama (busy: {ollama_lock.current_holder()})...")})
         else:
-            yield json.dumps({"type": "status", "message": "Generiere Antwort..."})
+            yield json.dumps({"type": "status", "message": ui_text("Generiere Antwort...", "Generating answer...")})
 
         # Stream LLM response
         import re as _re

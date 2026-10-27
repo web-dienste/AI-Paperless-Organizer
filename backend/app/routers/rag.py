@@ -5,6 +5,7 @@ from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 from starlette.requests import Request
+from app.services.ui_lang import ui_text
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -84,7 +85,7 @@ class ConfigUpdate(BaseModel):
 @router.post("/chat")
 async def chat(body: ChatRequest, request: Request):
     if not await _check_api_auth(request):
-        raise HTTPException(status_code=401, detail="Ungültiger API-Key")
+        raise HTTPException(status_code=401, detail=ui_text("Ungültiger API-Key", "Invalid API key"))
     service = get_rag_service()
     filters = body.filters.model_dump(exclude_none=True) if body.filters else None
 
@@ -109,7 +110,7 @@ async def chat(body: ChatRequest, request: Request):
 @router.post("/search")
 async def search(body: SearchRequest, request: Request):
     if not await _check_api_auth(request):
-        raise HTTPException(status_code=401, detail="Ungültiger API-Key")
+        raise HTTPException(status_code=401, detail=ui_text("Ungültiger API-Key", "Invalid API key"))
     service = get_rag_service()
     filters = body.filters.model_dump(exclude_none=True) if body.filters else None
 
@@ -131,7 +132,7 @@ async def search(body: SearchRequest, request: Request):
 async def start_indexing(request: IndexRequest):
     service = get_rag_service()
     if service.indexer.is_indexing:
-        raise HTTPException(status_code=409, detail="Indexierung läuft bereits")
+        raise HTTPException(status_code=409, detail=ui_text("Indexierung läuft bereits", "Indexing already running"))
 
     await service.indexer.start_indexing(force=request.force)
     return {"status": "started", "force": request.force}
@@ -156,7 +157,7 @@ async def get_session(session_id: str):
     service = get_rag_service()
     session = await service.get_session(session_id)
     if not session:
-        raise HTTPException(status_code=404, detail="Session nicht gefunden")
+        raise HTTPException(status_code=404, detail=ui_text("Session nicht gefunden", "Session not found"))
     return session
 
 
@@ -165,7 +166,7 @@ async def delete_session(session_id: str):
     service = get_rag_service()
     deleted = await service.delete_session(session_id)
     if not deleted:
-        raise HTTPException(status_code=404, detail="Session nicht gefunden")
+        raise HTTPException(status_code=404, detail=ui_text("Session nicht gefunden", "Session not found"))
     return {"deleted": True}
 
 
@@ -182,7 +183,7 @@ async def update_config(request: ConfigUpdate):
     service = get_rag_service()
     updates = request.model_dump(exclude_none=True)
     if not updates:
-        raise HTTPException(status_code=400, detail="Keine Änderungen angegeben")
+        raise HTTPException(status_code=400, detail=ui_text("Keine Änderungen angegeben", "No changes specified"))
     return await service.update_config(updates)
 
 

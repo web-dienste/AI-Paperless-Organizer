@@ -7,6 +7,7 @@ import httpx
 import socket
 import asyncio
 from urllib.parse import urlparse
+from app.services.ui_lang import ui_text
 
 router = APIRouter()
 
@@ -41,21 +42,21 @@ async def dns_lookup(request: DnsRequest):
             "success": True,
             "hostname": hostname,
             "ips": ips,
-            "message": f"DNS aufgelöst: {hostname} -> {', '.join(ips)}"
+            "message": ui_text(f"DNS aufgelöst: {hostname} -> {', '.join(ips)}", f"DNS resolved: {hostname} -> {', '.join(ips)}")
         }
     except socket.gaierror as e:
         return {
             "success": False,
             "hostname": request.hostname,
             "error": str(e),
-            "message": f"DNS-Auflösung fehlgeschlagen: {e}"
+            "message": ui_text(f"DNS-Auflösung fehlgeschlagen: {e}", f"DNS resolution failed: {e}")
         }
     except Exception as e:
         return {
             "success": False,
             "hostname": request.hostname,
             "error": str(e),
-            "message": f"Fehler: {e}"
+            "message": ui_text(f"Fehler: {e}", f"Error: {e}")
         }
 
 
@@ -94,21 +95,21 @@ async def tcp_connect(request: PingRequest):
             "host": host,
             "port": port,
             "latency_ms": round(elapsed, 2),
-            "message": f"TCP-Verbindung zu {host}:{port} erfolgreich ({elapsed:.0f}ms)"
+            "message": ui_text(f"TCP-Verbindung zu {host}:{port} erfolgreich ({elapsed:.0f}ms)", f"TCP connection to {host}:{port} successful ({elapsed:.0f}ms)")
         }
     except asyncio.TimeoutError:
         return {
             "success": False,
             "host": request.host,
             "error": "Timeout",
-            "message": f"Timeout: Keine Verbindung zu {request.host} innerhalb von 5 Sekunden"
+            "message": ui_text(f"Timeout: Keine Verbindung zu {request.host} innerhalb von 5 Sekunden", f"Timeout: No connection to {request.host} within 5 seconds")
         }
     except Exception as e:
         return {
             "success": False,
             "host": request.host,
             "error": str(e),
-            "message": f"Verbindung fehlgeschlagen: {e}"
+            "message": ui_text(f"Verbindung fehlgeschlagen: {e}", f"Connection failed: {e}")
         }
 
 
@@ -129,7 +130,7 @@ async def http_test(request: HttpTestRequest):
                 redirect_location = response.headers.get("location", "")
                 redirect_info = {
                     "redirects_to": redirect_location,
-                    "hint": "Paperless leitet um! Versuche die Ziel-URL direkt."
+                    "hint": ui_text("Paperless leitet um! Versuche die Ziel-URL direkt.", "Paperless is redirecting! Try the target URL directly.")
                 }
             
             return {
@@ -139,7 +140,7 @@ async def http_test(request: HttpTestRequest):
                 "headers": dict(response.headers),
                 "content_length": len(response.content),
                 "redirect_info": redirect_info,
-                "message": f"HTTP {response.status_code} - {len(response.content)} Bytes empfangen"
+                "message": ui_text(f"HTTP {response.status_code} - {len(response.content)} Bytes empfangen", f"HTTP {response.status_code} - {len(response.content)} bytes received")
             }
     except httpx.ConnectError as e:
         return {
@@ -147,14 +148,14 @@ async def http_test(request: HttpTestRequest):
             "url": request.url,
             "error": "ConnectError",
             "details": str(e),
-            "message": f"Verbindungsfehler: Kann {request.url} nicht erreichen"
+            "message": ui_text(f"Verbindungsfehler: Kann {request.url} nicht erreichen", f"Connection error: Cannot reach {request.url}")
         }
     except httpx.TimeoutException:
         return {
             "success": False,
             "url": request.url,
             "error": "Timeout",
-            "message": f"Timeout nach {request.timeout} Sekunden"
+            "message": ui_text(f"Timeout nach {request.timeout} Sekunden", f"Timeout after {request.timeout} seconds")
         }
     except Exception as e:
         return {
@@ -162,7 +163,7 @@ async def http_test(request: HttpTestRequest):
             "url": request.url,
             "error": type(e).__name__,
             "details": str(e),
-            "message": f"Fehler: {e}"
+            "message": ui_text(f"Fehler: {e}", f"Error: {e}")
         }
 
 
@@ -247,7 +248,7 @@ async def paperless_test(request: PaperlessTestRequest):
                 "status_code": final_status,
                 "is_paperless": is_paperless,
                 "tested_urls": results,
-                "message": f"Paperless API gefunden! Nutze: {redirect_target or working_url}"
+                "message": ui_text(f"Paperless API gefunden! Nutze: {redirect_target or working_url}", f"Paperless API found! Use: {redirect_target or working_url}")
             }
         else:
             # Check if we got redirects
@@ -266,8 +267,8 @@ async def paperless_test(request: PaperlessTestRequest):
                 "tested_urls": results,
                 "redirect_detected": redirect_info,
                 "is_paperless": False,
-                "message": f"Paperless API nicht gefunden. Redirect zu: {redirect_info}" if redirect_info else "Paperless API nicht gefunden",
-                "hint": "Versuche HTTPS oder prüfe ob ein API-Token benötigt wird"
+                "message": ui_text(f"Paperless API nicht gefunden. Redirect zu: {redirect_info}", f"Paperless API not found. Redirect to: {redirect_info}") if redirect_info else ui_text("Paperless API nicht gefunden", "Paperless API not found"),
+                "hint": ui_text("Versuche HTTPS oder prüfe ob ein API-Token benötigt wird", "Try HTTPS or check whether an API token is required")
             }
     except Exception as e:
         return {
@@ -275,7 +276,7 @@ async def paperless_test(request: PaperlessTestRequest):
             "url": request.url,
             "error": str(e),
             "tested_urls": results,
-            "message": f"Paperless nicht erreichbar: {e}"
+            "message": ui_text(f"Paperless nicht erreichbar: {e}", f"Paperless not reachable: {e}")
         }
 
 
@@ -309,7 +310,7 @@ async def get_network_info():
             "hostname": hostname,
             "local_ip": local_ip,
             "dns_servers": dns_servers,
-            "interfaces": interfaces[:20] if interfaces else ["Nicht verfügbar"]
+            "interfaces": interfaces[:20] if interfaces else [ui_text("Nicht verfügbar", "Not available")]
         }
     except Exception as e:
         return {
