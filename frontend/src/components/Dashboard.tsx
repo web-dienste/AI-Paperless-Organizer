@@ -6,7 +6,7 @@ import {
 } from 'lucide-react'
 import clsx from 'clsx'
 import * as api from '../services/api'
-import { tr } from '../i18n'
+import { tr, locale } from '../i18n'
 
 // ── Animated counter ──────────────────────────────────────────────────────────
 function AnimatedNumber({ value, duration = 900 }: { value: number; duration?: number }) {
@@ -24,7 +24,7 @@ function AnimatedNumber({ value, duration = 900 }: { value: number; duration?: n
     raf.current = requestAnimationFrame(animate)
     return () => { if (raf.current) cancelAnimationFrame(raf.current) }
   }, [value])
-  return <>{display.toLocaleString('de-DE')}</>
+  return <>{display.toLocaleString(locale)}</>
 }
 
 // ── SVG Donut Chart ───────────────────────────────────────────────────────────
@@ -134,13 +134,13 @@ export default function Dashboard() {
 
   // Donut: shows full archive breakdown
   const donutSegs: DonutSeg[] = [
-    { value: applied, color: '#10b981', glow: '#10b98177', label: 'KI-Klassifiziert' },
-    { value: analyzed, color: '#f59e0b', glow: '#f59e0b66', label: 'Analysiert (offen)' },
-    { value: ocrDoneUnclassified, color: '#0ea5e9', glow: '#0ea5e955', label: 'OCR fertig' },
-    { value: ocrReview, color: '#f97316', glow: '#f9731666', label: 'OCR Prüfen' },
-    { value: ocrErrors, color: '#ef4444', glow: '#ef444466', label: 'OCR Fehler' },
-    { value: Math.max(0, ocrPending - ocrIgnored - ocrReview - ocrErrors), color: '#334155', label: 'Noch kein OCR' },
-    { value: ocrIgnored, color: '#475569', label: 'Ignoriert' },
+    { value: applied, color: '#10b981', glow: '#10b98177', label: tr("KI-Klassifiziert") },
+    { value: analyzed, color: '#f59e0b', glow: '#f59e0b66', label: tr("Analysiert (offen)") },
+    { value: ocrDoneUnclassified, color: '#0ea5e9', glow: '#0ea5e955', label: tr("OCR fertig") },
+    { value: ocrReview, color: '#f97316', glow: '#f9731666', label: tr("OCR Prüfen") },
+    { value: ocrErrors, color: '#ef4444', glow: '#ef444466', label: tr("OCR Fehler") },
+    { value: Math.max(0, ocrPending - ocrIgnored - ocrReview - ocrErrors), color: '#334155', label: tr("Noch kein OCR") },
+    { value: ocrIgnored, color: '#475569', label: tr("Ignoriert") },
   ].filter(s => s.value > 0)
 
   const lastBatchLog = (ocrBatch?.log || []).filter((l: string) => !l.startsWith('⏳') && !l.startsWith('🔎')).slice(-2)
@@ -168,22 +168,22 @@ export default function Dashboard() {
           {/* Legend */}
           <div className="w-full space-y-1.5 mt-2">
             {[
-              { color: '#10b981', label: 'KI-Klassifiziert', value: applied, pct: totalDocs > 0 ? (applied / totalDocs * 100).toFixed(1) : '0' },
-              { color: '#f59e0b', label: 'Analysiert (offen)', value: analyzed, pct: totalDocs > 0 ? (analyzed / totalDocs * 100).toFixed(1) : '0' },
-              { color: '#0ea5e9', label: 'OCR fertig', value: ocrDoneUnclassified, pct: totalDocs > 0 ? (ocrDoneUnclassified / totalDocs * 100).toFixed(1) : '0' },
-              { color: '#f97316', label: 'OCR Prüfen', value: ocrReview, pct: totalDocs > 0 ? (ocrReview / totalDocs * 100).toFixed(1) : '0' },
-              { color: '#475569', label: 'Ignoriert / kein OCR', value: ocrPending, pct: totalDocs > 0 ? (ocrPending / totalDocs * 100).toFixed(1) : '0' },
+              { color: '#10b981', label: tr("KI-Klassifiziert"), value: applied, pct: totalDocs > 0 ? (applied / totalDocs * 100).toFixed(1) : '0' },
+              { color: '#f59e0b', label: tr("Analysiert (offen)"), value: analyzed, pct: totalDocs > 0 ? (analyzed / totalDocs * 100).toFixed(1) : '0' },
+              { color: '#0ea5e9', label: tr("OCR fertig"), value: ocrDoneUnclassified, pct: totalDocs > 0 ? (ocrDoneUnclassified / totalDocs * 100).toFixed(1) : '0' },
+              { color: '#f97316', label: tr("OCR Prüfen"), value: ocrReview, pct: totalDocs > 0 ? (ocrReview / totalDocs * 100).toFixed(1) : '0' },
+              { color: '#475569', label: tr("Ignoriert / kein OCR"), value: ocrPending, pct: totalDocs > 0 ? (ocrPending / totalDocs * 100).toFixed(1) : '0' },
             ].map(seg => (
               <div key={seg.label} className="flex items-center gap-2 text-xs">
                 <div className="w-2.5 h-2.5 rounded-sm shrink-0" style={{ background: seg.color }} />
                 <span className="text-surface-400 flex-1 truncate">{seg.label}</span>
                 <span className="font-mono text-surface-500 text-[11px]">{seg.pct}%</span>
-                <span className="font-mono text-surface-300 w-12 text-right">{seg.value.toLocaleString('de-DE')}</span>
+                <span className="font-mono text-surface-300 w-12 text-right">{seg.value.toLocaleString(locale)}</span>
               </div>
             ))}
             <div className="pt-1.5 border-t border-surface-700/40 flex justify-between text-xs">
               <span className="text-surface-500">{tr("Gesamt")}</span>
-              <span className="font-mono font-bold text-surface-200">{totalDocs.toLocaleString('de-DE')}</span>
+              <span className="font-mono font-bold text-surface-200">{totalDocs.toLocaleString(locale)}</span>
             </div>
           </div>
         </div>
@@ -192,19 +192,19 @@ export default function Dashboard() {
         <div className="lg:col-span-3 grid grid-cols-2 gap-4">
           {[
             {
-              label: 'Gesamt Dokumente', value: totalDocs, sub: `${counts.correspondents} Korr. · ${counts.tags} Tags`,
+              label: tr("Gesamt Dokumente"), value: totalDocs, sub: tr("{correspondents} Korr. · {tags} Tags", { correspondents: counts.correspondents, tags: counts.tags }),
               icon: Layers, grad: 'from-slate-500 to-slate-600', glow: '#64748b',
             },
             {
-              label: 'KI-Klassifiziert', value: applied, sub: `${classifiedPct}% des Archivs klassifiziert`,
+              label: tr("KI-Klassifiziert"), value: applied, sub: tr("{classifiedPct}% des Archivs klassifiziert", { classifiedPct: classifiedPct }),
               icon: Brain, grad: 'from-violet-500 to-purple-600', glow: '#7c3aed',
             },
             {
-              label: 'OCR abgeschlossen', value: ocrDone, sub: `${ocrPct}% · ${ocrPending} ausstehend`,
+              label: tr("OCR abgeschlossen"), value: ocrDone, sub: tr("{ocrPct}% · {ocrPending} ausstehend", { ocrPct: ocrPct, ocrPending: ocrPending }),
               icon: ScanText, grad: 'from-cyan-500 to-blue-600', glow: '#0891b2',
             },
             {
-              label: 'Bereinigt', value: totalCleaned, sub: `${timeSaved} Min. gespart`,
+              label: tr("Bereinigt"), value: totalCleaned, sub: tr("{timeSaved} Min. gespart", { timeSaved: timeSaved }),
               icon: Wrench, grad: 'from-amber-500 to-orange-600', glow: '#d97706',
             },
           ].map((c) => {
@@ -250,12 +250,12 @@ export default function Dashboard() {
 
           <div className="grid grid-cols-3 gap-2 mt-4 text-center">
             {[
-              { val: ocrDone, label: 'Fertig', color: 'text-cyan-300' },
-              { val: ocrReview, label: 'Prüfen', color: ocrReview > 0 ? 'text-orange-400' : 'text-surface-500' },
-              { val: ocrIgnored, label: 'Ignoriert', color: 'text-surface-500' },
+              { val: ocrDone, label: tr("Fertig"), color: 'text-cyan-300' },
+              { val: ocrReview, label: tr("Prüfen"), color: ocrReview > 0 ? 'text-orange-400' : 'text-surface-500' },
+              { val: ocrIgnored, label: tr("Ignoriert"), color: 'text-surface-500' },
             ].map(i => (
               <div key={i.label} className="p-2 rounded-lg bg-surface-700/30">
-                <div className={clsx('text-lg font-bold', i.color)}>{i.val.toLocaleString('de-DE')}</div>
+                <div className={clsx('text-lg font-bold', i.color)}>{i.val.toLocaleString(locale)}</div>
                 <div className="text-xs text-surface-500">{i.label}</div>
               </div>
             ))}
@@ -290,12 +290,12 @@ export default function Dashboard() {
 
           <div className="grid grid-cols-3 gap-2 mt-4 text-center">
             {[
-              { val: applied, label: 'Angewendet', color: 'text-emerald-400' },
-              { val: analyzed, label: 'Offen', color: analyzed > 0 ? 'text-amber-400' : 'text-surface-500' },
-              { val: classStats?.total_runs || 0, label: 'Analysen', color: 'text-violet-300' },
+              { val: applied, label: tr("Angewendet"), color: 'text-emerald-400' },
+              { val: analyzed, label: tr("Offen"), color: analyzed > 0 ? 'text-amber-400' : 'text-surface-500' },
+              { val: classStats?.total_runs || 0, label: tr("Analysen"), color: 'text-violet-300' },
             ].map(i => (
               <div key={i.label} className="p-2 rounded-lg bg-surface-700/30">
-                <div className={clsx('text-lg font-bold', i.color)}>{i.val.toLocaleString('de-DE')}</div>
+                <div className={clsx('text-lg font-bold', i.color)}>{i.val.toLocaleString(locale)}</div>
                 <div className="text-xs text-surface-500">{i.label}</div>
               </div>
             ))}
@@ -324,9 +324,9 @@ export default function Dashboard() {
 
           <div className="grid grid-cols-3 gap-2 mb-4 text-center">
             {[
-              { val: counts.correspondents, label: 'Korr.', cleaned: cleanupStats?.correspondents?.merged + cleanupStats?.correspondents?.deleted || 0, color: 'text-blue-400' },
-              { val: counts.tags, label: 'Tags', cleaned: cleanupStats?.tags?.merged + cleanupStats?.tags?.deleted || 0, color: 'text-purple-400' },
-              { val: counts.documentTypes, label: 'Typen', cleaned: cleanupStats?.document_types?.merged || 0, color: 'text-amber-400' },
+              { val: counts.correspondents, label: tr("Korr."), cleaned: cleanupStats?.correspondents?.merged + cleanupStats?.correspondents?.deleted || 0, color: 'text-blue-400' },
+              { val: counts.tags, label: tr("Tags"), cleaned: cleanupStats?.tags?.merged + cleanupStats?.tags?.deleted || 0, color: 'text-purple-400' },
+              { val: counts.documentTypes, label: tr("Typen"), cleaned: cleanupStats?.document_types?.merged || 0, color: 'text-amber-400' },
             ].map(i => (
               <div key={i.label} className="p-2 rounded-lg bg-surface-700/30">
                 <div className={clsx('text-xl font-bold', i.color)}>{i.val}</div>
@@ -444,14 +444,14 @@ export default function Dashboard() {
           <TrendingUp className="w-3.5 h-3.5" />{tr("Schnellzugriff")}</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {[
-            { href: '/classifier', icon: Brain, label: 'Klassifizierer', sub: `${(classStats?.total_documents_paperless || 0) - applied} offen`, color: 'border-violet-500/25 hover:border-violet-500/50', ic: 'text-violet-400', bg: 'bg-violet-500/5' },
-            { href: '/ocr', icon: ScanText, label: 'OCR Manager', sub: ocrPending > ocrIgnored ? `${ocrPending - ocrIgnored} ausstehend` : 'Alles fertig ✓', color: 'border-cyan-500/25 hover:border-cyan-500/50', ic: 'text-cyan-400', bg: 'bg-cyan-500/5' },
-            { href: '/correspondents', icon: Users, label: 'Korrespondenten', sub: `${counts.correspondents} aktiv`, color: 'border-blue-500/25 hover:border-blue-500/50', ic: 'text-blue-400', bg: 'bg-blue-500/5' },
-            { href: '/tags/wizard', icon: Tags, label: 'Tag Wizard', sub: `${counts.tags} Tags`, color: 'border-purple-500/25 hover:border-purple-500/50', ic: 'text-purple-400', bg: 'bg-purple-500/5' },
-            { href: '/ocr?tab=review', icon: Eye, label: 'OCR Prüfen', sub: ocrReview > 0 ? `${ocrReview} ausstehend` : 'Alles erledigt ✓', color: 'border-orange-500/25 hover:border-orange-500/50', ic: 'text-orange-400', bg: 'bg-orange-500/5' },
-            { href: '/ocr?tab=ignore', icon: ShieldOff, label: 'Ignore-Liste', sub: `${ocrIgnored} Einträge`, color: 'border-surface-600/40 hover:border-surface-500/60', ic: 'text-surface-400', bg: '' },
-            { href: '/document-types', icon: FileText, label: 'Dokumententypen', sub: `${counts.documentTypes} Typen`, color: 'border-amber-500/25 hover:border-amber-500/50', ic: 'text-amber-400', bg: 'bg-amber-500/5' },
-            { href: '/settings', icon: Activity, label: 'Einstellungen', sub: 'KI, Paperless & Prompts', color: 'border-surface-600/40 hover:border-surface-500/60', ic: 'text-surface-400', bg: '' },
+            { href: '/classifier', icon: Brain, label: tr("Klassifizierer"), sub: tr("{v0} offen", { v0: (classStats?.total_documents_paperless || 0) - applied }), color: 'border-violet-500/25 hover:border-violet-500/50', ic: 'text-violet-400', bg: 'bg-violet-500/5' },
+            { href: '/ocr', icon: ScanText, label: tr("OCR Manager"), sub: ocrPending > ocrIgnored ? tr("{v0} ausstehend", { v0: ocrPending - ocrIgnored }) : tr("Alles fertig ✓"), color: 'border-cyan-500/25 hover:border-cyan-500/50', ic: 'text-cyan-400', bg: 'bg-cyan-500/5' },
+            { href: '/correspondents', icon: Users, label: tr("Korrespondenten"), sub: tr("{correspondents} aktiv", { correspondents: counts.correspondents }), color: 'border-blue-500/25 hover:border-blue-500/50', ic: 'text-blue-400', bg: 'bg-blue-500/5' },
+            { href: '/tags/wizard', icon: Tags, label: tr("Tag Wizard"), sub: tr("{tags} Tags", { tags: counts.tags }), color: 'border-purple-500/25 hover:border-purple-500/50', ic: 'text-purple-400', bg: 'bg-purple-500/5' },
+            { href: '/ocr?tab=review', icon: Eye, label: tr("OCR Prüfen"), sub: ocrReview > 0 ? tr("{ocrReview} ausstehend", { ocrReview: ocrReview }) : tr("Alles erledigt ✓"), color: 'border-orange-500/25 hover:border-orange-500/50', ic: 'text-orange-400', bg: 'bg-orange-500/5' },
+            { href: '/ocr?tab=ignore', icon: ShieldOff, label: tr("Ignore-Liste"), sub: tr("{ocrIgnored} Einträge", { ocrIgnored: ocrIgnored }), color: 'border-surface-600/40 hover:border-surface-500/60', ic: 'text-surface-400', bg: '' },
+            { href: '/document-types', icon: FileText, label: tr("Dokumententypen"), sub: tr("{documentTypes} Typen", { documentTypes: counts.documentTypes }), color: 'border-amber-500/25 hover:border-amber-500/50', ic: 'text-amber-400', bg: 'bg-amber-500/5' },
+            { href: '/settings', icon: Activity, label: tr("Einstellungen"), sub: tr("KI, Paperless & Prompts"), color: 'border-surface-600/40 hover:border-surface-500/60', ic: 'text-surface-400', bg: '' },
           ].map(item => {
             const Icon = item.icon
             return (

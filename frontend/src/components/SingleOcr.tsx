@@ -13,7 +13,7 @@ import {
 import clsx from 'clsx'
 import * as api from '../services/api'
 import DocumentPreview from './DocumentPreview'
-import { tr } from '../i18n'
+import { tr, locale } from '../i18n'
 
 interface SingleOcrProps {
     initialDocId?: number | null
@@ -83,7 +83,7 @@ export default function SingleOcr({ initialDocId }: SingleOcrProps = {}) {
             const res = await api.ocrSingleDocument(id, true)
             setResult(res)
         } catch (e: any) {
-            setError(e?.message || 'Unbekannter Fehler')
+            setError(e?.message || tr("Unbekannter Fehler"))
         } finally {
             stopProgressPolling()
             setLoading(false)
@@ -105,7 +105,7 @@ export default function SingleOcr({ initialDocId }: SingleOcrProps = {}) {
             const res = await api.ocrSingleDocument(id, forceOcr)
             setResult(res)
         } catch (e: any) {
-            setError(e?.message || 'Unbekannter Fehler')
+            setError(e?.message || tr("Unbekannter Fehler"))
         } finally {
             stopProgressPolling()
             setLoading(false)
@@ -125,7 +125,7 @@ export default function SingleOcr({ initialDocId }: SingleOcrProps = {}) {
                 // Not in review queue — that's fine
             }
         } catch (e: any) {
-            setError(e?.message || 'Fehler beim Übertragen')
+            setError(e?.message || tr("Fehler beim Übertragen"))
         } finally {
             setApplying(false)
         }
@@ -315,7 +315,7 @@ export default function SingleOcr({ initialDocId }: SingleOcrProps = {}) {
                                         ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
                                         : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
                                 )}>
-                                    {ratio}{tr("% Textumfang (")}{result.old_length.toLocaleString()} → {result.new_length.toLocaleString()}{tr(" Zeichen)")}</div>
+                                    {ratio}{tr("% Textumfang (")}{result.old_length.toLocaleString(locale)} → {result.new_length.toLocaleString(locale)}{tr(" Zeichen)")}</div>
                             </div>
                         </div>
 
@@ -340,7 +340,7 @@ export default function SingleOcr({ initialDocId }: SingleOcrProps = {}) {
                                 {/* Original OCR Text */}
                                 <div>
                                     <h4 className="text-sm font-semibold text-surface-300 mb-3 flex items-center gap-2">
-                                        <span className="w-2 h-2 rounded-full bg-surface-500"></span>{tr("Original OCR")}<span className="text-xs text-surface-500 font-mono ml-auto">{result.old_length.toLocaleString()}{tr(" Zeichen")}</span>
+                                        <span className="w-2 h-2 rounded-full bg-surface-500"></span>{tr("Original OCR")}<span className="text-xs text-surface-500 font-mono ml-auto">{result.old_length.toLocaleString(locale)}{tr(" Zeichen")}</span>
                                     </h4>
                                     <div className="bg-surface-900/60 rounded-xl p-4 border border-surface-700/50 max-h-[500px] overflow-y-auto custom-scrollbar">
                                         <pre className="text-sm text-surface-300 whitespace-pre-wrap font-mono leading-relaxed">
@@ -351,7 +351,7 @@ export default function SingleOcr({ initialDocId }: SingleOcrProps = {}) {
                                 {/* New Vision OCR Text */}
                                 <div>
                                     <h4 className="text-sm font-semibold text-cyan-300 mb-3 flex items-center gap-2">
-                                        <span className="w-2 h-2 rounded-full bg-cyan-500"></span>{tr("Ollama Vision OCR")}<span className="text-xs text-surface-500 font-mono ml-auto">{result.new_length.toLocaleString()}{tr(" Zeichen")}</span>
+                                        <span className="w-2 h-2 rounded-full bg-cyan-500"></span>{tr("Ollama Vision OCR")}<span className="text-xs text-surface-500 font-mono ml-auto">{result.new_length.toLocaleString(locale)}{tr(" Zeichen")}</span>
                                     </h4>
                                     <div className="bg-surface-900/60 rounded-xl p-4 border border-cyan-500/20 max-h-[500px] overflow-y-auto custom-scrollbar">
                                         <pre className="text-sm text-cyan-100 whitespace-pre-wrap font-mono leading-relaxed">

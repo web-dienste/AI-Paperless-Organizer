@@ -13,12 +13,12 @@ interface CustomPrompt {
 }
 
 const ENTITY_DESCRIPTIONS: Record<string, string> = {
-  correspondents: 'Prompt zur Analyse von Korrespondenten-Duplikaten',
-  tags: 'Prompt zur Analyse von ähnlichen Tags',
-  document_types: 'Prompt zur Analyse von ähnlichen Dokumententypen',
-  tags_nonsense: 'Prompt zur Erkennung von sinnlosen/generischen Tags',
-  tags_are_correspondents: 'Prompt zur Erkennung von Tags die eigentlich Firmen/Personen sind',
-  tags_are_document_types: 'Prompt zur Erkennung von Tags die eigentlich Dokumententypen sind'
+  correspondents: tr("Prompt zur Analyse von Korrespondenten-Duplikaten"),
+  tags: tr("Prompt zur Analyse von ähnlichen Tags"),
+  document_types: tr("Prompt zur Analyse von ähnlichen Dokumententypen"),
+  tags_nonsense: tr("Prompt zur Erkennung von sinnlosen/generischen Tags"),
+  tags_are_correspondents: tr("Prompt zur Erkennung von Tags die eigentlich Firmen/Personen sind"),
+  tags_are_document_types: tr("Prompt zur Erkennung von Tags die eigentlich Dokumententypen sind")
 }
 
 // Group prompts by category

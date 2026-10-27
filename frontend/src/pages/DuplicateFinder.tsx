@@ -5,7 +5,7 @@ import {
 } from 'lucide-react'
 import clsx from 'clsx'
 import * as api from '../services/api'
-import { tr } from '../i18n'
+import { tr, locale } from '../i18n'
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -50,7 +50,7 @@ type TabKey = 'exact' | 'similar' | 'invoices'
 function formatDate(iso: string): string {
   if (!iso) return '–'
   try {
-    return new Date(iso).toLocaleDateString('de-DE', {
+    return new Date(iso).toLocaleDateString(locale, {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric',
@@ -62,7 +62,7 @@ function formatDate(iso: string): string {
 
 function formatAmount(amount: number | undefined): string {
   if (amount == null) return '–'
-  return amount.toLocaleString('de-DE', { style: 'currency', currency: 'EUR' })
+  return amount.toLocaleString(locale, { style: 'currency', currency: 'EUR' })
 }
 
 // ── Component ────────────────────────────────────────────────────────────────
@@ -174,7 +174,7 @@ export default function DuplicateFinder() {
     if (modeInvoices) modes.push('invoices')
 
     if (modes.length === 0) {
-      setScanError('Bitte mindestens einen Modus auswählen.')
+      setScanError(tr("Bitte mindestens einen Modus auswählen."))
       setLoading(false)
       return
     }
@@ -189,7 +189,7 @@ export default function DuplicateFinder() {
       })
       startPolling()
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Unbekannter Fehler'
+      const msg = err instanceof Error ? err.message : tr("Unbekannter Fehler")
       setScanError(msg)
       setLoading(false)
     }
@@ -464,9 +464,9 @@ export default function DuplicateFinder() {
           {/* Tabs */}
           <div className="flex gap-1 bg-surface-800/50 rounded-xl p-1 border border-surface-700/50">
             {([
-              { key: 'exact' as TabKey, label: 'Exakt', icon: Hash, color: 'text-blue-400' },
-              { key: 'similar' as TabKey, label: 'Ähnlich', icon: FileText, color: 'text-purple-400' },
-              { key: 'invoices' as TabKey, label: 'Rechnungen', icon: Calculator, color: 'text-emerald-400' },
+              { key: 'exact' as TabKey, label: tr("Exakt"), icon: Hash, color: 'text-blue-400' },
+              { key: 'similar' as TabKey, label: tr("Ähnlich"), icon: FileText, color: 'text-purple-400' },
+              { key: 'invoices' as TabKey, label: tr("Rechnungen"), icon: Calculator, color: 'text-emerald-400' },
             ]).map((tab) => (
               <button
                 key={tab.key}

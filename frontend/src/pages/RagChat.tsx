@@ -225,7 +225,7 @@ export default function RagChat() {
             if (last && last.role === 'assistant') {
               updated[updated.length - 1] = {
                 ...last,
-                content: last.content + `\n\n⚠️ Fehler: ${error}`,
+                content: last.content + tr("\n\n⚠️ Fehler: {error}", { error }),
                 isStreaming: false,
               }
             }

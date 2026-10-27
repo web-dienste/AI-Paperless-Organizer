@@ -17,7 +17,7 @@ import {
 import clsx from 'clsx'
 import * as api from '../services/api'
 import DocumentPreview from './DocumentPreview'
-import { tr } from '../i18n'
+import { tr, locale } from '../i18n'
 
 interface ReviewItem {
     document_id: number
@@ -77,7 +77,7 @@ export default function OcrReview({ onRecheckDocument, hideSubLists }: OcrReview
             const data = await api.getReviewQueue()
             setItems(data.items || [])
         } catch (e: any) {
-            setError(e?.message || 'Fehler beim Laden')
+            setError(e?.message || tr("Fehler beim Laden"))
         } finally {
             setLoading(false)
         }
@@ -107,10 +107,10 @@ export default function OcrReview({ onRecheckDocument, hideSubLists }: OcrReview
         try {
             await api.applyReviewItem(docId)
             setItems(prev => prev.filter(i => i.document_id !== docId))
-            setSuccess(`"${title}" – Text übernommen!`)
+            setSuccess(tr("\"{title}\" – Text übernommen!", { title: title }))
             setTimeout(() => setSuccess(''), 4000)
         } catch (e: any) {
-            setError(e?.message || 'Fehler beim Anwenden')
+            setError(e?.message || tr("Fehler beim Anwenden"))
         } finally {
             setActionLoading(null)
         }
@@ -125,7 +125,7 @@ export default function OcrReview({ onRecheckDocument, hideSubLists }: OcrReview
             setSuccess(`"${title}" – Verworfen.`)
             setTimeout(() => setSuccess(''), 4000)
         } catch (e: any) {
-            setError(e?.message || 'Fehler beim Verwerfen')
+            setError(e?.message || tr("Fehler beim Verwerfen"))
         } finally {
             setActionLoading(null)
         }
@@ -138,10 +138,10 @@ export default function OcrReview({ onRecheckDocument, hideSubLists }: OcrReview
             await api.ignoreReviewItem(docId)
             setItems(prev => prev.filter(i => i.document_id !== docId))
             setIgnoreList(prev => [...prev, { document_id: docId, title, reason: 'Original besser als OCR', timestamp: new Date().toISOString() }])
-            setSuccess(`"${title}" – Auf Ignore-Liste gesetzt. Wird bei zukünftigem OCR übersprungen.`)
+            setSuccess(tr("\"{title}\" – Auf Ignore-Liste gesetzt. Wird bei zukünftigem OCR übersprungen.", { title: title }))
             setTimeout(() => setSuccess(''), 5000)
         } catch (e: any) {
-            setError(e?.message || 'Fehler beim Ignorieren')
+            setError(e?.message || tr("Fehler beim Ignorieren"))
         } finally {
             setActionLoading(null)
         }
@@ -155,11 +155,11 @@ export default function OcrReview({ onRecheckDocument, hideSubLists }: OcrReview
         try {
             const result = await api.resetAllReviewItems()
             setItems([])
-            const msg = `${result.reset} Dokument(e) zurückgestellt – werden beim nächsten Batch-OCR neu verarbeitet.`
-            setSuccess(result.errors.length > 0 ? `${msg} (${result.errors.length} Fehler)` : msg)
+            const msg = tr("{count} Dokument(e) zurückgestellt – werden beim nächsten Batch-OCR neu verarbeitet.", { count: result.reset })
+            setSuccess(result.errors.length > 0 ? tr("{msg} ({length} Fehler)", { msg: msg, length: result.errors.length }) : msg)
             setTimeout(() => setSuccess(''), 6000)
         } catch (e: any) {
-            setError(e?.message || 'Fehler beim Zurückstellen')
+            setError(e?.message || tr("Fehler beim Zurückstellen"))
         } finally {
             setResetAllLoading(false)
         }
@@ -167,19 +167,18 @@ export default function OcrReview({ onRecheckDocument, hideSubLists }: OcrReview
 
     const keepAllOriginals = async () => {
         if (!confirm(
-            `Alle ${items.length} Dokumente mit Original-OCR behalten?\n\n` +
-            `Der bestehende Inhalt bleibt unverändert. Alle Dokumente erhalten "ocrfinish" und werden nie wieder von unserem OCR verarbeitet.`
+            tr("Alle {count} Dokumente mit Original-OCR behalten?\n\nDer bestehende Inhalt bleibt unverändert. Alle Dokumente erhalten \"ocrfinish\" und werden nie wieder von unserem OCR verarbeitet.", { count: items.length })
         )) return
         setKeepAllLoading(true)
         setError('')
         try {
             const result = await api.keepAllOriginals()
             setItems([])
-            const msg = `${result.kept} Dokument(e) abgeschlossen – Original-OCR beibehalten, "ocrfinish" gesetzt.`
-            setSuccess(result.errors.length > 0 ? `${msg} (${result.errors.length} Fehler)` : msg)
+            const msg = tr("{count} Dokument(e) abgeschlossen – Original-OCR beibehalten, \"ocrfinish\" gesetzt.", { count: result.kept })
+            setSuccess(result.errors.length > 0 ? tr("{msg} ({length} Fehler)", { msg: msg, length: result.errors.length }) : msg)
             setTimeout(() => setSuccess(''), 8000)
         } catch (e: any) {
-            setError(e?.message || 'Fehler beim Behalten der Originale')
+            setError(e?.message || tr("Fehler beim Behalten der Originale"))
         } finally {
             setKeepAllLoading(false)
         }
@@ -194,7 +193,7 @@ export default function OcrReview({ onRecheckDocument, hideSubLists }: OcrReview
             setSuccess(`"${title}" – Von Ignore-Liste entfernt.`)
             setTimeout(() => setSuccess(''), 4000)
         } catch (e: any) {
-            setError(e?.message || 'Fehler beim Entfernen')
+            setError(e?.message || tr("Fehler beim Entfernen"))
         } finally {
             setActionLoading(null)
         }
@@ -206,10 +205,10 @@ export default function OcrReview({ onRecheckDocument, hideSubLists }: OcrReview
         try {
             await api.removeFromOcrErrorList(docId)
             setErrorList(prev => prev.filter(i => i.document_id !== docId))
-            setSuccess(`"${title}" – Von Fehlerliste entfernt. Tag 'ocrfehler' wurde entfernt, Dokument wird beim nächsten Batch erneut versucht.`)
+            setSuccess(tr("\"{title}\" – Von Fehlerliste entfernt. Tag 'ocrfehler' wurde entfernt, Dokument wird beim nächsten Batch erneut versucht.", { title: title }))
             setTimeout(() => setSuccess(''), 5000)
         } catch (e: any) {
-            setError(e?.message || 'Fehler beim Entfernen')
+            setError(e?.message || tr("Fehler beim Entfernen"))
         } finally {
             setActionLoading(null)
         }
@@ -316,7 +315,7 @@ export default function OcrReview({ onRecheckDocument, hideSubLists }: OcrReview
                                 <div className="flex items-center gap-3 mt-1 text-sm text-surface-400">
                                     <span className="font-mono">#{item.document_id}</span>
                                     <span>•</span>
-                                    <span>{new Date(item.timestamp).toLocaleString('de-DE')}</span>
+                                    <span>{new Date(item.timestamp).toLocaleString(locale)}</span>
                                 </div>
                             </div>
                         </div>
@@ -334,7 +333,7 @@ export default function OcrReview({ onRecheckDocument, hideSubLists }: OcrReview
                                         ? 'bg-orange-500/20 text-orange-300 border border-orange-500/30'
                                         : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
                             )}>
-                                {item.ratio}% — {item.new_length.toLocaleString()}{tr(" vs ")}{item.old_length.toLocaleString()}{tr(" Zeichen")}</div>
+                                {item.ratio}% — {item.new_length.toLocaleString(locale)}{tr(" vs ")}{item.old_length.toLocaleString(locale)}{tr(" Zeichen")}</div>
 
                             {/* Action buttons */}
                             <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
@@ -386,7 +385,7 @@ export default function OcrReview({ onRecheckDocument, hideSubLists }: OcrReview
                                 {/* Original OCR Text */}
                                 <div>
                                     <h4 className="text-sm font-semibold text-surface-300 mb-3 flex items-center gap-2">
-                                        <span className="w-2 h-2 rounded-full bg-surface-500"></span>{tr("Original OCR")}<span className="text-xs text-surface-500 font-mono ml-auto">{item.old_length.toLocaleString()}{tr(" Zeichen")}</span>
+                                        <span className="w-2 h-2 rounded-full bg-surface-500"></span>{tr("Original OCR")}<span className="text-xs text-surface-500 font-mono ml-auto">{item.old_length.toLocaleString(locale)}{tr(" Zeichen")}</span>
                                     </h4>
                                     <div className="bg-surface-900/60 rounded-xl p-4 border border-surface-700/50 max-h-[500px] overflow-y-auto custom-scrollbar">
                                         <pre className="text-sm text-surface-300 whitespace-pre-wrap font-mono leading-relaxed">
@@ -397,7 +396,7 @@ export default function OcrReview({ onRecheckDocument, hideSubLists }: OcrReview
                                 {/* New Vision OCR Text */}
                                 <div>
                                     <h4 className="text-sm font-semibold text-cyan-300 mb-3 flex items-center gap-2">
-                                        <span className="w-2 h-2 rounded-full bg-cyan-500"></span>{tr("Ollama Vision OCR")}<span className="text-xs text-surface-500 font-mono ml-auto">{item.new_length.toLocaleString()}{tr(" Zeichen")}</span>
+                                        <span className="w-2 h-2 rounded-full bg-cyan-500"></span>{tr("Ollama Vision OCR")}<span className="text-xs text-surface-500 font-mono ml-auto">{item.new_length.toLocaleString(locale)}{tr(" Zeichen")}</span>
                                     </h4>
                                     <div className="bg-surface-900/60 rounded-xl p-4 border border-cyan-500/20 max-h-[500px] overflow-y-auto custom-scrollbar">
                                         <pre className="text-sm text-cyan-100 whitespace-pre-wrap font-mono leading-relaxed">
@@ -445,7 +444,7 @@ export default function OcrReview({ onRecheckDocument, hideSubLists }: OcrReview
                                                 <span>•</span>
                                                 <span>{entry.fail_count}{tr("x fehlgeschlagen")}</span>
                                                 <span>•</span>
-                                                <span>{new Date(entry.timestamp).toLocaleString('de-DE')}</span>
+                                                <span>{new Date(entry.timestamp).toLocaleString(locale)}</span>
                                             </div>
                                             <p className="text-xs text-red-300/70 mt-1 truncate" title={entry.error}>
                                                 {entry.error}
@@ -508,7 +507,7 @@ export default function OcrReview({ onRecheckDocument, hideSubLists }: OcrReview
                                             <div className="flex items-center gap-2 text-xs text-surface-500 mt-0.5 flex-wrap">
                                                 <span className="font-mono">#{entry.document_id}</span>
                                                 {entry.reason && <span className="text-orange-400/70 truncate max-w-xs">{entry.reason}</span>}
-                                                <span>{new Date(entry.timestamp).toLocaleString('de-DE')}</span>
+                                                <span>{new Date(entry.timestamp).toLocaleString(locale)}</span>
                                             </div>
                                         </div>
                                     </div>

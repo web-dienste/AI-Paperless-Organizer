@@ -8,7 +8,7 @@ import {
 } from 'lucide-react'
 import clsx from 'clsx'
 import * as api from '../services/api'
-import { tr } from '../i18n'
+import { tr, locale } from '../i18n'
 
 type Tab = 'classify' | 'benchmark' | 'settings' | 'history' | 'review' | 'tag_ideas'
 
@@ -179,7 +179,7 @@ export default function DocumentClassifier() {
         document_type: null, storage_path_id: null, storage_path_name: null, storage_path_reason: null,
         created_date: null, custom_fields: {}, tokens_input: 0, tokens_output: 0,
         cost_usd: 0, duration_seconds: 0, tool_calls_count: 0,
-        error: e.message || 'Unbekannter Fehler',
+        error: e.message || tr("Unbekannter Fehler"),
       }
       setResult(errRes)
     } finally {
@@ -220,7 +220,7 @@ export default function DocumentClassifier() {
   const handleApplyAndNext = async () => {
     if (!result || result.error || !documentId) return
     setApplyingAndNext(true)
-    setNextStatus('Wende Klassifizierung an...')
+    setNextStatus(tr("Wende Klassifizierung an..."))
     const currentId = parseInt(documentId)
     try {
       // 1. Apply current classification
@@ -243,7 +243,7 @@ export default function DocumentClassifier() {
 
       if (reviewMode) {
         // ── Review mode: remove applied entry and load next from review queue ──
-        setNextStatus('Lade nächsten Prüf-Eintrag...')
+        setNextStatus(tr("Lade nächsten Prüf-Eintrag..."))
 
         // Small delay to let backend commit the status change
         await new Promise(r => setTimeout(r, 300))
@@ -259,7 +259,7 @@ export default function DocumentClassifier() {
         setReviewQueue(freshQueue)
 
         if (freshQueue.length === 0) {
-          setNextStatus('Prüf-Warteschlange leer!')
+          setNextStatus(tr("Prüf-Warteschlange leer!"))
           setReviewMode(false)
           setTimeout(() => setNextStatus(''), 3000)
           setApplyingAndNext(false)
@@ -277,16 +277,16 @@ export default function DocumentClassifier() {
         setTimeout(() => resultRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100)
       } else {
         // ── Normal mode: find next unclassified document ──
-        setNextStatus('Suche naechstes Dokument...')
+        setNextStatus(tr("Suche naechstes Dokument..."))
         const next = await api.getNextUnclassified(currentId)
         if (!next.found || !next.document_id) {
-          setNextStatus('Keine weiteren Dokumente gefunden!')
+          setNextStatus(tr("Keine weiteren Dokumente gefunden!"))
           setTimeout(() => setNextStatus(''), 3000)
           setApplyingAndNext(false)
           return
         }
 
-        setNextStatus(`Lade Dokument #${next.document_id}...`)
+        setNextStatus(tr("Lade Dokument #{document_id}...", { document_id: next.document_id }))
         setDocumentId(String(next.document_id))
         setResult(null)
         setApplied(false)
@@ -308,7 +308,7 @@ export default function DocumentClassifier() {
             document_type: null, storage_path_id: null, storage_path_name: null, storage_path_reason: null,
             created_date: null, custom_fields: {}, tokens_input: 0, tokens_output: 0,
             cost_usd: 0, duration_seconds: 0, tool_calls_count: 0,
-            error: e.message || 'Unbekannter Fehler',
+            error: e.message || tr("Unbekannter Fehler"),
           }
           setResult(errRes)
         } finally {
@@ -316,7 +316,7 @@ export default function DocumentClassifier() {
         }
       }
     } catch (e: any) {
-      setNextStatus(`Fehler: ${e.message}`)
+      setNextStatus(tr("Fehler: {message}", { message: e.message }))
       setTimeout(() => setNextStatus(''), 4000)
       setApplyingAndNext(false)
     }
@@ -702,12 +702,12 @@ export default function DocumentClassifier() {
       {/* Tabs */}
       <div className="flex gap-2 border-b border-surface-700/50 pb-0">
         {([
-          { id: 'classify' as Tab, label: 'Klassifizieren', icon: Play },
-          { id: 'benchmark' as Tab, label: 'Benchmark', icon: Scale },
-          { id: 'review' as Tab, label: `Prüfen${reviewQueue.length > 0 ? ` (${reviewQueue.length})` : ''}`, icon: AlertCircle },
-          { id: 'tag_ideas' as Tab, label: `Tag-Ideen${tagIdeas.length > 0 ? ` (${tagIdeas.length})` : ''}`, icon: Tags },
-          { id: 'settings' as Tab, label: 'Einstellungen', icon: Settings2 },
-          { id: 'history' as Tab, label: 'Verlauf', icon: History },
+          { id: 'classify' as Tab, label: tr("Klassifizieren"), icon: Play },
+          { id: 'benchmark' as Tab, label: tr("Benchmark"), icon: Scale },
+          { id: 'review' as Tab, label: tr("Prüfen{v0}", { v0: reviewQueue.length > 0 ? ` (${reviewQueue.length})` : '' }), icon: AlertCircle },
+          { id: 'tag_ideas' as Tab, label: tr("Tag-Ideen{v0}", { v0: tagIdeas.length > 0 ? ` (${tagIdeas.length})` : '' }), icon: Tags },
+          { id: 'settings' as Tab, label: tr("Einstellungen"), icon: Settings2 },
+          { id: 'history' as Tab, label: tr("Verlauf"), icon: History },
         ]).map(tab => (
           <button
             key={tab.id}
@@ -1423,25 +1423,25 @@ export default function DocumentClassifier() {
                       <tbody>
                         {[
                           {
-                            label: 'Dauer',
+                            label: tr("Dauer"),
                             values: benchmarkResult.results.map(r => r.result.duration_seconds),
                             format: (v: number) => `${v.toFixed(1)}s`,
                             best: 'min' as const,
                           },
                           {
-                            label: 'Tokens',
+                            label: tr("Tokens"),
                             values: benchmarkResult.results.map(r => r.result.tokens_input + r.result.tokens_output),
                             format: (v: number) => v > 0 ? `${v}` : '-',
                             best: null,
                           },
                           {
-                            label: 'Kosten',
+                            label: tr("Kosten"),
                             values: benchmarkResult.results.map(r => r.result.cost_usd),
                             format: (v: number) => `$${v.toFixed(4)}`,
                             best: 'min' as const,
                           },
                           {
-                            label: 'Calls',
+                            label: tr("Calls"),
                             values: benchmarkResult.results.map(r => r.result.tool_calls_count),
                             format: (v: number) => `${v}`,
                             best: null,
@@ -2055,9 +2055,9 @@ export default function DocumentClassifier() {
                     <p className="text-xs font-medium text-surface-300">{tr("Zuweisung bei vorhandenem Pfad")}</p>
                     <div className="space-y-1.5">
                       {[
-                        { value: 'always', label: 'Immer zuweisen', desc: 'KI-Vorschlag ersetzt immer den vorhandenen Pfad' },
-                        { value: 'keep_if_set', label: 'Vorhandenen behalten', desc: 'Pfad wird nie geaendert, nur bei leeren Dokumenten gesetzt' },
-                        { value: 'keep_except_list', label: 'Behalten — außer bei diesen Pfaden', desc: 'Vorhandener Pfad bleibt, außer er steht in der Liste unten (z.\u202fB. Platzhalter)' },
+                        { value: 'always', label: tr("Immer zuweisen"), desc: tr("KI-Vorschlag ersetzt immer den vorhandenen Pfad") },
+                        { value: 'keep_if_set', label: tr("Vorhandenen behalten"), desc: tr("Pfad wird nie geaendert, nur bei leeren Dokumenten gesetzt") },
+                        { value: 'keep_except_list', label: tr("Behalten — außer bei diesen Pfaden"), desc: tr("Vorhandener Pfad bleibt, außer er steht in der Liste unten (z. B. Platzhalter)") },
                       ].map((opt) => (
                         <label key={opt.value} className="flex items-start gap-2.5 p-2 rounded-lg border border-surface-700/50 hover:border-surface-600/50 cursor-pointer bg-surface-800/30">
                           <input
@@ -2822,7 +2822,7 @@ export default function DocumentClassifier() {
                       </div>
                       <div className="flex items-center gap-2 shrink-0 ml-3">
                         <span className="text-xs text-surface-500">
-                          {entry.created_at ? new Date(entry.created_at).toLocaleString('de-DE') : ''}
+                          {entry.created_at ? new Date(entry.created_at).toLocaleString(locale) : ''}
                         </span>
                         <ChevronRight className="w-3.5 h-3.5 text-surface-600" />
                       </div>
@@ -2929,7 +2929,7 @@ export default function DocumentClassifier() {
                           {entry.document_title || tr("Unbekannt")}
                         </p>
                         <span className="text-surface-600 text-[11px]">
-                          {entry.created_at ? new Date(entry.created_at).toLocaleString('de-DE', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : ''}
+                          {entry.created_at ? new Date(entry.created_at).toLocaleString(locale, { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : ''}
                         </span>
                       </div>
                       <div className="flex items-center gap-1.5 shrink-0">
@@ -3004,19 +3004,19 @@ export default function DocumentClassifier() {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 <StatCard
                   label={tr("Dokumente gesamt")}
-                  value={stats.total_documents_paperless.toLocaleString('de-DE')}
+                  value={stats.total_documents_paperless.toLocaleString(locale)}
                   sub="in Paperless"
                   color="surface"
                 />
                 <StatCard
                   label={tr("Klassifiziert")}
-                  value={stats.unique_applied.toLocaleString('de-DE')}
-                  sub={`von ${stats.total_documents_paperless} (${stats.total_documents_paperless > 0 ? Math.round(stats.unique_applied / stats.total_documents_paperless * 100) : 0}%)`}
+                  value={stats.unique_applied.toLocaleString(locale)}
+                  sub={tr("von {total} ({pct}%)", { total: stats.total_documents_paperless, pct: stats.total_documents_paperless > 0 ? Math.round(stats.unique_applied / stats.total_documents_paperless * 100) : 0 })}
                   color="emerald"
                 />
                 <StatCard
                   label={tr("Noch offen")}
-                  value={stats.remaining.toLocaleString('de-DE')}
+                  value={stats.remaining.toLocaleString(locale)}
                   sub="nicht klassifiziert"
                   color="amber"
                 />
@@ -3029,7 +3029,7 @@ export default function DocumentClassifier() {
                     const parts = []
                     if (cloudProviders.length > 0) parts.push(cloudProviders.map(p => `${p.model}: $${p.cost.toFixed(4)}`).join(', '))
                     if (localProviders.length > 0) parts.push('lokal: 0\u20ac')
-                    return parts.length > 0 ? parts.join(' | ') : `${(stats.total_tokens_in + stats.total_tokens_out).toLocaleString('de-DE')} Tokens`
+                    return parts.length > 0 ? parts.join(' | ') : `${(stats.total_tokens_in + stats.total_tokens_out).toLocaleString(locale)} Tokens`
                   })()}
                   color="sky"
                 />
@@ -3186,7 +3186,7 @@ export default function DocumentClassifier() {
                             {entry.model || entry.provider}
                           </span>
                           <span className="text-surface-600 text-[11px]">{entry.duration_seconds.toFixed(1)}s</span>
-                          <span className="text-surface-600 text-[11px]">{entry.created_at ? new Date(entry.created_at).toLocaleString('de-DE', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : ''}</span>
+                          <span className="text-surface-600 text-[11px]">{entry.created_at ? new Date(entry.created_at).toLocaleString(locale, { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : ''}</span>
                         </div>
                       </div>
 
@@ -3243,7 +3243,7 @@ export default function DocumentClassifier() {
                   <h2 className="text-lg font-semibold text-surface-100 flex items-center gap-2">
                     <Tags className="w-4 h-4 text-primary-400" />{tr("Tag-Statistik")}</h2>
                   <p className="text-xs text-surface-500 mt-0.5">
-                    {tagStats.total_unique_tags}{tr(" verschiedene Tags · ")}{tagStats.total_tag_assignments.toLocaleString('de-DE')}{tr(" Zuweisungen · ")}{tagStats.total_new_tags_created}{tr(" neue erstellt")}</p>
+                    {tagStats.total_unique_tags}{tr(" verschiedene Tags · ")}{tagStats.total_tag_assignments.toLocaleString(locale)}{tr(" Zuweisungen · ")}{tagStats.total_new_tags_created}{tr(" neue erstellt")}</p>
                 </div>
               </div>
               <div className="space-y-1.5">

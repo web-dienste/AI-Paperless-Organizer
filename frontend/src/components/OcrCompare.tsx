@@ -19,7 +19,7 @@ import {
 } from 'lucide-react'
 import clsx from 'clsx'
 import * as api from '../services/api'
-import { tr } from '../i18n'
+import { tr, locale } from '../i18n'
 
 export default function OcrCompare() {
     const [docId, setDocId] = useState('')
@@ -60,7 +60,7 @@ export default function OcrCompare() {
                 setSelectedModels([data.current_model])
             }
         } catch (e: any) {
-            setError('Modelle konnten nicht geladen werden: ' + e.message)
+            setError(tr("Modelle konnten nicht geladen werden: {error}", { error: e.message }))
         } finally {
             setLoadingModels(false)
         }
@@ -115,11 +115,11 @@ export default function OcrCompare() {
     const startCompare = async () => {
         const id = parseInt(docId)
         if (isNaN(id) || id <= 0) {
-            setError('Bitte eine gültige Dokument-ID eingeben')
+            setError(tr("Bitte eine gültige Dokument-ID eingeben"))
             return
         }
         if (selectedModels.length === 0) {
-            setError('Bitte mindestens ein Modell auswählen')
+            setError(tr("Bitte mindestens ein Modell auswählen"))
             return
         }
 
@@ -134,7 +134,7 @@ export default function OcrCompare() {
             await api.startOcrCompare(id, selectedModels, page)
             startPolling()
         } catch (e: any) {
-            setError(e.message || 'Vergleich konnte nicht gestartet werden')
+            setError(e.message || tr("Vergleich konnte nicht gestartet werden"))
             setRunning(false)
         }
     }
@@ -168,27 +168,27 @@ export default function OcrCompare() {
 
     const getPhaseLabel = (phase: string) => {
         switch (phase) {
-            case 'starting': return 'Starte...'
-            case 'download': return 'Dokument herunterladen...'
-            case 'convert': return 'PDF in Bilder konvertieren...'
-            case 'health_check': return 'Ollama Health-Check...'
-            case 'waiting_ollama': return 'Warte auf Ollama-Neustart...'
-            case 'model_loading': return 'Modell wird geladen...'
-            case 'ocr_page': return 'OCR läuft...'
-            case 'unloading': return 'Modell wird entladen...'
-            case 'done': return 'Fertig!'
-            case 'error': return 'Fehler!'
+            case 'starting': return tr("Starte...")
+            case 'download': return tr("Dokument herunterladen...")
+            case 'convert': return tr("PDF in Bilder konvertieren...")
+            case 'health_check': return tr("Ollama Health-Check...")
+            case 'waiting_ollama': return tr("Warte auf Ollama-Neustart...")
+            case 'model_loading': return tr("Modell wird geladen...")
+            case 'ocr_page': return tr("OCR läuft...")
+            case 'unloading': return tr("Modell wird entladen...")
+            case 'done': return tr("Fertig!")
+            case 'error': return tr("Fehler!")
             default: return phase
         }
     }
 
     const EVAL_MODELS = [
-        { id: '', label: 'Standard (konfiguriertes Modell)' },
-        { id: 'gpt-4.1', label: 'GPT-4.1 (OpenAI, sehr stark)' },
-        { id: 'gpt-4o', label: 'GPT-4o (OpenAI, schnell)' },
-        { id: 'gpt-4o-mini', label: 'GPT-4o Mini (OpenAI, günstig)' },
-        { id: 'o3', label: 'o3 (OpenAI, Reasoning)' },
-        { id: 'o4-mini', label: 'o4-mini (OpenAI, Reasoning günstig)' },
+        { id: '', label: tr("Standard (konfiguriertes Modell)") },
+        { id: 'gpt-4.1', label: tr("GPT-4.1 (OpenAI, sehr stark)") },
+        { id: 'gpt-4o', label: tr("GPT-4o (OpenAI, schnell)") },
+        { id: 'gpt-4o-mini', label: tr("GPT-4o Mini (OpenAI, günstig)") },
+        { id: 'o3', label: tr("o3 (OpenAI, Reasoning)") },
+        { id: 'o4-mini', label: tr("o4-mini (OpenAI, Reasoning günstig)") },
     ]
 
     const getSeverityColor = (severity: string) => {
@@ -213,16 +213,16 @@ export default function OcrCompare() {
 
     const getCategoryLabel = (key: string) => {
         const labels: Record<string, string> = {
-            names_persons: 'Namen & Personen',
-            dates_periods: 'Datum & Zeitraum',
-            iban_banking: 'IBAN & Bankdaten',
-            amounts_numbers: 'Beträge & Zahlen',
-            addresses: 'Adressen',
-            form_logic: 'Formularlogik',
-            completeness: 'Vollständigkeit',
-            formatting: 'Formatierung',
-            no_hallucinations: 'Keine Halluzinationen',
-            automatizability: 'Automatisierbarkeit'
+            names_persons: tr("Namen & Personen"),
+            dates_periods: tr("Datum & Zeitraum"),
+            iban_banking: tr("IBAN & Bankdaten"),
+            amounts_numbers: tr("Beträge & Zahlen"),
+            addresses: tr("Adressen"),
+            form_logic: tr("Formularlogik"),
+            completeness: tr("Vollständigkeit"),
+            formatting: tr("Formatierung"),
+            no_hallucinations: tr("Keine Halluzinationen"),
+            automatizability: tr("Automatisierbarkeit")
         }
         return labels[key] || key
     }
@@ -244,13 +244,13 @@ export default function OcrCompare() {
         try {
             const successfulResults = result.results.filter(r => !r.error && r.chars > 0)
             if (successfulResults.length === 0) {
-                setEvalError('Keine erfolgreichen OCR-Ergebnisse zum Auswerten')
+                setEvalError(tr("Keine erfolgreichen OCR-Ergebnisse zum Auswerten"))
                 return
             }
             const data = await api.evaluateOcrResults(result.title, successfulResults, evalModel || undefined)
             setEvaluation(data)
         } catch (e: any) {
-            setEvalError(e.message || 'Auswertung fehlgeschlagen')
+            setEvalError(e.message || tr("Auswertung fehlgeschlagen"))
         } finally {
             setEvaluating(false)
         }
@@ -602,7 +602,7 @@ export default function OcrCompare() {
                                             )}>
                                                 <FileText className="w-3.5 h-3.5" />
                                                 <span className="font-mono font-bold text-sm">
-                                                    {r.chars.toLocaleString()}{tr(" Zeichen")}</span>
+                                                    {r.chars.toLocaleString(locale)}{tr(" Zeichen")}</span>
                                             </div>
                                             <div className="text-surface-500">
                                                 {r.pages_processed}{tr(" Seite")}{r.pages_processed !== 1 ? 'n' : ''}
@@ -650,7 +650,7 @@ export default function OcrCompare() {
                                 className="w-full p-4 flex items-center justify-between text-left hover:bg-surface-800/50 transition-colors"
                             >
                                 <div className="flex items-center gap-2 text-sm text-surface-400">
-                                    <FileText className="w-4 h-4" />{tr("Originaler Paperless-Text (")}{result.old_content.length.toLocaleString()}{tr(" Zeichen)")}</div>
+                                    <FileText className="w-4 h-4" />{tr("Originaler Paperless-Text (")}{result.old_content.length.toLocaleString(locale)}{tr(" Zeichen)")}</div>
                                 <ChevronDown className="w-4 h-4 text-surface-500" />
                             </button>
                             <div id="original-content" className="hidden p-4 border-t border-surface-700/50">

@@ -16,7 +16,7 @@ import {
 } from 'lucide-react'
 import clsx from 'clsx'
 import * as api from '../services/api'
-import { tr } from '../i18n'
+import { tr, locale } from '../i18n'
 
 const DEFAULT_TERMS = [
     "Allgemeine Geschäftsbedingungen",
@@ -120,7 +120,7 @@ export default function CleanupManager() {
                 setSelectedIds(new Set(result.documents.map(d => d.id)))
             }
         } catch (e: any) {
-            setError(e?.message || 'Fehler beim Scannen')
+            setError(e?.message || tr("Fehler beim Scannen"))
         } finally {
             setLoading(false)
         }
@@ -153,7 +153,7 @@ export default function CleanupManager() {
             setDocuments(prev => prev.filter(d => !selectedIds.has(d.id)))
             setSelectedIds(new Set())
         } catch (e: any) {
-            setError(e?.message || 'Fehler beim Löschen')
+            setError(e?.message || tr("Fehler beim Löschen"))
         } finally {
             setDeleting(false)
         }
@@ -421,7 +421,7 @@ export default function CleanupManager() {
                                             <div className="flex items-center gap-2 mt-1.5 text-xs text-surface-500">
                                                 <span className="font-mono">#{doc.id}</span>
                                                 {doc.created && (
-                                                    <span>{new Date(doc.created).toLocaleDateString('de-DE')}</span>
+                                                    <span>{new Date(doc.created).toLocaleDateString(locale)}</span>
                                                 )}
                                             </div>
                                         </div>

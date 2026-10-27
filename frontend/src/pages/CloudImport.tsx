@@ -7,7 +7,7 @@ import {
 } from 'lucide-react'
 import clsx from 'clsx'
 import * as api from '../services/api'
-import { tr } from '../i18n'
+import { tr, locale } from '../i18n'
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -92,9 +92,9 @@ function SourceTypeIcon({ type, className }: { type: string; className?: string 
 }
 
 function sourceTypeLabel(type: string) {
-  if (type === 'webdav') return 'WebDAV / Nextcloud'
-  if (type === 'rclone') return 'rclone (Google Drive, OneDrive…)'
-  return 'Lokaler Ordner'
+  if (type === 'webdav') return tr("WebDAV / Nextcloud")
+  if (type === 'rclone') return tr("rclone (Google Drive, OneDrive…)")
+  return tr("Lokaler Ordner")
 }
 
 // ── Status badge ─────────────────────────────────────────────────────────────
@@ -187,7 +187,7 @@ export default function CloudImport() {
       const status = await api.fetchJson<SyncStatus>('/cloud-import/status')
       setSyncStatus(status)
     } catch (e: any) {
-      alert('Fehler: ' + e.message)
+      alert(tr("Fehler: {error}", { error: e.message }))
     }
   }
 
@@ -219,7 +219,7 @@ export default function CloudImport() {
 
   const saveSource = async () => {
     if (!editSource.name?.trim()) {
-      setModalError('Bitte einen Namen vergeben.')
+      setModalError(tr("Bitte einen Namen vergeben."))
       return
     }
     setModalSaving(true)
@@ -256,7 +256,7 @@ export default function CloudImport() {
       await api.fetchJson(`/cloud-import/sources/${id}`, { method: 'DELETE' })
       await loadAll()
     } catch (e: any) {
-      alert('Fehler beim Löschen: ' + e.message)
+      alert(tr("Fehler beim Löschen: {error}", { error: e.message }))
     } finally {
       setDeletingId(null)
     }
@@ -271,7 +271,7 @@ export default function CloudImport() {
       const log = await api.fetchJson<ImportLog[]>('/cloud-import/log?limit=50')
       setImportLog(log)
     } catch (e: any) {
-      alert('Fehler bei Synchronisation: ' + e.message)
+      alert(tr("Fehler bei Synchronisation: {error}", { error: e.message }))
     } finally {
       setSyncingId(null)
     }
@@ -284,7 +284,7 @@ export default function CloudImport() {
     // Save first if new, then test — or test from temp object via dedicated endpoint
     // For simplicity: if editing, test saved source; if new, show hint to save first
     if (!isEditing || !editSource.id) {
-      setTestResult({ ok: false, message: 'Bitte erst speichern, dann testen.' })
+      setTestResult({ ok: false, message: tr("Bitte erst speichern, dann testen.") })
       setTestLoading(false)
       return
     }
@@ -350,7 +350,7 @@ export default function CloudImport() {
                   : tr("Sync-Daemon gestoppt")}
             </p>
             {syncStatus?.last_run && (
-              <p className="text-xs text-surface-500">{tr("Letzter Lauf: ")}{new Date(syncStatus.last_run).toLocaleString('de-DE')}
+              <p className="text-xs text-surface-500">{tr("Letzter Lauf: ")}{new Date(syncStatus.last_run).toLocaleString(locale)}
                 {syncStatus.files_imported_session > 0 && tr(" · {files_imported_session} Dateien importiert", { files_imported_session: syncStatus.files_imported_session })}
               </p>
             )}
@@ -422,7 +422,7 @@ export default function CloudImport() {
                   <div className="flex-1 min-w-0">
                     <p className="text-sm text-white truncate">{entry.file_name}</p>
                     <p className="text-xs text-surface-500 truncate">
-                      {entry.source_name} · {entry.imported_at ? new Date(entry.imported_at).toLocaleString('de-DE') : '—'}
+                      {entry.source_name} · {entry.imported_at ? new Date(entry.imported_at).toLocaleString(locale) : '—'}
                     </p>
                   </div>
                   {entry.error_message && (
@@ -566,7 +566,7 @@ function SourceCard({
           <span className="text-orange-400">{tr("Quelldatei löschen")}</span>
         )}
         {source.last_checked_at && (
-          <span>{tr("Zuletzt: ")}{new Date(source.last_checked_at).toLocaleString('de-DE')}</span>
+          <span>{tr("Zuletzt: ")}{new Date(source.last_checked_at).toLocaleString(locale)}</span>
         )}
       </div>
 
@@ -607,7 +607,7 @@ function SourceModal({
   showRcloneConfig: boolean
   setShowRcloneConfig: (v: boolean) => void
 }) {
-  const steps = ['Typ wählen', 'Verbindung', 'Import-Einstellungen']
+  const steps = [tr("Typ wählen"), tr("Verbindung"), tr("Import-Einstellungen")]
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4" onClick={e => e.target === e.currentTarget && onClose()}>
@@ -646,9 +646,9 @@ function SourceModal({
             <div className="space-y-3">
               <p className="text-sm text-surface-400">{tr("Wähle den Typ der Cloud-Quelle:")}</p>
               {[
-                { type: 'webdav', icon: <Globe className="w-5 h-5 text-blue-400" />, label: 'WebDAV / Nextcloud', desc: 'Nextcloud, ownCloud, Box, HiDrive, GMX Cloud – kein API-Key nötig' },
-                { type: 'rclone', icon: <Cloud className="w-5 h-5 text-purple-400" />, label: 'Google Drive / OneDrive / Dropbox', desc: 'Einfach anmelden – wird automatisch eingerichtet' },
-                { type: 'local', icon: <HardDrive className="w-5 h-5 text-green-400" />, label: 'Lokaler Ordner', desc: 'Docker-Volume oder gemounteter Netzwerkpfad' },
+                { type: 'webdav', icon: <Globe className="w-5 h-5 text-blue-400" />, label: tr("WebDAV / Nextcloud"), desc: tr("Nextcloud, ownCloud, Box, HiDrive, GMX Cloud – kein API-Key nötig") },
+                { type: 'rclone', icon: <Cloud className="w-5 h-5 text-purple-400" />, label: tr("Google Drive / OneDrive / Dropbox"), desc: tr("Einfach anmelden – wird automatisch eingerichtet") },
+                { type: 'local', icon: <HardDrive className="w-5 h-5 text-green-400" />, label: tr("Lokaler Ordner"), desc: tr("Docker-Volume oder gemounteter Netzwerkpfad") },
               ].map(opt => (
                 <button
                   key={opt.type}
@@ -944,9 +944,9 @@ function Field({ label, hint, required, children }: { label: string; hint?: stri
 type RcloneProvider = 'gdrive' | 'onedrive' | 'dropbox'
 
 const RCLONE_PROVIDERS: { id: RcloneProvider; label: string; color: string }[] = [
-  { id: 'gdrive', label: 'Google Drive', color: 'text-blue-400' },
-  { id: 'onedrive', label: 'OneDrive', color: 'text-sky-400' },
-  { id: 'dropbox', label: 'Dropbox', color: 'text-indigo-400' },
+  { id: 'gdrive', label: tr("Google Drive"), color: 'text-blue-400' },
+  { id: 'onedrive', label: tr("OneDrive"), color: 'text-sky-400' },
+  { id: 'dropbox', label: tr("Dropbox"), color: 'text-indigo-400' },
 ]
 
 function RcloneConnectFlow({
@@ -1010,7 +1010,7 @@ function RcloneConnectFlow({
         } else if (status.status === 'error') {
           clearInterval(iv)
           setPolling(false)
-          setAuthError(status.error || 'Autorisierung fehlgeschlagen')
+          setAuthError(status.error || tr("Autorisierung fehlgeschlagen"))
           setAuthStatus('error')
         }
       } catch { /* ignore */ }
@@ -1022,7 +1022,7 @@ function RcloneConnectFlow({
       if (polling) {
         setPolling(false)
         if (authStatus === 'waiting') {
-          setAuthError('Zeitüberschreitung – bitte erneut versuchen.')
+          setAuthError(tr("Zeitüberschreitung – bitte erneut versuchen."))
           setAuthStatus('error')
         }
       }

@@ -26,7 +26,7 @@ import OcrStats from './OcrStats'
 import SingleOcr from './SingleOcr'
 import OcrReview from './OcrReview'
 import OcrCompare from './OcrCompare'
-import { tr } from '../i18n'
+import { tr, locale } from '../i18n'
 
 type BatchMode = 'all' | 'tagged' | 'manual'
 type Tab = 'processing' | 'single' | 'review' | 'compare' | 'stats' | 'settings' | 'ignore' | 'errors'
@@ -196,14 +196,14 @@ export default function OcrManager() {
 
     // Tab definitions
     const tabs: { id: Tab; label: string; icon: React.ReactNode; color: string; badge?: number }[] = [
-        { id: 'processing', label: 'Verarbeitung', icon: <LayoutDashboard className="w-4 h-4" />, color: 'primary' },
-        { id: 'single', label: 'Einzel-OCR', icon: <FileSearch className="w-4 h-4" />, color: 'cyan' },
-        { id: 'compare', label: 'Vergleich', icon: <FlaskConical className="w-4 h-4" />, color: 'violet' },
-        { id: 'review', label: 'Prüfen', icon: <AlertCircle className="w-4 h-4" />, color: 'amber', badge: reviewCount },
-        { id: 'errors', label: 'Fehler', icon: <AlertTriangle className="w-4 h-4" />, color: 'red', badge: errorCount },
-        { id: 'ignore', label: 'Ignoriert', icon: <ShieldOff className="w-4 h-4" />, color: 'orange', badge: ignoreCount },
-        { id: 'stats', label: 'Statistiken', icon: <BarChart3 className="w-4 h-4" />, color: 'primary' },
-        { id: 'settings', label: 'Einstellungen', icon: <Settings className="w-4 h-4" />, color: 'primary' },
+        { id: 'processing', label: tr("Verarbeitung"), icon: <LayoutDashboard className="w-4 h-4" />, color: 'primary' },
+        { id: 'single', label: tr("Einzel-OCR"), icon: <FileSearch className="w-4 h-4" />, color: 'cyan' },
+        { id: 'compare', label: tr("Vergleich"), icon: <FlaskConical className="w-4 h-4" />, color: 'violet' },
+        { id: 'review', label: tr("Prüfen"), icon: <AlertCircle className="w-4 h-4" />, color: 'amber', badge: reviewCount },
+        { id: 'errors', label: tr("Fehler"), icon: <AlertTriangle className="w-4 h-4" />, color: 'red', badge: errorCount },
+        { id: 'ignore', label: tr("Ignoriert"), icon: <ShieldOff className="w-4 h-4" />, color: 'orange', badge: ignoreCount },
+        { id: 'stats', label: tr("Statistiken"), icon: <BarChart3 className="w-4 h-4" />, color: 'primary' },
+        { id: 'settings', label: tr("Einstellungen"), icon: <Settings className="w-4 h-4" />, color: 'primary' },
     ]
 
     const colorMap: Record<string, string> = {
@@ -304,9 +304,9 @@ export default function OcrManager() {
                             {/* Mode Selection */}
                             <div className="grid grid-cols-3 gap-3">
                                 {[
-                                    { id: 'all', icon: '🔄', label: 'Alle', desc: 'Ohne Finish-Tag' },
-                                    { id: 'tagged', icon: '🏷️', label: 'Tag', desc: '"runocr"' },
-                                    { id: 'manual', icon: '✏️', label: 'Manuell', desc: 'IDs eingeben' }
+                                    { id: 'all', icon: '🔄', label: tr("Alle"), desc: tr("Ohne Finish-Tag") },
+                                    { id: 'tagged', icon: '🏷️', label: tr("Tag"), desc: '"runocr"' },
+                                    { id: 'manual', icon: '✏️', label: tr("Manuell"), desc: tr("IDs eingeben") }
                                 ].map((mode) => (
                                     <button
                                         key={mode.id}
@@ -579,10 +579,10 @@ function OcrErrorTab({ onCountChange }: { onCountChange: (n: number) => void }) 
         try {
             await api.removeFromOcrErrorList(docId)
             removeEntry(docId)
-            setSuccess(`"${title}" – Fehlerzähler zurückgesetzt, wird beim nächsten Batch erneut versucht.`)
+            setSuccess(tr("\"{title}\" – Fehlerzähler zurückgesetzt, wird beim nächsten Batch erneut versucht.", { title: title }))
             setTimeout(() => setSuccess(''), 5000)
         } catch (e: any) {
-            setError(e?.message || 'Fehler')
+            setError(e?.message || tr("Fehler"))
         } finally {
             setActionLoading(null)
         }
@@ -596,10 +596,10 @@ function OcrErrorTab({ onCountChange }: { onCountChange: (n: number) => void }) 
                 api.removeFromOcrErrorList(docId),
             ])
             removeEntry(docId)
-            setSuccess(`"${title}" – zur Ignore-Liste hinzugefügt, wird künftig übersprungen.`)
+            setSuccess(tr("\"{title}\" – zur Ignore-Liste hinzugefügt, wird künftig übersprungen.", { title: title }))
             setTimeout(() => setSuccess(''), 5000)
         } catch (e: any) {
-            setError(e?.message || 'Fehler')
+            setError(e?.message || tr("Fehler"))
         } finally {
             setActionLoading(null)
         }
@@ -617,10 +617,10 @@ function OcrErrorTab({ onCountChange }: { onCountChange: (n: number) => void }) 
             ))
             setItems([])
             onCountChange(0)
-            setSuccess(`${items.length} Dokumente ignoriert – Fehlerliste ist jetzt leer.`)
+            setSuccess(tr("{length} Dokumente ignoriert – Fehlerliste ist jetzt leer.", { length: items.length }))
             setTimeout(() => setSuccess(''), 5000)
         } catch (e: any) {
-            setError(e?.message || 'Fehler')
+            setError(e?.message || tr("Fehler"))
             await load()
         } finally {
             setBulkLoading(false)
@@ -633,10 +633,10 @@ function OcrErrorTab({ onCountChange }: { onCountChange: (n: number) => void }) 
             await api.clearOcrErrorList()
             setItems([])
             onCountChange(0)
-            setSuccess('Fehlerliste geleert.')
+            setSuccess(tr("Fehlerliste geleert."))
             setTimeout(() => setSuccess(''), 4000)
         } catch (e: any) {
-            setError(e?.message || 'Fehler')
+            setError(e?.message || tr("Fehler"))
         }
     }
 
@@ -708,7 +708,7 @@ function OcrErrorTab({ onCountChange }: { onCountChange: (n: number) => void }) 
                                     <div className="flex items-center gap-3 text-xs text-surface-500 mt-0.5">
                                         <span className="font-mono">#{entry.document_id}</span>
                                         <span className="text-red-400 font-semibold">{entry.fail_count}{tr("× fehlgeschlagen")}</span>
-                                        <span>{new Date(entry.timestamp).toLocaleString('de-DE')}</span>
+                                        <span>{new Date(entry.timestamp).toLocaleString(locale)}</span>
                                     </div>
                                     <p className="text-xs text-red-300/70 mt-1 truncate" title={entry.error}>{entry.error}</p>
                                 </div>
@@ -772,10 +772,10 @@ function OcrIgnoreTab({ onCountChange }: { onCountChange: (n: number) => void })
             await api.removeFromOcrIgnoreList(docId)
             setItems(prev => prev.filter(i => i.document_id !== docId))
             onCountChange(items.length - 1)
-            setSuccess(`"${title}" – Von Ignore-Liste entfernt. Wird beim nächsten Batch wieder verarbeitet.`)
+            setSuccess(tr("\"{title}\" – Von Ignore-Liste entfernt. Wird beim nächsten Batch wieder verarbeitet.", { title: title }))
             setTimeout(() => setSuccess(''), 5000)
         } catch (e: any) {
-            setError(e?.message || 'Fehler')
+            setError(e?.message || tr("Fehler"))
         } finally {
             setActionLoading(null)
         }
@@ -834,7 +834,7 @@ function OcrIgnoreTab({ onCountChange }: { onCountChange: (n: number) => void })
                                     <div className="flex items-center gap-3 text-xs text-surface-500 mt-0.5">
                                         <span className="font-mono">#{entry.document_id}</span>
                                         <span className="text-orange-400/80">{entry.reason}</span>
-                                        <span>{new Date(entry.timestamp).toLocaleString('de-DE')}</span>
+                                        <span>{new Date(entry.timestamp).toLocaleString(locale)}</span>
                                     </div>
                                 </div>
                             </div>

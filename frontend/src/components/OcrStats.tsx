@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { BarChart3, Clock, FileText, Layers, RefreshCw, CheckCircle, Loader2, AlertCircle } from 'lucide-react'
 import * as api from '../services/api'
 import clsx from 'clsx'
-import { tr } from '../i18n'
+import { tr, locale } from '../i18n'
 
 export default function OcrStats() {
     const [stats, setStats] = useState<api.OcrStats[]>([])
@@ -205,7 +205,7 @@ export default function OcrStats() {
                                         stat.success === false ? "bg-red-500/10 hover:bg-red-500/20" : "hover:bg-surface-700/20"
                                     )}>
                                         <td className="px-6 py-4 text-surface-300 whitespace-nowrap">
-                                            {new Date(stat.timestamp).toLocaleString()}
+                                            {new Date(stat.timestamp).toLocaleString(locale)}
                                         </td>
                                         <td className="px-6 py-4 font-medium text-white">
                                             <span className="flex items-center gap-2">
