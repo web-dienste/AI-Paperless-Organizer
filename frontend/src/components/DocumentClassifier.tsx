@@ -3005,7 +3005,7 @@ export default function DocumentClassifier() {
                 <StatCard
                   label={tr("Dokumente gesamt")}
                   value={stats.total_documents_paperless.toLocaleString(locale)}
-                  sub="in Paperless"
+                  sub={tr("in Paperless")}
                   color="surface"
                 />
                 <StatCard
@@ -3017,7 +3017,7 @@ export default function DocumentClassifier() {
                 <StatCard
                   label={tr("Noch offen")}
                   value={stats.remaining.toLocaleString(locale)}
-                  sub="nicht klassifiziert"
+                  sub={tr("nicht klassifiziert")}
                   color="amber"
                 />
                 <StatCard

@@ -162,7 +162,7 @@ export default function Dashboard() {
               segments={donutSegs}
               total={totalDocs}
               centerTop={`${ocrPct}%`}
-              centerBot="OCR-Quote"
+              centerBot={tr("OCR-Quote")}
             />
           )}
           {/* Legend */}

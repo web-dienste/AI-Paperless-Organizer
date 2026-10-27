@@ -1342,6 +1342,11 @@ const en: Record<string, string> = {
   "{count} Seite": "{count} page",
   "{provider} verbinden": "Connect {provider}",
   "· Vom KI verwendet": "· Used by the AI",
+
+  // --- Anzeige-Attribute eigener Komponenten ---
+  "OCR-Quote": "OCR rate",
+  "in Paperless": "in Paperless",
+  "nicht klassifiziert": "not classified",
 }
 
 export default en
