@@ -4,6 +4,13 @@ Alle wichtigen Änderungen an AI Paperless Organizer.
 
 ---
 
+## 2026-11-02
+
+### „Ollama Offline“ obwohl Ollama läuft
+- **Bugfix**: Die Anzeige oben in der Seitenleiste prüft die Ollama-Adresse der OCR. Stand in den OCR-Einstellungen nichts Eigenes, war das `http://localhost:11434`, und das zeigt im Docker-Container auf den Container selbst. Die Anzeige stand dann dauerhaft auf „Offline“, auch wenn Klassifizierer und Aufräumen mit Ollama liefen, und OCR ging nicht. Jetzt übernimmt die OCR in diesem Fall die Ollama-Adresse aus den KI-Einstellungen. Die OCR-Einstellungen zeigen dazu einen Hinweis.
+- **Anzeige**: Beim Drüberfahren steht, welche Adresse geprüft wurde und woran es scheitert. Ein Klick öffnet die OCR-Einstellungen.
+- **Fehlertext**: Antwortet Ollama nicht, stand bisher nur „Letzter Fehler:“ ohne Grund. Jetzt steht dort „keine Antwort (Zeitüberschreitung)“ bzw. „Verbindung abgelehnt“.
+
 ## 2026-10-27
 
 ### Oberfläche auch auf Englisch

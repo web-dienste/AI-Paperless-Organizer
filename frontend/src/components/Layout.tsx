@@ -101,6 +101,8 @@ export default function Layout({ children }: LayoutProps) {
   const [ollamaConnected, setOllamaConnected] = useState<boolean | null>(null)
   const [ollamaModelAvailable, setOllamaModelAvailable] = useState<boolean | null>(null)
   const [ollamaModel, setOllamaModel] = useState<string | null>(null)
+  const [ollamaUrl, setOllamaUrl] = useState<string | null>(null)
+  const [ollamaError, setOllamaError] = useState<string | null>(null)
   const [reviewCount, setReviewCount] = useState<number>(0)
   const [errorCount, setErrorCount] = useState<number>(0)
 
@@ -201,7 +203,15 @@ export default function Layout({ children }: LayoutProps) {
         setOllamaConnected(ocrStatus.connected)
         setOllamaModelAvailable(ocrStatus.model_available)
         setOllamaModel(ocrStatus.requested_model || ocrStatus.model || null)
+        setOllamaUrl(ocrStatus.url || null)
+        setOllamaError(ocrStatus.error || null)
+      } catch {
+        setOllamaConnected(false)
+        setOllamaModelAvailable(false)
+        setOllamaError(null)
+      }
 
+      try {
         const [queue, errors] = await Promise.all([
           api.getReviewQueue(),
           api.getOcrErrorList().catch(() => ({ count: 0 })),
@@ -209,8 +219,7 @@ export default function Layout({ children }: LayoutProps) {
         setReviewCount(queue.count)
         setErrorCount(errors.count ?? 0)
       } catch {
-        setOllamaConnected(false)
-        setOllamaModelAvailable(false)
+        // Zähler bleiben beim letzten Stand
       }
     }
 
@@ -341,7 +350,18 @@ export default function Layout({ children }: LayoutProps) {
             )}>{tr("LLM ")}{llmConfigured ? tr("konfiguriert") : tr("nicht konfiguriert")}
             </span>
           </div>
-          <div className="flex items-center gap-2 text-sm">
+          <Link
+            to="/ocr?tab=settings"
+            onClick={() => setSidebarOpen(false)}
+            className="flex items-center gap-2 text-sm hover:opacity-80 transition-opacity"
+            title={[
+              ollamaUrl ? tr("Geprüft: {url}", { url: ollamaUrl }) : null,
+              ollamaModel ? tr("OCR-Modell: {ollamaModel}", { ollamaModel: ollamaModel }) : null,
+              ollamaConnected === false ? ollamaError : null,
+              ollamaConnected && !ollamaModelAvailable ? tr("Das OCR-Modell ist auf diesem Ollama nicht installiert.") : null,
+              tr("Klick öffnet die OCR-Einstellungen."),
+            ].filter(Boolean).join('\n')}
+          >
             {ollamaConnected === null ? (
               <div className="w-2 h-2 rounded-full bg-surface-500 animate-pulse" />
             ) : (ollamaConnected && ollamaModelAvailable) ? (
@@ -354,9 +374,9 @@ export default function Layout({ children }: LayoutProps) {
             <span className={clsx(
               (ollamaConnected && ollamaModelAvailable) ? 'text-emerald-400' :
                 ollamaConnected ? 'text-amber-400' : 'text-surface-400'
-            )} title={ollamaModel ? tr("Modell: {ollamaModel}", { ollamaModel: ollamaModel }) : undefined}>{tr("Ollama ")}{ollamaConnected ? (ollamaModelAvailable ? tr("Online") : tr("Modell fehlt")) : tr("Offline")}
+            )}>{tr("Ollama ")}{ollamaConnected ? (ollamaModelAvailable ? tr("Online") : tr("Modell fehlt")) : tr("Offline")}
             </span>
-          </div>
+          </Link>
           {reviewCount > 0 && (
             <Link
               to="/ocr?tab=review"

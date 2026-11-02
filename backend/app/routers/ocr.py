@@ -98,11 +98,41 @@ class OcrEvaluateRequest(BaseModel):
 
 # --- Helper ---
 
+# Ollama-Adresse aus den KI-Einstellungen. Wird für OCR genommen, solange dort noch der
+# Standard localhost steht – der zeigt im Docker-Container auf den Container selbst.
+_provider_ollama_url: Optional[str] = None
+
+
+async def refresh_provider_ollama_url() -> None:
+    """Read the Ollama address from the LLM provider settings."""
+    global _provider_ollama_url
+    try:
+        from app.database import async_session
+        from app.models.settings_model import LLMProvider
+        async with async_session() as db:
+            result = await db.execute(select(LLMProvider).where(LLMProvider.name == "ollama"))
+            provider = result.scalar_one_or_none()
+        url = (provider.api_base_url or "").strip().rstrip("/") if provider else ""
+        _provider_ollama_url = url if url and url != DEFAULT_OLLAMA_URL else None
+    except Exception as e:
+        logger.warning(f"Could not read Ollama provider URL: {e}")
+
+
+def get_ollama_urls() -> List[str]:
+    """Ollama addresses used for OCR (falls back to the provider address instead of localhost)."""
+    configured = ocr_settings.get("ollama_urls") or [ocr_settings.get("ollama_url", DEFAULT_OLLAMA_URL)]
+    urls = [u.strip().rstrip("/") for u in configured if u and u.strip()]
+    if (not urls or urls == [DEFAULT_OLLAMA_URL]) and _provider_ollama_url:
+        return [_provider_ollama_url]
+    return urls or [DEFAULT_OLLAMA_URL]
+
+
 def get_ocr_service() -> OcrService:
     """Get OCR service with current settings."""
+    urls = get_ollama_urls()
     return OcrService(
-        ollama_url=ocr_settings.get("ollama_url", DEFAULT_OLLAMA_URL),
-        ollama_urls=ocr_settings.get("ollama_urls", []),
+        ollama_url=urls[0],
+        ollama_urls=urls,
         model=ocr_settings["model"],
         max_image_size=ocr_settings.get("max_image_size", 1344),
         smart_skip_enabled=ocr_settings.get("smart_skip_enabled", True)
@@ -114,8 +144,11 @@ def get_ocr_service() -> OcrService:
 @router.get("/settings")
 async def get_ocr_settings():
     """Get current OCR settings."""
+    await refresh_provider_ollama_url()
     # Merge global settings with memory state
     settings = ocr_settings.copy()
+    settings["effective_ollama_urls"] = get_ollama_urls()
+    settings["provider_ollama_url"] = _provider_ollama_url
     settings["watchdog_enabled"] = watchdog_state["enabled"]
     settings["watchdog_interval"] = watchdog_state["interval_minutes"]
     return settings
@@ -235,6 +268,7 @@ async def ensure_ocr_tags(
 @router.post("/test-connection")
 async def test_ocr_connection():
     """Test connection to Ollama."""
+    await refresh_provider_ollama_url()
     service = get_ocr_service()
     result = await service.test_connection()
     # Add model name to result for UI feedback
@@ -879,7 +913,7 @@ async def get_document_thumbnail(
 @router.get("/models")
 async def get_ollama_models():
     """Get all available models from all configured Ollama servers."""
-    urls = ocr_settings.get("ollama_urls", [ocr_settings.get("ollama_url", DEFAULT_OLLAMA_URL)])
+    urls = get_ollama_urls()
     all_models = set()
     
     for url in urls:
@@ -946,7 +980,7 @@ def reset_compare_state():
 
 async def _unload_model_from_vram(model: str):
     """Send keep_alive=0 to Ollama to immediately unload model from VRAM."""
-    urls = ocr_settings.get("ollama_urls", [ocr_settings.get("ollama_url", DEFAULT_OLLAMA_URL)])
+    urls = get_ollama_urls()
     for url in urls:
         url = url.rstrip("/")
         try:
@@ -963,7 +997,7 @@ async def _unload_model_from_vram(model: str):
 
 async def _wait_for_ollama_ready(max_wait: int = 60) -> bool:
     """Wait until at least one Ollama server responds. Returns True if ready."""
-    urls = ocr_settings.get("ollama_urls", [ocr_settings.get("ollama_url", DEFAULT_OLLAMA_URL)])
+    urls = get_ollama_urls()
     waited = 0
     interval = 3
     
@@ -1120,8 +1154,8 @@ async def _run_compare_job(paperless_client, document_id: int, models: list, tar
             print(f"[Compare] Testing model: {model_name} (image: {optimal_image_size}px, DPI: {render_dpi}, ctx: {model_params['num_ctx']}, repeat_pen: {model_params['repeat_penalty']})")
             
             service = OcrService(
-                ollama_url=ocr_settings.get("ollama_url", DEFAULT_OLLAMA_URL),
-                ollama_urls=ocr_settings.get("ollama_urls", []),
+                ollama_url=get_ollama_urls()[0],
+                ollama_urls=get_ollama_urls(),
                 model=model_name,
                 max_image_size=optimal_image_size,
                 smart_skip_enabled=False

@@ -13,7 +13,7 @@ logging.basicConfig(
     stream=sys.stdout,
 )
 from app.routers import paperless, correspondents, tags, document_types, settings, llm, debug, statistics, ignored_items, ocr, cleanup, classifier, rag, api_keys, cloud_import, duplicates, match
-from app.routers.ocr import ocr_settings, get_ocr_service
+from app.routers.ocr import ocr_settings, get_ocr_service, refresh_provider_ollama_url
 from app.services.ocr_service import watchdog_state
 from app.services.paperless_client import PaperlessClient
 from app.services.ui_lang import SUPPORTED_LANGS, set_saved_lang, ui_lang
@@ -38,6 +38,9 @@ async def lifespan(app: FastAPI):
         set_saved_lang(getattr(app_settings, "ui_language", None))
     except Exception as e:
         logging.getLogger(__name__).error(f"Loading UI language failed: {e}")
+
+    # Ollama address from the AI settings (OCR fallback instead of localhost)
+    await refresh_provider_ollama_url()
 
     # Auto-start watchdog if it was enabled before shutdown
     if ocr_settings.get("watchdog_enabled"):

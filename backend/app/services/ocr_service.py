@@ -309,13 +309,19 @@ class OcrService:
                         "url": url
                     }
             except Exception as e:
-                logger.warning(f"Connection test failed for {url}: {e}")
-                last_error = str(e)
-        
+                logger.warning(f"Connection test failed for {url}: {e!r}")
+                if isinstance(e, httpx.TimeoutException):
+                    reason = ui_text("keine Antwort (Zeitüberschreitung)", "no response (timeout)")
+                elif isinstance(e, httpx.ConnectError):
+                    reason = ui_text("Verbindung abgelehnt oder Adresse nicht erreichbar", "connection refused or address unreachable")
+                else:
+                    reason = str(e) or type(e).__name__
+                last_error = f"{url}: {reason}"
+
         return {
             "connected": False,
             "model_available": False,
-            "error": f"Alle Versuche fehlgeschlagen. Letzter Fehler: {last_error}",
+            "error": ui_text(f"Alle Versuche fehlgeschlagen. Letzter Fehler: {last_error}", f"All attempts failed. Last error: {last_error}"),
             "tried_urls": self.ollama_urls
         }
 

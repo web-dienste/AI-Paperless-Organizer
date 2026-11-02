@@ -21,6 +21,10 @@ export default function OcrSettings() {
     const [availableModels, setAvailableModels] = useState<string[]>([])
     const [loadingModels, setLoadingModels] = useState(false)
     const [provider, setProvider] = useState<'ollama' | 'mistral-ocr'>('ollama')
+    // Ollama-Adresse aus den KI-Einstellungen; ersetzt den Standard localhost
+    const [providerOllamaUrl, setProviderOllamaUrl] = useState<string | null>(null)
+    const usesProviderUrl = !!providerOllamaUrl &&
+        ollamaUrls.map(u => u.trim().replace(/\/+$/, '')).filter(Boolean).every(u => u === 'http://localhost:11434')
 
     useEffect(() => {
         loadSettings()
@@ -51,6 +55,7 @@ export default function OcrSettings() {
             setMaxImageSize(settings.max_image_size || 1344)
             setSmartSkipEnabled(settings.smart_skip_enabled !== undefined ? settings.smart_skip_enabled : true)
             if (settings.provider) setProvider(settings.provider as 'ollama' | 'mistral-ocr')
+            setProviderOllamaUrl(settings.provider_ollama_url || null)
 
             if (settings.watchdog_enabled !== undefined) {
                 setWatchdogEnabled(settings.watchdog_enabled)
@@ -287,6 +292,12 @@ export default function OcrSettings() {
                             </div>
                         ))}
                     </div>
+
+                    {usesProviderUrl && (
+                        <p className="text-xs text-blue-300 bg-blue-500/10 border border-blue-500/20 rounded-lg px-3 py-2 mb-3">
+                            {tr("Hier steht noch der Standard localhost. Im Docker-Container zeigt der auf den Container selbst, deshalb nimmt die OCR die Ollama-Adresse aus den KI-Einstellungen: {url}", { url: providerOllamaUrl ?? '' })}
+                        </p>
+                    )}
 
                     <div className="flex gap-2">
                         <input
